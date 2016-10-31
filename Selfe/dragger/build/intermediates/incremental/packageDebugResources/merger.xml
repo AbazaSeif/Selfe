@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main$Generated" generated="true"><source path="/root/Desktop/Work/WoW/WoW/dragger/res"/><source path="/root/Desktop/Work/WoW/WoW/dragger/build/generated/res/rs/debug"/><source path="/root/Desktop/Work/WoW/WoW/dragger/build/generated/res/resValues/debug"/></dataSet><dataSet config="debug$Generated" generated="true"><source path="/root/Desktop/Work/WoW/WoW/dragger/src/debug/res"/></dataSet><dataSet config="main" generated-set="main$Generated"><source path="/root/Desktop/Work/WoW/WoW/dragger/res"><file path="/root/Desktop/Work/WoW/WoW/dragger/res/values/attrs.xml" qualifiers=""><declare-styleable name="dragger_layout">
+    <attr format="reference" name="drag_view_id"/>
+    <attr format="reference" name="shadow_view_id"/>
+    <attr format="reference|integer" name="tension"/>
+    <attr format="reference|integer" name="friction"/>
+    <attr format="float" name="drag_limit"/>
+
+    <attr format="enum" name="drag_position">
+      <enum name="left" value="0"/>
+      <enum name="right" value="1"/>
+      <enum name="top" value="2"/>
+      <enum name="bottom" value="3"/>
+    </attr>
+  </declare-styleable></file><file path="/root/Desktop/Work/WoW/WoW/dragger/res/values/colors.xml" qualifiers=""><color name="black">#E6000000</color></file><file name="layout_shadow" path="/root/Desktop/Work/WoW/WoW/dragger/res/layout/layout_shadow.xml" qualifiers="" type="layout"/><file name="lazy_dragger_panel" path="/root/Desktop/Work/WoW/WoW/dragger/res/layout/lazy_dragger_panel.xml" qualifiers="" type="layout"/><file name="dragger_panel" path="/root/Desktop/Work/WoW/WoW/dragger/res/layout/dragger_panel.xml" qualifiers="" type="layout"/></source><source path="/root/Desktop/Work/WoW/WoW/dragger/build/generated/res/rs/debug"/><source path="/root/Desktop/Work/WoW/WoW/dragger/build/generated/res/resValues/debug"/></dataSet><dataSet config="debug" generated-set="debug$Generated"><source path="/root/Desktop/Work/WoW/WoW/dragger/src/debug/res"/></dataSet><mergedItems><configuration qualifiers=""><declare-styleable name="dragger_layout"><attr format="reference" name="drag_view_id"/><attr format="reference" name="shadow_view_id"/><attr format="reference|integer" name="tension"/><attr format="reference|integer" name="friction"/><attr format="float" name="drag_limit"/><attr format="enum" name="drag_position">
+      <enum name="left" value="0"/>
+      <enum name="right" value="1"/>
+      <enum name="top" value="2"/>
+      <enum name="bottom" value="3"/>
+    </attr></declare-styleable></configuration></mergedItems></merger>

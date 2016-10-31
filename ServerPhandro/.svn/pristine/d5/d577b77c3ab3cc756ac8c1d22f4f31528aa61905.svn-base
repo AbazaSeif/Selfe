@@ -1,0 +1,115 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of UserMangment
+ *
+ * @author abaza
+ */
+class UserMangment {
+
+    var $Database = null;
+    var $Tools = null;
+    var $Filter = null;
+
+    function __construct() {
+        if (is_null($this->Filter)) {
+            $this->Filter = new Filtering();
+        }
+
+        if (is_null($this->Tools)) {
+            $this->Tools = new Tools();
+        }
+
+        if (is_null($this->Database)) {
+            $Configration = Configration();
+            $this->Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+            if (!isset($this->Database)) {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Database Not Connected : " . $this->Database->ReturnError());
+                die($this->Tools->ShowDie($this->Tools->ShowDie("ERROR Database")));
+            }
+        }
+    }
+
+    function __destruct() {
+        unset($this->Database);
+        unset($this->Tools);
+        unset($this->Filter);
+    }
+
+    public function Get_User_Information() {
+        $UserID = array(
+            FILED_UID => $this->Filter->FilterData(KEY_UID)
+        );
+        $Main = array(
+            FILED_USER_ID => $UserID[FILED_UID]
+        );
+
+
+        $UserID = $this->Tools->removeNull($UserID);
+        if (is_null($UserID)) {
+            die(ShowError());
+        } else {
+            $TableUser = $this->Database->select(TABLE_USER, $Main);
+            $TablePhone = $this->Database->select(TABLE_PHONE, $UserID);
+            $TableSTOK = $this->Database->select(TABLE_USER_STOCK, $UserID);
+            $TableGIFT = $this->Database->select(TABLE_USER_GIFT, $UserID);
+            $TableMessage = $this->Database->select(TABLE_MESSAGE, $UserID);
+            $TableFriend = $this->Database->select(TABLE_FRIENDS, $UserID);
+
+            $UserInfo = array_merge($TableGIFT, $TablePhone, $TableSTOK, $TableUser, $TableMessage, $TableFriend);
+            $UserInfo = $this->Tools->removeNull($UserInfo);
+
+            $UserInfo = $this->Tools->RemoveKeyInArray(FILED_UID, $UserInfo);
+
+            return $UserInfo;
+        }
+    }
+
+    public function Get_User_Albume() {
+        $UserUID = array();
+        $Images = array();
+        $Commands = array();
+        $RetarnImage = array();
+
+        $temp = array(
+            FILED_UID => $this->Filter->FilterData(KEY_UID)
+        );
+
+        $UserUID = $this->Tools->removeNull($temp);
+        if (!is_null($UserUID)) {
+            $Images = $this->Database->select(TABLE_USER_PHOTO, $UserUID);
+        }
+
+        if (!is_null($Images)) {
+            if (is_array($Images)) {
+                foreach ($Images as $RecImage) {
+                    $ID = $RecImage[FILED_USER_PHOTO_ID];
+                    $ImageCommand = array(FILED_USER_PHOTO_COMMENT_UPID => $ID);
+                    $Commands = $this->Database->select(TABLE_USER_PHOTO_COMMENT, $ImageCommand);
+                    $Commands = $this->Tools->removeNull($Commands);
+                    $element = array(
+                        [$RecImage, $Commands]
+                    );
+                    if (is_null($Commands)) {
+                        array_push($RetarnImage, $RecImage);
+                    } else {
+                        array_push($RetarnImage, $element);
+                    }
+                }
+
+                return $RetarnImage;
+            }
+        }
+    }
+
+}

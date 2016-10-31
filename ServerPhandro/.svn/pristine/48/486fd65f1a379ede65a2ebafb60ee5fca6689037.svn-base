@@ -1,0 +1,21 @@
+<?php
+if (getcwd() == dirname(__FILE__)) {
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+function ShowError() {
+    $Msg = '<html>
+<head>
+<title>' . SERVER_ERROR_MESSAGE . '</title>
+<body>
+
+<H2>We\'re sorry but the page you\'re looking for could not be found</H2><br>
+</body>
+</html>';
+    echo $Msg;
+}

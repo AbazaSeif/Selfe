@@ -1,0 +1,204 @@
+<?php
+
+error_reporting(0);
+ini_set('arg_separator.output', '&amp;');
+ini_set('max_execution_time', 0);
+session_start();
+set_time_limit(0);
+
+define("MAIN_DIR", __DIR__);
+include __DIR__ . '/UserManger/Creating_New.php';
+include __DIR__ . '/UserManger/UserMangment.php';
+include __DIR__ . '/System/Core.php';
+include __DIR__ . '/System/Tools.php';
+include __DIR__ . '/System/UUID.php';
+include __DIR__ . '/System/ErrorPage.php';
+include __DIR__ . '/System/FileType_Image.php';
+include __DIR__ . '/System/Filesystem.php';
+include __DIR__ . '/Security/Filtering.php';
+include __DIR__ . '/Database/SQLClass.php';
+include __DIR__ . '/conf/Configration.php';
+
+class AndroServer {
+
+    protected $CommandMain = null;
+    protected $DebugMode = false;
+    protected $Server = null;
+    protected $Filter = null;
+    protected $Tools = null;
+
+    public function __construct() {
+
+        if (is_null($this->Server)) {
+            $this->Server = new Core($this);
+        }
+        if (is_null($this->Filter)) {
+            $this->Filter = new Filtering();
+        }
+
+        if (is_null($this->Tools)) {
+            $this->Tools = new Tools();
+        }
+        $Data = $this->Filter->FilterData(DEBUG);
+
+        $this->DebugMode = (isset($Data) ? true : false);
+        $this->CommandMain = $this->Filter->FilterData(MAIN_COMMAND);
+
+        $this->Tools->setDebug($this->DebugMode);
+
+        if ($this->DebugMode) {
+            $DebugCount = $this->Tools->Count_Debug_time();
+            print("<b>Debug Mode is Run (" . $DebugCount . ")</b><br>");
+            $this->Tools->HeaderDebug();
+        }
+        session_name($this->Tools->generateRandomString());
+        register_shutdown_function(array($this, '__destruct'));
+
+
+        $this->Tools->System_Log("Start Session " . session_name(), __FUNCTION__, __LINE__);
+
+        if (!is_null($this->CommandMain)) {
+            if ($this->URL_Check($this->CommandMain)) {
+                $this->Switching($this->CommandMain);
+            } else {
+                $this->Tools->System_Log("Error in Command , it is not in array command ", __FUNCTION__, __LINE__);
+                die(ShowError());
+            }
+        } elseif (!is_null($Key = $this->Tools->getValue(MAIN_COMMAND, $_REQUEST))) {
+            if (!is_null($Key)) {
+                if ($this->URL_Check($Key)) {
+                    $this->Switching($Key);
+                } else {
+                    $this->Tools->System_Log("Error in Command , it is not in array command", __FUNCTION__, __LINE__);
+                    die(ShowError());
+                }
+            } else {
+                $this->Tools->System_Log("Fail to get " . MAIN_COMMAND . " in Request.", __FUNCTION__, __LINE__);
+                die(ShowError());
+            }
+        } else {
+            $this->Tools->System_Log("Not found Main Command (Main Key) so System can't accept this order", __FUNCTION__, __LINE__);
+            die(ShowError());
+        }
+    }
+
+    private function Switching($Command) {
+        $this->Tools->System_Log("Open Key " . $Command, __FUNCTION__, __LINE__);
+        switch ($Command) {
+            case NEW_USER:
+                $this->Moving($this->Server, 'User_Group', "N");
+                break;
+            case EDIT_USER:
+                $this->Moving($this->Server, 'User_Group', "E");
+                break;
+            case DELETE_USER:
+                $this->Moving($this->Server, 'User_Group', "D");
+                break;
+            case UPLOAD_IMAGE:
+                $this->Moving($this->Server, 'User_Group', "U");
+                break;
+            case GET_IMAGE:
+                $this->Moving($this->Server, 'User_Group', "G");
+                break;
+
+            case GET_USER_INFO:
+                $this->Moving($this->Server, 'User_Mangment_Group', 'G');
+                break;
+            case GET_ALBUMES:
+                $this->Moving($this->Server, 'User_Mangment_Group', 'A');
+                break;
+
+            case TEST:
+                $this->Moving($this->Server, 'Test');
+                break;
+        }
+    }
+
+    private function URL_Check($Command) {
+        $this->Tools->System_Log("URL Check", __FUNCTION__, __LINE__);
+        
+        if (!defined($Command)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function Moving($Class, $Function, $arg = NULL) {
+        $this->Tools->System_Log("Implimantation Function " . $Function, __FUNCTION__, __LINE__);
+        if ($this->DebugMode) {
+            if (isset($arg)) {
+                if (is_string($arg)) {
+                    $this->Tools->System_Log("String", __FUNCTION__, __LINE__);
+                    $this->MovingRecording("Moving to " . $Function . " With Args " . $arg);
+                } else if (is_int($arg)) {
+                    $this->Tools->System_Log("Integer", __FUNCTION__, __LINE__);
+                    $this->MovingRecording("Moving to " . $Function . " With Args Integer " . $arg);
+                } else if (is_array($arg)) {
+                    $this->Tools->System_Log("Array", __FUNCTION__, __LINE__);
+                    $this->MovingRecording("Moving to " . $Function . " With Args Array");
+                } else {
+                    $this->Tools->System_Log("Unknow Type of arg", __FUNCTION__, __LINE__);
+                    $this->MovingRecording("Moving to " . $Function);
+                }
+            } else {
+                $this->Tools->System_Log("Moving to function " . $Function, __FUNCTION__, __LINE__);
+                $this->MovingRecording("Moving to " . $Function);
+            }
+        }
+        if (isset($arg)) {
+            $this->Tools->System_Log("Call Function With Arg", __FUNCTION__, __LINE__);
+            call_user_func(array($Class, $Function), $arg);
+        } else {
+            $this->Tools->System_Log("Call Function Without Arg", __FUNCTION__, __LINE__);
+            call_user_func(array($Class, $Function));
+        }
+    }
+
+    private function MovingRecording($Message) {
+        $Echo = '<b>' . $Message . '</b>' . '<br>';
+        if ($this->DebugMode) {
+            $this->Tools->Show($Echo);
+        }
+    }
+
+    public function Buffer($Data) {
+        $Array = array();
+
+        if (is_array($Data)) {
+            $Array[RETERN] = SUCCESS;
+            $Array = array_merge($Array, $Data);
+            if ($this->DebugMode) {
+                $this->Tools->Show('<b> JSON : </b>');
+            }
+            $this->Tools->ShowBuffer($Array);
+            $this->Tools->System_Log($Array, __FUNCTION__, __LINE__);
+        } else {
+            if ($this->DebugMode) {
+                $this->Tools->Show('<b> JSON : </b>');
+            }
+
+            if (strstr($Data, "__")) {
+                $Data = str_replace("__", "_:_", $Data);
+            }
+
+            $this->Tools->ShowBuffer($Data);
+            $this->Tools->System_Log($Data, __FUNCTION__, __LINE__);
+        }
+    }
+
+    private function __destruct() {
+        $this->Tools->System_Log("Close Session Now " . session_name(), __FUNCTION__, __LINE__);
+        unset($this->CommandMain);
+        unset($this->Filter);
+        unset($this->Server);
+        unset($this->Tools);
+        unset($this->DebugMode);
+        session_unset();
+        exit(0);
+    }
+
+}
+
+$Server = new AndroServer();
+

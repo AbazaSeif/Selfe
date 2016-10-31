@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="wrap_content" android:layout_height="wrap_content"
+              android:orientation="horizontal"
+              android:padding="10dp"
+              app:layout_collapseParallaxMultiplier="1.0"
+              android:scrollbarSize="0dp">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="217dp"
+        android:clickable="true"
+        android:id="@+id/imgGirl"
+        android:src="@drawable/girls"
+        android:contentDescription=""
+        tools:ignore="ContentDescription"
+        android:layout_weight="4.70"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="217dp"
+        android:clickable="true"
+        android:id="@+id/imgMan"
+        android:src="@drawable/boy"
+        android:contentDescription=""
+        tools:ignore="ContentDescription"
+        android:layout_weight="4.70"/>
+
+</LinearLayout>

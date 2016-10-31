@@ -1,0 +1,85 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Filtering
+ *
+ * @author abaza
+ */
+class Filtering {
+
+    function __construct() {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+    }
+
+    
+
+    public function FilterData($Var) {
+        if (isset($Var) || !empty($Var)) {
+            $temp = filter_input(INPUT_GET, $Var);
+            if (isset($temp)) {
+                if (is_string($temp)) {
+                    //TODO: Must Clear Whaitspace from $temp
+                    $Data = trim($temp);
+
+                    return mysql_real_escape_string($Data);
+                }
+
+                if (is_numeric($Data)) {
+                    if (is_float($Data)) {
+                        return (float) $Data;
+                    } elseif (is_int($Data)) {
+                        return (int) $Data;
+                    } else {
+                        return $Data;
+                    }
+                }
+                if (is_object($Data)) {
+                    return (object) $Data;
+                }
+            } else {
+                return NULL;
+            }
+        } else {
+            return NULL;
+        }
+    }
+
+    public function isBlackList() {
+        $Page = array("Configration.php",
+            "Adminstration.php",
+            "SQLClass.php",
+            "SQLEXECUTE.php",
+            "Filtering.php",
+            "Core.php",
+            "ErrorPage.php",
+            "Filesystem.php",
+            "FileType_Image.php",
+            "Tools.php",
+            "UUID.php",
+            "Creating_New.php");
+
+        $ServerScript = $_SERVER['SCRIPT_FILENAME'];
+        $Ar = split(DIRECTORY_SEPARATOR, $ServerScript);
+        $Script = print_r($Ar[count($Ar) - 1], true);
+        if (!empty($Script)) {
+            if (in_array($Script, $Page)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+    }
+
+}

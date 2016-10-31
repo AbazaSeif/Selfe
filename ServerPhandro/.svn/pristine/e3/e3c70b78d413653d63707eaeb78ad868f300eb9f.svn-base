@@ -1,0 +1,1713 @@
+CREATE DATABASE IF NOT EXISTS `super_wow` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `super_wow`;
+
+-- --------------------------------------------------------
+
+CREATE TABLE IF NOT EXISTS `Table_User` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UUID` text NOT NULL,
+  `_NAME` text NOT NULL,
+  `_PHONE` text NOT NULL,
+  `_SEX` tinyint(4) NOT NULL,
+  `_PASSWORD` text NOT NULL,
+  `_STATUS` int(11) NOT NULL,
+  `_DIR_PATH` text NOT NULL,
+  `_IS_FAMOUS` tinyint(4) NOT NULL,
+  `_IS_VIP` tinyint(4) NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Gift` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_FROM_UUID` text NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Contact_List` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_NAME` text NOT NULL,
+  `_PHONE_1` text NOT NULL,
+  `_PHONE_2` text NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Country` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_NAME` text NOT NULL,
+  `_PATH_FLAG` text NOT NULL,
+  `_CODE` int(11) NOT NULL,
+  `_MEMBERS` int(11) NOT NULL,
+  `_CORRENSE` text NOT NULL,
+  `_PRICE` int(11) NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Giftes` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_TYPE` int(11) NOT NULL,
+  `_CATEGORY` text NOT NULL,
+  `_GIFT_PATH` text NOT NULL,
+  `_PRICE` text NOT NULL,
+  `_LIMITED` mediumint(9) NOT NULL,
+  `_TO_USER` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_TO_USER`) REFERENCES Table_User_Gift(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Mobile_Network` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_NETWORK_NAME` text NOT NULL,
+  `_CODE` text NOT NULL,
+  `_COUNTRY_NAME` text NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Phone` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_IMEI` text NOT NULL,
+  `_SIM_SERIAL` text NOT NULL,
+  `_NETWORK_COUNTRY_ISO` text NOT NULL,
+  `_COUNTRY_ISO` text NOT NULL,
+  `_NETWORK_NAME` text NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_System` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_VERSION` text NOT NULL,
+  `_APPLICATION_NAME` text NOT NULL,
+  `_SERVER_CURRENT_PATH` text NOT NULL,
+  `_SERVER_NEW_PATH` text NOT NULL,
+  `_POWER_BY` text NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_System_Log` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_DATE` text NOT NULL,
+  `_ACTION` text NOT NULL,
+  `_REQUEST` text NOT NULL,
+  `_INFO` text NOT NULL,
+  `_IP_CLIENT` text NOT NULL,
+  `_COUNTRY_ID` int(11) NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Top_Users` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_COUNTRY_ID` int(11) NOT NULL,
+  `_TOP_BOY_NAME` text NOT NULL,
+  `_TOP_GIRL_NAME` text NOT NULL,
+  `_TOP_BOY_VALUE` int(11) NOT NULL,
+  `_TOP_GIRL_VALUE` int(11) NOT NULL,
+  `_DATE` text NOT NULL,
+  PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Users_Online` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_STATUS` tinyint(4) NOT NULL,
+  `_WHAT_IS_IN_YOUR_MIND` text NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Log` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_DATE` text NOT NULL,
+  `_ACTION` int(11) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Stock` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_MONEY_STOCK` text NOT NULL,
+  `_POINT_STOCK` text NOT NULL,
+  `_DATE_CHARGE_MONEY_STOK` text NOT NULL,
+  `_VALUE_WAS_CHARGE_MONEY_STOCK` text NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Photo` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_PHOTO_PATH` text NOT NULL,
+  `_COMMENT` varchar(500) DEFAULT NULL,
+  `_IS_PROFILE` tinyint(4) NOT NULL,
+  `_TIME_OF_LIKE` int(11) NOT NULL,
+  `_TIME_OF_UNLIKE` int(11) NOT NULL,
+  `_PRIVACY` smallint(6) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Video` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) NOT NULL,
+  `_VIDEO_PATH` text NOT NULL,
+  `_COMMENT` varchar(500) DEFAULT NULL,
+  `_TIME_OF_LIKE` int(11) NOT NULL,
+  `_TIME_OF_UNLIKE` int(11) NOT NULL,
+  `_PRIVACY` smallint(6) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Photo_comment` (
+ `ID` int(11) NOT NULL AUTO_INCREMENT,
+ `_UPID` int(11) NOT NULL , 
+ `_COMMENT` varchar(500) DEFAULT NULL,
+ `_DATE` TEXT NOT NULL ,
+ `_LIKE` smallint(6) NOT NULL,
+ `_UNLIKE` smallint(6) NOT NULL,
+PRIMARY KEY (`ID`),
+FOREIGN KEY (`_UPID`) REFERENCES Table_User_Photo(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Video_comment` (
+ `ID` int(11) NOT NULL AUTO_INCREMENT,
+ `_UVID` int(11) NOT NULL , 
+ `_COMMENT` varchar(500) DEFAULT NULL,
+ `_DATE` TEXT NOT NULL ,
+ `_LIKE` smallint(6) NOT NULL,
+ `_UNLIKE` smallint(6) NOT NULL,
+PRIMARY KEY (`ID`),
+FOREIGN KEY (`_UVID`) REFERENCES Table_User_Video(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Messages` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `_UID` int(11) DEFAULT NULL,
+  `_TO` text DEFAULT NULL,
+  `_FROM` text DEFAULT NULL,
+  `_MESSAGE` varchar(9000) DEFAULT NULL,
+  `_NEW` smallint(6) NOT NULL,
+  PRIMARY KEY (`ID`),
+  FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_Notifications` (
+    `ID` int(11) NOT NULL AUTO_INCREMENT,
+    `_FROM` int(11) NOT NULL,
+    `_TO`   int(11) NOT NULL,
+    `_LABEL` text NOT NULL,
+    `_DATE` text NOT NULL,
+    `_ACTION` int(11) NOT NULL,
+ PRIMARY KEY (`ID`)
+);
+
+CREATE TABLE IF NOT EXISTS `Table_User_Friends` (
+ `ID` int(11) NOT NULL AUTO_INCREMENT,
+ `_UID` int(11) NOT NULL , 
+ `_FRIEND` int(11) NOT NULL ,
+ `_DATE` TEXT NOT NULL ,
+ `_FAVORIT` smallint(6) NOT NULL,
+PRIMARY KEY (`ID`),
+FOREIGN KEY (`_UID`) REFERENCES Table_User(`ID`)
+);
+
+
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AWCC' , '41201' , 'Afghanistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Areeba' , '41240' , 'Afghanistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat' , '41250' , 'Afghanistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Roshan' , '41220' , 'Afghanistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AMC' , '27601' , 'Albania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Eagle Mobile' , '27603' , 'Albania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Plus Communication' , '27604' , 'Albania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '27602' , 'Albania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Djezzy' , '60302' , 'Algeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobilis' , '60301' , 'Algeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nedjma' , '60303' , 'Algeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bluesky' , '54411' , 'American Samoa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobiland' , '21303' , 'Andorra'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MOVICEL' , '63104' , 'Angola'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('UNITEL' , '63102' , 'Angola'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '365840' , 'Anguilla (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Weblinks Limited' , '365010' , 'Anguilla (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('APUA' , '344030' , 'Antigua and Barbuda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('bmobile' , '344920' , 'Antigua and Barbuda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '344930' , 'Antigua and Barbuda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '722310' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '722320' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '722330' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutchinson (PORT HABLE)' , '722350' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Movistar' , '722010' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Movistar' , '722070' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '722020' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Personal' , '72234' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom Personal SA' , '722341' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom Personal SA' , '72236' , 'Argentina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '28301' , 'Armenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '28310' , 'Armenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VivaCell-MTS' , '28305' , 'Armenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '36302' , 'Aruba (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicell' , '36320' , 'Aruba (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SETAR' , '36301' , 'Aruba (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '50506' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '50512' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3GIS' , '50515' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AAPT' , '50514' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Advanced Communications Technologies' , '50524' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airnet' , '50509' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Crazy Johns' , '50538' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Department of Defence' , '50504' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Localstar' , '50588' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Norfolk Telecom' , '50510' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('One. Tel' , '50508' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('One. Tel' , '50599' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('OPTUS / Virgin Mobile' , '50502' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ozitel' , '50505' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Railcorp' , '50513' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SOUL' , '50521' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telstra' , '50501' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telstra' , '50511' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telstra' , '50571' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telstra' , '50572' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Victorian Rail Track' , '50516' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '50503' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '50507' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('YES OPTUS' , '50590' , 'Australia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '23210' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '23214' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('A1' , '23201' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('A1' , '23209' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Barablu' , '23215' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('bob' , '23211' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('GSM-R A' , '23291' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '23205' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '23203' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '23207' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('yesss' , '23212' , 'Austria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Azercell' , '40001' , 'Azerbaijan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bakcell' , '40002' , 'Azerbaijan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('FONEX' , '40003' , 'Azerbaijan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nar Mobile' , '40004' , 'Azerbaijan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BaTelCo' , '364390' , 'Bahamas'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Batelco' , '42601' , 'Bahrain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTC-VFBH' , '42602' , 'Bahrain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VIVA' , '42604' , 'Bahrain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aktel' , '47002' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Banglalink' , '47003' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Citycell' , '47005' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Citycell' , '47006' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Grameenphone' , '47001' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TeleTalk' , '47004' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Warid' , '47007' , 'Bangladesh'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('bmobile' , '342600' , 'Barbados'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '342750' , 'Barbados'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sunbeach Communications' , '342820' , 'Barbados'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BelCel JV' , '257501' , 'Belarus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DIALLOG' , '25703' , 'Belarus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('life:)' , '25704' , 'Belarus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '25702' , 'Belarus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Velcom' , '25701' , 'Belarus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BASE' , '20620' , 'Belgium'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobistar' , '20610' , 'Belgium'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Proximus' , '20601' , 'Belgium'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenet' , '20605' , 'Belgium'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Belize Telemedia' , '70267' , 'Belize'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('International Telecommunications Ltd.' , '70268' , 'Belize'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Smart' , '70299' , 'Belize'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Areeba' , '61603' , 'Benin'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BBCOM' , '61600' , 'Benin'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BBCOM' , '61604' , 'Benin'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Glo' , '61605' , 'Benin'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libercom' , '61601' , 'Benin'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel' , '61602' , 'Benin'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '31038' , 'Bermudas'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel Bermuda' , '35001' , 'Bermudas'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobility' , '35002' , 'Bermudas'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('B-Mobile' , '40211' , 'Bhutan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TashiCell' , '40277' , 'Bhutan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Entel' , '73602' , 'Bolivia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nuevatel' , '73601' , 'Bolivia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '73603' , 'Bolivia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BH Mobile' , '21890' , 'Bosnia and Herzegovina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ERONET' , '21803' , 'Bosnia and Herzegovina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('m:tel' , '21805' , 'Bosnia and Herzegovina'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BTC Mobile' , '65204' , 'Botswana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mascom' , '65201' , 'Botswana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '65202' , 'Botswana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('aiou' , '72437' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Amazonia Celular' , '72424' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Brasil Telecom' , '72416' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '72405' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTBC Cellular' , '72432' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTBC Cellular' , '72433' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTBC Cellular' , '72434' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTBC Celular' , '72407' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '72400' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '72439' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sercomtel' , '72415' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TIM' , '72402' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TIM' , '72403' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TIM' , '72404' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TIM' , '72408' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TNL PCS' , '72431' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vivo' , '72406' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vivo' , '72410' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vivo' , '72411' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vivo' , '72423' , 'Brazil'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '348170' , 'British Virgin Islands (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Caribbean Cellular Telephone' , '348570' , 'British Virgin Islands (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '348770' , 'British Virgin Islands (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('B-Mobile' , '52802' , 'Brunei'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DTSCom' , '52811' , 'Brunei'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Jabatan Telekom' , '52801' , 'Brunei'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('GLOBUL' , '28405' , 'Bulgaria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('M-Tel' , '28401' , 'Bulgaria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Undisclosed' , '28404' , 'Bulgaria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vivatel' , '28403' , 'Bulgaria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Onatel' , '61301' , 'Burkina Faso'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel Faso' , '61303' , 'Burkina Faso'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '61302' , 'Burkina Faso'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Africell' , '64202' , 'Burundi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('HiTs Telecom' , '64208' , 'Burundi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Smart Mobile' , '64207' , 'Burundi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Spacetel' , '64201' , 'Burundi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel' , '64203' , 'Burundi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('U-COM Burundi' , '64282' , 'Burundi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '45609' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Camshin / Shinawatra' , '45618' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Excell' , '45611' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('hello' , '45602' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Metfone' , '45608' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel' , '45601' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('qb' , '45604' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('S Telecom' , '45603' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Smart Mobile' , '45606' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Star-Cell' , '45605' , 'Cambodia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN Cameroon' , '62401' , 'Cameroon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '62402' , 'Cameroon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel Wireless' , '302290' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BC Tel Mobility' , '302652' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bell' , '302610' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bell' , '302640' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bell / Telus / SaskTel' , '302880' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bell Mobility' , '302651' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DMTS' , '302380' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Fido' , '302370' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('FIRST' , '302350' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Globalstar' , '302710' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ICE Wireless' , '302620' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MB Tel Mobility' , '302701' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobilicity' , '302320' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MT&T Mobility' , '302702' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '302660' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS Mobility' , '302655' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('New Tel Mobility' , '302703' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Rogers Wireless' , '302720' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sask Tel Mobility' , '302654' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SaskTel' , '302680' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SaskTel' , '302780' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tbay Mobility' , '302656' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telus' , '302220' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telus' , '302221' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telus (Quebec) Mobility' , '302657' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telus Mobility' , '302360' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telus Mobility' , '302361' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telus Mobility' , '302653' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Videotron' , '302500' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Videotron' , '302510' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('WIND Mobile' , '302490' , 'Canada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CVMOVEL' , '62501' , 'Cape Verde'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T+' , '62502' , 'Cape Verde'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '346140' , 'Cayman Islands (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '346050' , 'Cayman Islands (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTP' , '62301' , 'Central African Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nationlink' , '62304' , 'Central African Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '62303' , 'Central African Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TC' , '62302' , 'Central African Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '73003' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Entel' , '73001' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Entel' , '73010' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '73002' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '73004' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VTR MÃ³vil' , '73008' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Will' , '73099' , 'Chile'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('(unknown)' , '46006' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Mobile' , '46000' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Mobile' , '46002' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Mobile' , '46007' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Telecom' , '46003' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Telecom' , '46005' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Tietong' , '46020' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Unicom' , '46001' , 'China'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Colombia Telecomunicaciones S.A. - Telecom' , '732001' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Comcel' , '732101' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Edatel' , '732002' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '732102' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '732123' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '732103' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '732111' , 'Colombia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('HURI - SNPT' , '65401' , 'Comoros'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom Cook' , '54801' , 'Cook Islands'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ICE' , '71201' , 'Costa Rica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ICE' , '71202' , 'Costa Rica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ICE' , '71203' , 'Costa Rica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '71204' , 'Costa Rica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cora de Comstar' , '61201' , 'Cote d"Ivoire'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KoZ' , '61204' , 'Cote d"Ivoire'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Moov' , '61202' , 'Cote d"Ivoire'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '61205' , 'Cote d"Ivoire'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '61203' , 'Cote d"Ivoire'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ORICEL' , '61206' , 'Cote d"Ivoire'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '21901' , 'Croatia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2' , '21902' , 'Croatia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VIPnet' , '21910' , 'Croatia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ETECSA' , '36801' , 'Cuba'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cytamobile-Vodafone' , '28001' , 'Cyprus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '28010' , 'Cyprus'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Salam' , '62204' , 'Czad'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TAWALI' , '62202' , 'Czad'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TIGO - Millicom' , '62203' , 'Czad'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '62201' , 'Czad'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('EUROTEL PRAHA' , '23002' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('OSKAR' , '23003' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('OSNO TELECOMUNICATION, s.r.o.' , '23006' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SprÃ¡va Å¾elezniÄnÃ­ dopravnÃ­ cesty, s.o' , '23098' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '23001' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TRAVEL TELEKOMMUNIKATION, s.r.o.' , '23005' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('U:fon' , '23004' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone Czech Republic a.s., R&D Centre at FEE, CTU' , '23099' , 'Czech Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CCT' , '63086' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellco' , '63004' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libertis Telecom' , '63010' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SAIT Telecom' , '63089' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Supercell' , '63005' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodacom' , '63001' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '63002' , 'Democratic Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '23806' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ApS KBUS' , '23805' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Barablu Mobile Ltd.' , '23807' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dansk Beredskabskommunikation A/S' , '23809' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dansk Beredskabskommunikation A/S' , '23811' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ericsson Danmark A/S' , '23840' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Lycamobile Denmark Ltd' , '23812' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MIGway A/S' , '23803' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sonofon' , '23877' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TDC' , '23801' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TDC' , '23810' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor' , '23802' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telia' , '23820' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telia' , '23830' , 'Denmark'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Evatis' , '63801' , 'Djibouti'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '366110' , 'Dominica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '366020' , 'Dominica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '37002' , 'Dominican Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '37001' , 'Dominican Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tricom S.A.' , '37003' , 'Dominican Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ViVa' , '37004' , 'Dominican Republic'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Timor Telecom' , '51402' , 'East Timor'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Alegro' , '74002' , 'Ecuador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Movistar' , '74000' , 'Ecuador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Porta' , '74001' , 'Ecuador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat' , '60203' , 'Egypt'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobinil' , '60201' , 'Egypt'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '60202' , 'Egypt'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '70610' , 'El Salvador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '70611' , 'El Salvador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTE Telecom Personal' , '70601' , 'El Salvador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('digicel' , '70602' , 'El Salvador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '70604' , 'El Salvador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telemovil EL Salvador' , '70603' , 'El Salvador'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hits GQ' , '62703' , 'Equatorial Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange GQ' , '62701' , 'Equatorial Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Eritel' , '65701' , 'Eritrea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AS Bravocom Mobiil' , '24805' , 'Estonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Elisa' , '24802' , 'Estonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('EMT' , '24801' , 'Estonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('OY Top Connect' , '24804' , 'Estonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('OY ViaTel' , '24806' , 'Estonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele 2' , '24803' , 'Estonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ETMTN' , '63601' , 'Ethiopia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Faroese Telecom' , '28801' , 'Faroe Islands (Denmark)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '28802' , 'Faroe Islands (Denmark)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '54202' , 'Fiji'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '54201' , 'Fiji'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AMT' , '24414' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DNA' , '24403' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DNA' , '24412' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Elisa' , '24405' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nokia' , '24407' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SAMK' , '24415' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Saunalahti' , '24421' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Scnl Truphone' , '24429' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sonera' , '24491' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TDC Oy' , '24410' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Unknown' , '24408' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VIRVE' , '24411' , 'Finland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bouygues' , '20820' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bouygues' , '20821' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bouygues' , '20888' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('France Telecom Mobile' , '20801' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Free Mobile' , '20814' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Free Mobile' , '20815' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Globalstar Europe' , '20805' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Globalstar Europe' , '20806' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Globalstar Europe' , '20807' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '20800' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '20802' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SFR' , '20810' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SFR' , '20811' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SFR' , '20813' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Transatel Mobile' , '20822' , 'France'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VINI' , '54720' , 'French Polynesia (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Azur' , '62804' , 'Gabon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libertis' , '62801' , 'Gabon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Moov (Telecel) Gabon S.A.' , '62802' , 'Gabon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '62803' , 'Gabon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Africel' , '60702' , 'Gambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Comium' , '60703' , 'Gambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Gamcel' , '60701' , 'Gambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('QCell' , '60704' , 'Gambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('A-Mobile' , '28988' , 'Abkhazia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aquafon' , '28967' , 'Abkhazia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '28204' , 'Georgia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Geocell' , '28201' , 'Georgia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Iberiatel' , '28203' , 'Georgia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Magti' , '28202' , 'Georgia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Silknet' , '28205' , 'Georgia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('27C3' , '26242' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airdata' , '26215' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Deutsche Bahn AG' , '26210' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DB Telematik' , '26260' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Debitel' , '262901' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dolphin Telecom' , '26212' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('E-Plus' , '26203' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('E-Plus' , '26205' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('E-Plus' , '26277' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Group 3G UMTS' , '26214' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LYCA' , '26243' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobilcom Multimedia' , '26213' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nash Technologies' , '26292' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '26207' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '26208' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '26211' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Siemens AG' , '26276' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '26201' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '26206' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('vistream' , '26216' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '26202' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '26204' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '26209' , 'Germany'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '62006' , 'Ghana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ghana Telecom Mobile' , '62002' , 'Ghana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Kasapa / Hutchison Telecom' , '62004' , 'Ghana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '62001' , 'Ghana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('tiGO' , '62003' , 'Ghana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTS Mobile' , '26606' , 'Gibraltar (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('GibTel' , '26601' , 'Gibraltar (United Kingdom)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cosmote' , '20201' , 'Greece'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '20205' , 'Greece'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wind' , '20209' , 'Greece'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wind' , '20210' , 'Greece'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TELE Greenland A/S' , '29001' , 'Greenland (Denmark)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '352110' , 'Grenada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '352030' , 'Grenada'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '34020' , 'Guadeloupe (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MIO GSM' , '34008' , 'Guadeloupe (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '34001' , 'Guadeloupe (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Outremer' , '34002' , 'Guadeloupe (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telcell' , '34003' , 'Guadeloupe (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Guam Telephone Authority' , '310033' , 'Guam (United States)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Guamcell' , '310370' , 'Guam (United States)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Guamcell' , '310470' , 'Guam (United States)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('i CAN_GSM' , '311250' , 'Guam (United States)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IT&E Wireless' , '310032' , 'Guam (United States)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('mPulse' , '310140' , 'Guam (United States)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '70401' , 'Guatemala'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Comcel / Tigo' , '70402' , 'Guatemala'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '70403' , 'Guatemala'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '73801' , 'Guiana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('GT&T Cellink Plus' , '73802' , 'Guiana'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellcom' , '61105' , 'Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Lagui' , '61102' , 'Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '61104' , 'Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Spacetel' , '61101' , 'Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel Guinee' , '61103' , 'Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Areeba' , '63202' , 'Guinea-Bissau'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '63203' , 'Guinea-Bissau'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Comcel / Voila' , '372010' , 'Haiti'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '37202' , 'Haiti'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NATCOM' , '37203' , 'Haiti'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('6Gmobile' , '20414' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ASPIDER Solutions Nederland B.V.' , '20423' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Breezz Nederland B.V.' , '20427' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CapX B.V.' , '20425' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('eleena (MVNE)' , '20407' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Elephant Talk Communications Premium Rate Services' , '20405' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Intercity Mobile Communications B.V.' , '20417' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KPN' , '20408' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KPN' , '20410' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KPN Mobile The Netherlands B.V.' , '20469' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Lycamobile' , '20409' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ministerie van Defensie' , '20422' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mixe Communication Solutions B.V.' , '20419' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mundio Mobile (Netherlands) Ltd' , '20406' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NS Railinfrabeheer B.V.' , '20421' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange Nederland' , '20420' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Private Mobility Nederland B.V.' , '20424' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('RadioAccess B.V.' , '20467' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SpeakUp B.V.' , '20426' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile / Ben' , '20416' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2 Netherlands' , '20402' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telfort / O2' , '20412' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Unica Installatietechniek B.V' , '20413' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Unify Group Holding B.V.' , '20468' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('UPC Nederland B.V.' , '20418' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VastMobiel B.V.' , '20401' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '20404' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Voiceworks B.V.' , '20403' , 'Holland (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Celtel / Tigo' , '70802' , 'Honduras'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '70801' , 'Honduras'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DIGICEL' , '70840' , 'Honduras'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hondutel' , '70830' , 'Honduras'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3 (3G)' , '45403' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3 CDMA' , '45405' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3 Dual (2G)' , '45404' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('C Peoples' , '45412' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Motion Telecom' , '45409' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Unicom' , '45407' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China-Hongkong Telecom' , '45411' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CITIC Telecom 1616' , '45401' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CSL' , '45400' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CSL 3G' , '45402' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hong Kong CSL Limited' , '45418' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutchison Telecom' , '45414' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('New World' , '45410' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PCCW' , '45416' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PCCW' , '45419' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PCCW' , '45429' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SmarTone Mobile Comms' , '45415' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SmarTone Mobile Comms' , '45417' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Smartone-Vodafone' , '45406' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Trident' , '45408' , 'Hong Kong (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Pannon' , '21601' , 'Hungary'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '21630' , 'Hungary'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '21670' , 'Hungary'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IceCell' , '27407' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nova' , '27411' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NÃºll nÃ­u ehf' , '27406' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('On-waves' , '27408' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Siminn' , '27401' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tal' , '27412' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Viking' , '27404' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '27402' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '27403' , 'Iceland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '40417' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '40425' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '40428' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '40429' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '40437' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '40491' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405082' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405800' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405801' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405802' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405803' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405804' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405805' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405806' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405807' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405808' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405809' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405810' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405811' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405812' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AIRCEL' , '405813' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aircell Digilink' , '40460' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aircell Digilink Essar Cellph.' , '40415' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40406' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40410' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40431' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40440' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40445' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40449' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40470' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40494' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40495' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40497' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40498' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40551' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '40552' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AirTel' , '40553' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AirTel' , '40554' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AirTel' , '40555' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AirTel' , '40556' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AirTel' , '40570' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel - Haryana' , '40496' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel - Punjab' , '40402' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel / Bharti Telenet' , '40403' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel Gujrat' , '40493' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel Maharashtra & Goa' , '40490' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel Mumbai' , '40492' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BPL Mobile Cellular' , '40443' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BPL Mobile Mumbai' , '40421' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BPL USWest Cellular / Cellular Comms' , '40427' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40434' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40438' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40451' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40453' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40454' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40455' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40457' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40458' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40459' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40464' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40471' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40473' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40474' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40475' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40476' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40477' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40480' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL' , '40481' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL J&K' , '40462' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL Kerala' , '40472' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BSNL Maharashtra & Goa' , '40466' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BTA Cellcom' , '40478' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dishnet Wireless' , '40448' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Escorts' , '40482' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Escorts Telecom' , '40487' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Escorts Telecom' , '40488' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Escorts Telecom' , '40489' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Essar / Sterling Cellular' , '40411' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat DB(cheers)' , '405912' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat DB(cheers)' , '405913' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat DB(cheers)' , '405914' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat DB(cheers)' , '405917' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutch' , '40566' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutchinson Essar South' , '40486' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutchison Essar South' , '40413' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutchison Essar South' , '40484' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA' , '40419' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA' , '405799' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA' , '405845' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA' , '405848' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA' , '405850' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA' , '40586' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Idea (Escotel) Haryana' , '40412' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Idea (Escotel) UP West' , '40456' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA CELLULAR - Delhi' , '40404' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA Cellular - Gujarat' , '40424' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDEA Cellular - Maharashtra' , '40422' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Loop Mobile' , '405855' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Loop Mobile' , '405864' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Loop Mobile' , '405865' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTNL - Delhi' , '40468' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTNL - Mumbai' , '40469' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40450' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40452' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40467' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40483' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40485' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40501' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40503' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40504' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40509' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40510' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance' , '40513' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance Telecom Private' , '40409' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Reliance Telecom Private' , '40436' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('RPG MAA' , '40441' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('S Tel' , '405881' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Spice Telecom - Karnataka' , '40444' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Spice Telecom - Punjab' , '40414' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Srinivas Cellcom / Aircel' , '40442' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Cellular / Idea Cellular' , '40407' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405025' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405026' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405027' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405029' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405030' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405031' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405032' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405033' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405034' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405035' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405036' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405037' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405038' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405039' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405040' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405041' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405042' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405043' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405044' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405045' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405046' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TATA Teleservice' , '405047' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405818' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405819' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405820' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405821' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405822' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405844' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405875' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405880' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405927' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uninor' , '405929' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Videocon Datacom' , '405824' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Videocon Datacom' , '405827' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Videocon Datacom' , '405834' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '40420' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '40446' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone - Gujarat' , '40405' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone - Haryana' , '40401' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone - Kolkata' , '40430' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405750' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405751' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405752' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405753' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405754' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405755' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone IN' , '405756' , 'India'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '51089' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AXIS' , '51008' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ceria' , '510?' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ceria' , '51027' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Esia' , '51099' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Fren/Hepi' , '51028' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IM3' , '51021' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('INDOSAT' , '51001' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PSN' , '51000' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SMART' , '51009' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('StarOne' , '51003' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TelkomFlexi' , '51007' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TELKOMMobile' , '51020' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telkomsel' , '51010' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('XL' , '51011' , 'Indonesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Irancell' , '43235' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Iraphone' , '43293' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MCI' , '43211' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTCE' , '43219' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Taliya' , '43232' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TCI' , '43270' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TKC' , '43214' , 'Iran'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Asia Cell' , '41805' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Asia Cell' , '41850' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Korek' , '41840' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel' , '41845' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Omnnea' , '41892' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SanaTel' , '41808' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain IQ' , '41820' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain IQ' , '41830' , 'Iraq'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '27205' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Access Telecom' , '27204' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Clever Communications' , '27209' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('E-Mobile' , '27200' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Eircom' , '27207' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Liffey Telecom' , '27211' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Meteor' , '27203' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '27202' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tesco Mobile' , '272020' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '27201' , 'Ireland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellcom' , '42502' , 'Israel'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mirs' , '42577' , 'Israel'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '42501' , 'Israel'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Partner' , '-' , 'Israel'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Pelephone' , '42503' , 'Israel'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3 Italia' , '22299' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Blu' , '22298' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Elsacom' , '22202' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IPSE 2000' , '22277' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Noverca' , '22207' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('RFI' , '22230' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TIM' , '22201' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '22210' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wind' , '22288' , 'Italy'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '338020' , 'Jamaica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '338180' , 'Jamaica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '338070' , 'Jamaica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '338050' , 'Jamaica'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44001' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44002' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44003' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44009' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44010' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44011' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44012' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44013' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44014' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44015' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44016' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44017' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44018' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44019' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44021' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44022' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44023' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44024' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44025' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44026' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44027' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44028' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44029' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44030' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44031' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44032' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44033' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44034' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44035' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44036' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44037' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44038' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44039' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44049' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44058' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44060' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44061' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44062' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44063' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44064' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44065' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44066' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44067' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44068' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44069' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44087' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DoCoMo' , '44099' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('eMobile' , '44000' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44007' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44008' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44050' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44051' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44052' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44053' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44054' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44055' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44056' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44070' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44071' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44072' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44073' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44074' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44075' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44076' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44077' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44079' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44088' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KDDI' , '44089' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Okinawa Cellular Telephone' , '44078' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SoftBank' , '44020' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44080' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44081' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44082' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44083' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44084' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44085' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TU-KA' , '44086' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44004' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44006' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44040' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44041' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44042' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44043' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44044' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44045' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44046' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44047' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44048' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44090' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44092' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44093' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44094' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44095' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44096' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44097' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '44098' , 'Japan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '41677' , 'Jordan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Umniah' , '41603' , 'Jordan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('XPress Telecom' , '41602' , 'Jordan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '41601' , 'Jordan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '40101' , 'Kazakhstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dalacom' , '40107' , 'Kazakhstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('K\'Cell' , '40102' , 'Kazakhstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Kazakhtelecom' , '40108' , 'Kazakhstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobile Telecom Service' , '40177' , 'Kazakhstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange Kenya' , '63907' , 'Kenya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Safaricom' , '63902' , 'Kenya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('yu' , '63905' , 'Kenya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '63903' , 'Kenya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Kiribati Frigate' , '54509' , 'Kiribati'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Viva' , '41904' , 'Kuwait'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wataniya' , '41903' , 'Kuwait'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '41902' , 'Kuwait'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bitel' , '43701' , 'Kyrgyzstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Fonex' , '43703' , 'Kyrgyzstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MegaCom' , '43705' , 'Kyrgyzstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O!' , '43709' , 'Kyrgyzstan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ETL' , '45702' , 'Laos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LaoTel' , '45701' , 'Laos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LAT' , '45703' , 'Laos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '45708' , 'Laos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bite' , '24705' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Camel Mobile' , '24709' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IZZI' , '24708' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LMT' , '24701' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '24707' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Rigatta' , '24706' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2' , '24702' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TRIATEL' , '24703' , 'Latvia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Alfa' , '41501' , 'Lebanon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTC-Touch' , '41503' , 'Lebanon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ogero Mobile' , '41505' , 'Lebanon'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Econet Ezin-cel' , '65102' , 'Lesotho'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodacom' , '65101' , 'Lesotho'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Al-Jeel Phone' , '60602' , 'Libya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hatef Libya' , '60606' , 'Libya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libya Phone' , '60603' , 'Libya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libyana' , '60600' , 'Libya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Madar' , '60601' , 'Libya'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cubic Telecom' , '29504' , 'Liechtenstein'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('FL1' , '29505' , 'Liechtenstein'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '29502' , 'Liechtenstein'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Swisscom' , '29501' , 'Liechtenstein'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele 2' , '29577' , 'Liechtenstein'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BITE' , '24602' , 'Lithuania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LitRail' , '24605' , 'Lithuania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mediafon' , '24606' , 'Lithuania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Omnitel' , '24601' , 'Lithuania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele 2' , '24603' , 'Lithuania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellcom' , '61807' , 'Livery'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Comium Liberi' , '61804' , 'Livery'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libercell' , '61802' , 'Livery'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LIBTELCO' , '61820' , 'Livery'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Lonestar Cell' , '61801' , 'Livery'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LuxGSM' , '27001' , 'Luksemburg'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tango' , '27077' , 'Luksemburg'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Voxmobile' , '27099' , 'Luksemburg'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '45503' , 'Macao (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3' , '45505' , 'Macao (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('China Telecom' , '45502' , 'Macao (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTM' , '45501' , 'Macao (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTM' , '45504' , 'Macao (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SmarTone' , '45500' , 'Macao (People\'s Republic of China)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '64602' , 'Madagascar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sacel' , '64603' , 'Madagascar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telma' , '64604' , 'Madagascar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '64601' , 'Madagascar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TNM' , '65001' , 'Malawi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '65010' , 'Malawi'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ATUR 450' , '50201' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Baraka Telecom Sdn Bhd (MVNE)' , '502151' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Celcom' , '50213' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Celcom' , '50219' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DiGi' , '50216' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DiGi Telecommunications' , '50210' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Electcoms Wireless Sdn Bhd' , '50220' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Maxis' , '50212' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Maxis' , '50217' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telekom Malaysia Berhad for PSTN SMS' , '50214' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TM Homeline' , '50211' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tune Talk Sdn Bhd' , '502150' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('U Mobile' , '50218' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Yes' , '502152' , 'Malaysia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dhiraagu' , '47201' , 'Maldives'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wataniya' , '47202' , 'Maldives'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Malitel' , '61001' , 'Mali'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '61002' , 'Mali'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('GO' , '27821' , 'Malta'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Melita' , '27877' , 'Malta'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '27801' , 'Malta'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Chinguitel' , '60902' , 'Mauretania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mattel' , '60901' , 'Mauretania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mauritel' , '60910' , 'Mauretania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Emtel' , '61710' , 'Mauritius'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mahanagar Telephone (Mauritius) Ltd.' , '61702' , 'Mauritius'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '61701' , 'Mauritius'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Iusacell' , '334050' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '33403' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '334030' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '33401' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '334010' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telcel' , '33402' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telcel' , '334020' , 'Mexico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('FSM Telecom' , '55001' , 'Micronesia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Eventis' , '25904' , 'Moldova'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IDC' , '25903' , 'Moldova'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Moldcell' , '25902' , 'Moldova'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '25901' , 'Moldova'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('UnitÃ©' , '25905' , 'Moldova'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('UnitÃ©' , '25999' , 'Moldova'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Office des Telephones' , '21201' , 'Monaco'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('G.Mobile' , '42898' , 'Mongolia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MobiCom' , '42899' , 'Mongolia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Skytel' , '42891' , 'Mongolia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Unitel' , '42888' , 'Mongolia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('m:tel CG' , '29703' , 'Montenegro'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '22004' , 'Montenegro'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '29702' , 'Montenegro'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '29704' , 'Montenegro'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor Montenegro' , '29701' , 'Montenegro'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IAM' , '60401' , 'Morocco'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('INWI' , '60405' , 'Morocco'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MÃ©ditel' , '60400' , 'Morocco'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('mCel' , '64301' , 'Mozambique'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodacom' , '64304' , 'Mozambique'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MPT' , '41401' , 'Myanmar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cell One' , '64903' , 'Namibia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTC' , '64901' , 'Namibia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('switch' , '64902' , 'Namibia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '53602' , 'Nauru'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mero Mobile' , '42902' , 'Nepal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nepal Telecom' , '42901' , 'Nepal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SmartCell' , '42904' , 'Nepal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('United Telecom Limited' , '42903' , 'Nepal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BayÃ²s' , '36294' , 'Netherlands Antilles (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '36269' , 'Netherlands Antilles (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MIO' , '36295' , 'Netherlands Antilles (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telcell' , '36251' , 'Netherlands Antilles (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('UTS' , '36291' , 'Netherlands Antilles (Netherlands)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobilis' , '54601' , 'New Caledonia (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NZ Comms' , '53024' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom' , '53000' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom' , '53002' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom' , '53005' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TelstraClear' , '53004' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '53001' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Woosh' , '53003' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Two Degrees Mobile' , '53024' , 'New Zealand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '71021' , 'Nicaragua'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '71030' , 'Nicaragua'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SERCOM' , '71073' , 'Nicaragua'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '61404' , 'Niger'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SahelCom' , '61401' , 'Niger'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel' , '61403' , 'Niger'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '61402' , 'Niger'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat' , '62160' , 'Nigeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Glo' , '62150' , 'Nigeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('M-Tel' , '62140' , 'Nigeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '62130' , 'Nigeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Visafone' , '62125' , 'Nigeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '62120' , 'Nigeria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom Niue' , '55501' , 'Niue'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Koryolink' , '467192' , 'North Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SUN NET' , '467193' , 'North Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Barablu Mobile Norway Ltd' , '24209' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ice' , '24206' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Jernbaneverket AS' , '24220' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Lyca' , '24223' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTU' , '24203' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NetCom' , '24202' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Network Norway' , '24205' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SystemNet' , '24211' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TDC Mobil AS' , '24208' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2' , '24204' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor' , '24201' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telia' , '--' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ventelo' , '24207' , 'Norway'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nawras' , '42203' , 'Oman'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Oman Mobile' , '42202' , 'Oman'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Megafon' , '25030' , 'Osetia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Instaphone' , '41008' , 'Pakistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobilink' , '41001' , 'Pakistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor' , '41006' , 'Pakistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ufone' , '41003' , 'Pakistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Warid' , '41007' , 'Pakistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zong' , '41004' , 'Pakistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Palau Mobile' , '55280' , 'Palau'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PNCC' , '55201' , 'Palau'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('JAWWAL' , '42505' , 'Palestine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wataniya' , '42506' , 'Palestine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '71401' , 'Panama'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '71404' , 'Panama'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('laro' , '71403' , 'Panama'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '71402' , 'Panama'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('B-Mobile' , '53701' , 'Papua New Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '53703' , 'Papua New Guinea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '74402' , 'Paraguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Copaco' , '74406' , 'Paraguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Personal' , '74405' , 'Paraguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '74404' , 'Paraguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VOX' , '74401' , 'Paraguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '71610' , 'Peru'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '71606' , 'Peru'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NEXTEL' , '71607' , 'Peru'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ACeS Philippines' , '51511' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digitel' , '51505' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Globe' , '51502' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Islacom' , '51501' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '51588' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Red Mobile' , '51518' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Smart Gold' , '51503' , 'Philippines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aero2' , '26017' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CenterNet' , '26015' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cyfrowy Polsat' , '26012' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('E-Telko' , '26008' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobyland' , '26016' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nordisk Polska' , '26011' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '26003' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Play' , '26006' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Plus' , '26001' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Polska Telefonia KomÃ³rkowa Centertel Sp. z o.o.' , '26005' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Premium Internet' , '26007' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sferia' , '26013' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-mobile' , '26002' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2' , '26004' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telefony Opalenickie' , '26010' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telekomunikacja Kolejowa' , '26009' , 'Poland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Optimus' , '26803' , 'Portugal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TMN' , '26806' , 'Portugal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '26801' , 'Portugal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zapp' , '26821' , 'Portugal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '33011' , 'Puerto Rico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '330110' , 'Puerto Rico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Open Mobile' , '33000' , 'Puerto Rico'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ministry of Interior' , '42705' , 'Qatar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Qatarnet' , '42701' , 'Qatar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '42702' , 'Qatar'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Libertis Telecom' , '62910' , 'Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Warid Telecom' , '62907' , 'Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '62901' , 'Republic of Congo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cosmofon' , '29402' , 'Republic of Macedonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '29401' , 'Republic of Macedonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VIP' , '29403' , 'Republic of Macedonia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '64700' , 'Reunion (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Outremer' , '64702' , 'Reunion (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SFR Reunion' , '64710' , 'Reunion (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cosmote' , '22603' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DIGI.mobil' , '22605' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Enigma-System' , '22611' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '22610' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Romtelecom' , '22602' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '22601' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zapp' , '22604' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zapp' , '22606' , 'Romania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Baykalwestcom' , '25012' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '25028' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '25099' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DTC' , '25010' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ETK' , '25005' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('INDIGO' , '25019' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KUGSM' , '25013' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MegaFon' , '25002' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobicom - Novosibirsk' , '25023' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MOTIV' , '25035' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '25001' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NCC' , '25003' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('NTC' , '25016' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orensot' , '25011' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Primtelefon' , '25092' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sibchallenge' , '25004' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Skylink' , '25006' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Skylink' , '25009' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SMARTS' , '25007' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SMARTS' , '25014' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SMARTS' , '25015' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Stavtelesot / North Caucasian GSM' , '25044' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tambov GSM' , '25038' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2' , '25020' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom XXI' , '25093' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Utel' , '25017' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Utel' , '25039' , 'Russian Federation'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '63510' , 'Rwanda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Rwandatel' , '63512' , 'Rwanda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '63513' , 'Rwanda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '356110' , 'Saint Kitts and Nevis'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Chippie' , '356070' , 'Saint Kitts and Nevis'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '356050' , 'Saint Kitts and Nevis'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '358110' , 'Saint Lucia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '358050' , 'Saint Lucia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless' , '360110' , 'Saint Vincent and the Grenadines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cingular Wireless' , '360100' , 'Saint Vincent and the Grenadines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '360050' , 'Saint Vincent and the Grenadines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '360070' , 'Saint Vincent and the Grenadines'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ameris' , '30801' , 'Saint-Pierre and Miquelon (France)'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '54901' , 'Samoa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SamoaTel' , '54927' , 'Samoa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PRIMA' , '29201' , 'San Marino'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CSTmovel' , '62601' , 'Sao Tome and Principe'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('EAE' , '42007' , 'Saudi Arabia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobily' , '42003' , 'Saudi Arabia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('STC' , '42001' , 'Saudi Arabia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain SA' , '42004' , 'Saudi Arabia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Expresso' , '60803' , 'Senegal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sentel GSM' , '60802' , 'Senegal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sonatel ALIZE' , '60801' , 'Senegal'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telekom Srbija' , '22003' , 'Serbia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor' , '22001' , 'Serbia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VIP Mobile' , '22005' , 'Serbia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless (Seychelles) Ltd.' , '63301' , 'Seychelles'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mediatech International' , '63302' , 'Seychelles'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecom Airtel' , '63310' , 'Seychelles'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Africell' , '61905' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Comium' , '61904' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Datatel' , '61903' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LeoneCel' , '619?' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Millicom' , '61902' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel' , '61925' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '61901' , 'Sierra Leone'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digital Trunked Radio Network' , '52512' , 'Singapore'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('M1' , '52503' , 'Singapore'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SingTel' , '52501' , 'Singapore'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SingTel-G18' , '52502' , 'Singapore'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('StarHub' , '52505' , 'Singapore'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobile Entertainment Company' , '23105' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '23106' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '23101' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '23102' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '23104' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Unient Communications' , '23103' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Å½SR' , '23199' , 'Slovakia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel' , '29341' , 'Slovenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SI.mobil - Vodafone' , '29340' , 'Slovenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-2' , '29364' , 'Slovenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tusmobil' , '29370' , 'Slovenia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BREEZE' , '54001' , 'Solomon Islands'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BREEZE' , '5401' , 'Solomon Islands'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Golis' , '63730' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hormuud' , '63725' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nationlink' , '63710' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nationlink Telecom' , '63760' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Somafone' , '63704' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telcom Mobile' , '638' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telesom' , '63701' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telesom' , '63782' , 'Somalia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Bokamoso Consortium' , '65530' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cape Town Metropolitan Council' , '65521' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cell C' , '65507' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ilizwi Telecommunications' , '65532' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Karabo Telecoms (Pty) Ltd.' , '65531' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '65510' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Neotel' , '65513' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SAPS Gauteng' , '65511' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sentech' , '65506' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telkom Mobile / 8.ta' , '65502' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Thinta Thinta Telecommunications' , '65533' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodacom' , '65501' , 'South Africa'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KT' , '45004' , 'South Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KTF' , '45008' , 'South Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KTF CDMA' , '45002' , 'South Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LGU+' , '45006' , 'South Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Power 017' , '45003' , 'South Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SK Telecom' , '45005' , 'South Korea'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BARABLU MÃ“VIL ESPANA' , '21423' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BT' , '21415' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DigiMobil' , '21422' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Eroski' , '21424' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Euskaltel' , '21408' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Fonyou' , '21420' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('LycaMobile' , '21425' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '21407' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MÃ³bil R' , '21417' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ONO' , '21418' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '21403' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '21409' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Simyo' , '21419' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TeleCable' , '21416' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TME' , '21405' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '21401' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '21406' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Yoigo' , '21404' , 'Spain'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '41305' , 'Sri Lanka'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dialog' , '41302' , 'Sri Lanka'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hutch Sri Lanka' , '41308' , 'Sri Lanka'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel' , '41301' , 'Sri Lanka'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tigo' , '41303' , 'Sri Lanka'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel / Mobile Telephone Company' , '63401' , 'Sudan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '63402' , 'Sudan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sudani One' , '63407' , 'Sudan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vivacell' , '63405' , 'Sudan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '74603' , 'Suriname'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telesu' , '74602' , 'Suriname'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uniqa' , '74604' , 'Suriname'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Swazi MTN' , '65310' , 'Swaziland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3 HUTCHISON' , '24002' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3G Infrastructure Services' , '24004' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('42IT' , '24016' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Banverket' , '24021' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Barablu Mobile Scandinavia' , '24012' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beepsend' , '24026' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DigiTelMobile' , '24025' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Gotanet' , '24017' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Halebop' , '24000' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Lindholmen Science Park' , '24011' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobile Arts AB' , '24033' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nordisk Mobiltelefon' , '24003' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SpringMobil' , '24010' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sweden 2G' , '24024' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sweden 2G' , '24024' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sweden 3G' , '24005' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TDC Mobil' , '24014' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2Comviq' , '24007' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor' , '24006' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor' , '24008' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telenor Mobile Sverige' , '24009' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TeliaSonera Mobile Networks' , '24001' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ventelo Sverige' , '24013' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wireless Maingate' , '24020' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wireless Maingate Nordic' , '24015' , 'Sweden'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3G Mobile AG' , '22850' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BebbiCell AG' , '22851' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IN&Phone' , '22807' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '22803' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SBB AG' , '22806' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sunrise' , '22802' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Swisscom' , '22801' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tele2' , '22808' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Togewanet AG (Comfone)' , '22805' , 'Switzerland'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN Syria' , '41702' , 'Syria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SyriaTel' , '41701' , 'Syria'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('APTG' , '46602' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('APTG' , '46605' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Chunghwa LDM' , '46611' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Chungwa' , '46692' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('FarEasTone' , '46601' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('KG Telecom' , '46688' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MobiTai' , '46693' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Taiwan Mobile' , '46697' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TransAsia' , '46699' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tuntex' , '46606' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VIBO' , '46689' , 'Taiwan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Babilon-M' , '43604' , 'Tajikistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CTJTHSC Tajik-tel' , '43605' , 'Tajikistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Indigo' , '43602' , 'Tajikistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MLT' , '43603' , 'Tajikistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Somoncom' , '43601' , 'Tajikistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tcell' , '43612' , 'Tajikistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Hits' , '64009' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mobitel' , '64002' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sasatel' , '64006' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SmileCom' , '64011' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tritel' , '64001' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TTCL Mobile' , '64007' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TTCL Mobile' , '64008' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodacom' , '64004' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '64005' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zantel' , '64003' , 'Tanzania'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ACT Mobile' , '52015' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Advanced Info Service' , '52001' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Advanced Info Service' , '52023' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CAT CDMA' , '52000' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CAT CDMA' , '52002' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('DTAC' , '52018' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('True Move' , '52099' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('WCS IQ' , '52010' , 'Thailand'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Moov' , '61503' , 'Togo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel' , '61505' , 'Togo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Togo Cell' , '61501' , 'Togo'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '53988' , 'Tonga'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Shoreline Communication' , '53943' , 'Tonga'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tonga Communications Corporation' , '53901' , 'Tonga'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('bmobile' , '37412' , 'Trinidad and Tobago'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '37413' , 'Trinidad and Tobago'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '374130' , 'Trinidad and Tobago'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '60501' , 'Tunisia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tunicell' , '60502' , 'Tunisia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tunisiana' , '60503' , 'Tunisia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Avea' , '28603' , 'Turkey'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aycell' , '28604' , 'Turkey'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Turkcell' , '28601' , 'Turkey'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '28602' , 'Turkey'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '43801' , 'Turkmenistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TM-Cell' , '43802' , 'Turkmenistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('TTC' , '55301' , 'Tuvalu'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '64110' , 'Uganda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '64114' , 'Uganda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uganda Telecom Ltd.' , '64111' , 'Uganda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Warid Telecom' , '64122' , 'Uganda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '64101' , 'Uganda'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '25502' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('CDMA Ukraine' , '25523' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Golden Telecom' , '25505' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('IT' , '25504' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Kyivstar' , '25503' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('life:)' , '25506' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '25501' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PEOPLEnet' , '25521' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Utel' , '25507' , 'Ukraine'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('du' , '42403' , 'United Arab Emirates'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Etisalat' , '42402' , 'United Arab Emirates'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3 Hutchison' , '23420' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('BT' , '23400' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cable & Wireless / Sure Mobile (Isle of Man)' , '23455' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cloud9' , '23418' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Jersey Telenet' , '23403' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('JT-Wave' , '23450' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Manx Telecom' , '23458' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MCom' , '23401' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '23402' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '23410' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('O2' , '23411' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '23433' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Orange' , '23434' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Railtrack' , '23412' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Routo Telecom' , '23422' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sure Mobile' , '23409' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '23430' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telaware' , '23419' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Tesco Mobile' , '234100' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Unknown' , '23477' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Virgin' , '23431' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Virgin' , '23432' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vodafone' , '23415' , 'United Kingdom'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Advantage' , '310880' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aeris' , '310850' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airadigm' , '310640' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airlink PCS' , '310780' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airpeak' , '310034' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Airtel' , '310510' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Alaska Digitel' , '310430' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Alltel' , '310500' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Alltel' , '310590' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AmeriLink PCS' , '310630' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310038' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310090' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310150' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310170' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310410' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310560' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T' , '310680' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T Mobility' , '310380' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T Mobility' , '310980' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('AT&T Mobility' , '310990' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Caprock' , '310830' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Carolina Phone' , '310350' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cell One Amarillo' , '311130' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellular One' , '310320' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellular One' , '310440' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellular One of East Texas' , '310390' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cellular Properties' , '311190' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Centennial' , '310030' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Chariton Valley' , '311010' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Chinook Wireless' , '310570' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Choice Phone' , '310480' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Choice Phone' , '311120' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cincinnati Bell' , '310420' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cingular Wireless' , '311180' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Coleman County Telecom' , '310620' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Commnet Wireless' , '311040' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Concho' , '310040' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Conestoga' , '310690' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Consolidated Telcom' , '310060' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Convey' , '310740' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Corr' , '310080' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Cricket Communications' , '310016' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digital Cellular' , '310940' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Dutch Harbor' , '310190' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Easterbrooke' , '311070' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Endless Mountains Wireless' , '311160' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Epic Touch' , '310610' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Farmers Cellular' , '311060' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Farmers Cellular' , '311210' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Farmers Wireless' , '310311' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('First Cellular' , '310910' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Get Mobile Inc' , '310300' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Globalstar' , '310970' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('High Plains Wireless' , '311100' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('High Plains Wireless' , '311110' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Highland Cellular' , '310070' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('i CAN_GSM' , '310400' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('i wireless' , '310770' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Indigo Wireless' , '311030' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Jasper' , '310650' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Long Lines Wireless' , '311090' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MCI' , '310010' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mid-Tex Cellular' , '310000' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Mid-Tex Cellular' , '311000' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Missouri RSA 5 Partnership' , '311020' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MobileTel' , '310013' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Nextel' , '316010' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('North Sight Communications Inc.' , '310017' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Northstar' , '310670' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Oklahoma Western' , '310540' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PACE' , '310870' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Panhandle' , '310760' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PetroCom' , '311170' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Pine Cellular' , '311080' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PinPoint' , '310790' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Plateau Wireless' , '310100' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Plateau Wireless' , '310960' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('PTI Pacifica' , '310110' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SeaMobile' , '310730' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SIMMETRY' , '310046' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Simmetry' , '310460' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Southern Communications Services' , '316011' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sprint' , '310120' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Sprocket' , '311140' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SunCom' , '310490' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310026' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310160' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310200' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310210' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310220' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310230' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310240' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310250' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310260' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310270' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310280' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310290' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310310' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310330' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310580' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310660' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('T-Mobile' , '310800' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Taylor' , '310900' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Testing' , '310014' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Union Telephone Company' , '310020' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('VeriSign' , '310520' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Verizon' , '310004' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Verizon' , '310012' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Viaero' , '310450' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('West Central' , '310180' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('West Virginia Wireless' , '310530' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Westlink' , '310340' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wikes Cellular' , '311050' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wilkes Cellular' , '311150' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Wireless Alliance' , '310890' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('XIT Wireless' , '310950' , 'United States'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ancel' , '74800' , 'Uruguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ancel' , '74801' , 'Uruguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Claro' , '74810' , 'Uruguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Movistar' , '74807' , 'Uruguay'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline' , '43404' , 'Uzbekistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Buztel' , '43401' , 'Uzbekistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTS' , '43407' , 'Uzbekistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Perfectum Mobile' , '43406' , 'Uzbekistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Ucell' , '43405' , 'Uzbekistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Uzmacom' , '43402' , 'Uzbekistan'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SMILE' , '54101' , 'Vanuatu'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digitel' , '73401' , 'Venezuela'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digitel' , '73402' , 'Venezuela'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digitel' , '73403' , 'Venezuela'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Movilnet' , '73406' , 'Venezuela'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('movistar' , '73404' , 'Venezuela'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('3G EVNTelecom' , '45208' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Beeline VN' , '45207' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('E-Mobile' , '45206' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('HT Mobile' , '45205' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MobiFone' , '45201' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('S-Fone' , '45203' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Viettel Mobile' , '45204' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Vinaphone' , '45202' , 'Vietnam'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('C&W' , '376350' , 'Wyspy Turks i Caicos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Digicel' , '33805' , 'Wyspy Turks i Caicos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Islandcom' , '376352' , 'Wyspy Turks i Caicos'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('HiTS-UNITEL' , '42104' , 'Yemen'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '42102' , 'Yemen'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('SabaFon' , '42101' , 'Yemen'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Yemen Mobile' , '42103' , 'Yemen'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('MTN' , '64502' , 'Zambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Zain' , '64501' , 'Zambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('ZAMTEL' , '64503' , 'Zambia'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Econet' , '64804' , 'Zimbabwe'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Net*One' , '64801' , 'Zimbabwe'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Telecel' , '64803' , 'Zimbabwe'); 
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('Aquafon' , '28967' , 'Russia');
+INSERT INTO `Table_Mobile_Network`(`_NETWORK_NAME`, `_CODE`, `_COUNTRY_NAME`) VALUES ('A-Mobile' , '28988' , 'Russia');
+
+INSERT INTO `super_wow`.`Table_System` (`ID`, `_VERSION`, `_APPLICATION_NAME`, `_SERVER_CURRENT_PATH`, `_SERVER_NEW_PATH`, `_POWER_BY`) VALUES (NULL, '1.0.0', 'SuperWoW', 'http://192.168.0.105:80/SuperWoW/Interface.php', 'null', 'Seif Abaza');

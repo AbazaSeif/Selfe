@@ -1,0 +1,55 @@
+Update Database in time and date to ( `_DATE_TIME` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP, )
+[Groups]
+[TEST]
+1- serialize Sync in Core.php:Sync_Unit:SYNC_ALL
+
+[create_new]
+4- send code confirmation to email address      [not test]
+5- send SMS Confirm Code
+
+[news]
+3- sync it for zone and friends
+
+[friend]
+1- reorgniz frined class
+2- accept and refused and connected with notification
+
+[core.php]
+1 - sync for notifcation , and messages for (seen , write)
+2- gift_unit
+3- icon_user_unit
+4- money_unit
+5- conntact_unit
+
+[adminstration]
+1- core.php->login_unit->usersystem_login
+2- core.php->login_unit->admin_login
+3- databse explordatabase.php
+4- admin interface
+
+[tools.php]
+1- converthashtags
+2- filtration country zone 
+=====================
+- download users data as zip file and backup database 
+- anti spam
+- proxy
+- server monitor
+- port monitor
+- users monitor
+- messages monitor
+- locations monitor
+- get country from ip [not tested]
+- file maneger
+- mysql monitor
+- buffer also if internet is very slow 64bit time:300ms
+- audio streem
+
+
+
+-----------------------------------------------------
+buffraing
+4- random barcode
+
+[Cach.php]
+this class make xml for data in database every 5 sec becose not make load for database 

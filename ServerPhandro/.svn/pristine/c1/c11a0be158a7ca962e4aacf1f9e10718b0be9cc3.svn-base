@@ -1,0 +1,220 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+
+/**
+ * Description of AndroServer
+ *
+ * @author abaza
+ */
+class Core {
+
+    var $Interface = null;
+    var $UserGroup = null;
+    var $UserMangment = null;
+    var $Multimedia = null;
+    var $Login = null;
+    var $Buffer = null;
+
+    function __set($name, $class) {
+        if (is_null($name)) {
+            if (class_exists($class)) {
+                $name = new $class;
+                return $name;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public function __construct($Interface) {
+
+        $this->Interface = $Interface;
+
+        $this->UserGroup = (is_null($this->UserGroup = self::__set($this->UserGroup, Creating_New)) ? die(ShowError()) : $this->UserGroup);
+        $this->UserMangment = (is_null($this->UserMangment = self::__set($this->UserMangment, UserMangment)) ? die(ShowError()) : $this->UserMangment);
+        $this->Login = (is_null($this->Login = self::__set($this->Login, Class_Login)) ? die(ShowError()) : $this->Login);
+        $this->Multimedia = (is_null($this->Multimedia = self::__set($this->Multimedia, Maltimedia_module)) ? die(ShowError()) : $this->Multimedia);
+
+
+//        register_shutdown_function('__destruct');
+    }
+
+    public function Test() {
+        $this->UserMangment->Calculat_Total_Of_Ponans_User();
+        $GLOBALS[CLASS_TOOLS]->Show(APPLICATION_NAME . ' Server Version ' . APPLICATION_VERSION . '<br>');
+        $this->Interface->Buffer(SUCCESS);
+    }
+
+    public function User_Group($Type) {
+        if (is_string($Type)) {
+            switch ($Type) {
+                case NEW_USER://Create new user
+                    $this->Buffer = $this->UserGroup->Create_New_User();
+                    break;
+                case EDIT_USER://Edit Data user
+                    $this->Buffer = $this->UserGroup->Edite_User();
+                    break;
+                case DELETE_USER://Delete user account
+                    $this->Buffer = $this->UserGroup->Delete_User();
+                    break;
+            }
+        }
+        $this->Outdata();
+    }
+
+    public function Multimedia_Group($Type) {
+        switch ($Type) {
+            case UPLOAD_MALTIMEDIA://Upload image
+                $this->Buffer = $this->Multimedia->Maltimedia();
+                break;
+            case UPLOAD_FROM_URL:
+                $this->Buffer = $this->Multimedia->Get_From_URL();
+                break;
+            case GET_IMAGE://download image
+                $this->Buffer = $this->Multimedia->Get_Multimedia(PHOTO);
+                break;
+            case GET_VIDEO://get video
+                $this->Buffer = $this->Multimedia->Get_Multimedia(VIDEO);
+                break;
+            case GET_AUDIO:
+                $this->Buffer = $this->Multimedia->Get_Multimedia(AUDIO);
+                break;
+        }
+        $this->Outdata();
+    }
+
+    public function User_Mangment_Group($Type) {
+        switch ($Type) {
+            case GET_USER_LIST://Get all user list in the zone
+                $this->Buffer = $this->UserMangment->Get_User_List();
+                break;
+            case GET_USER_INFO: //Get Information
+                $this->Buffer = $this->UserMangment->Get_User_Information();
+                break;
+            case GET_ALBUMES://Get Photo Album for user
+                $this->Buffer = $this->UserMangment->Get_User_Albume();
+                break;
+            case SET_COMMENT_IN_PHOTO: //Set Comment in Photo
+                $this->Buffer = $this->UserMangment->Set_Comment_in_photo();
+                break;
+            case DELETE_COMMENT_IN_PHOTO: //Delete Comment in Photo
+                $this->Buffer = $this->UserMangment->Delet_Comment_in_Photo();
+                break;
+            case EDIT_COMMENT_IN_PHOTO: //Edite Comment in Photo
+                $this->Buffer = $this->UserMangment->Edit_Comment_in_Photo();
+                break;
+            case SET_COMMENT_IN_AUDIO: //Set Comment in Audio
+                $this->Buffer = $this->UserMangment->Set_Comment_in_Audio();
+                break;
+            case DELETE_COMMENT_IN_AUDIO: //Delete Comment in Audio
+                $this->Buffer = $this->UserMangment->Delet_Comment_in_Audio();
+                break;
+            case EDIT_COMMENT_IN_AUDIO : //Edite Comment in Audio
+                $this->Buffer = $this->UserMangment->Edit_Comment_in_Audio();
+                break;
+            case SET_COMMENT_IN_VIDEO: //Set Comment in Video
+                $this->Buffer = $this->UserMangment->Set_Comment_in_Video();
+                break;
+            case DELETE_COMMENT_IN_VIDEO: //Delete Comment in Video
+                $this->Buffer = $this->UserMangment->Delet_Comment_in_Video();
+                break;
+            case EDIT_COMMENT_IN_VIDEO : //Edite Comment in Video
+                $this->Buffer = $this->UserMangment->Edit_Comment_in_Video();
+                break;
+            case GET_NOTIFICATION: //Get Notification 
+                $this->Buffer = $this->UserMangment->getNotification();
+                break;
+            case STATUS_CHANGE: //Change Status (Online , Offline)
+                $this->Buffer = $this->UserMangment->Change_Status_Line();
+                break;
+            case MAKE_FRIEND: //set firend for user
+                $this->Buffer = $this->UserMangment->Set_Friend();
+                break;
+            case MAKE_UNFRIEND: //set unfirend for user
+                $this->Buffer = $this->UserMangment->Set_Unfriend();
+                break;
+            case SET_FRIEND_FAVORIT: //set favort friend
+                $this->Buffer = $this->UserMangment->Set_Friend_Favorit();
+                break;
+            case SET_FRIEND_UNFAVORIT: //set unfavort friend
+                $this->Buffer = $this->UserMangment->Set_Friend_Unfavorit();
+                break;
+            case SET_PONANS: //set Ponas for User
+                $this->Buffer = $this->UserMangment->Set_Ponans_For_User();
+                break;
+            case GET_PONANS: //get Ponas for User
+                $this->Buffer = $this->UserMangment->Get_Ponans_For_User();
+                break;
+        }
+        $this->Outdata();
+    }
+
+    public function Message_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Gift_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Icon_User_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Money_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Conntact_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Login_Unit($Type) {
+
+        switch ($Type) {
+            case USERSYSTEM_LOGIN: //Login for normal user to system without perimations for delete or edite
+                break;
+            case ADMIN_LOGIN: //Login for Adminstration
+                break;
+            case NORMAL_LOGIN : //normal login for Android Users
+                $this->Buffer = $this->Login->Normal_Login();
+                break;
+            case PASSWORD_LOGIN: //Login if IMEI or SIM Card Serial Number is Exist in Database
+                $this->Buffer = $this->Login->Password_Login();
+                break;
+        }
+        $this->Outdata();
+    }
+
+    private function Outdata() {
+        if (isset($this->Buffer)) {
+            $this->Interface->Buffer($this->Buffer);
+        }
+        exit();
+    }
+
+    function __destruct() {
+        if (!is_null($this->Buffer)) {
+            unset($this->Buffer);
+        }
+        if (!is_null($this->Interface)) {
+            unset($this->Interface);
+        }
+        if (!is_null($this->UserGroup)) {
+            unset($this->UserGroup);
+        }
+        if (!is_null($this->UserMangment)) {
+            unset($this->UserMangment);
+        }
+        if (!is_null($this->Multimedia)) {
+            unset($this->Multimedia);
+        }
+    }
+
+}

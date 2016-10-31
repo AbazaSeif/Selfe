@@ -1,0 +1,39 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+        const LOG_SYSTEM = true;
+        const APPLICATION_VERSION = '1.0.0';
+        const APPLICATION_NAME = "SuperWoW";
+        const CAN_GET_DATA_FROM_BROWSER = true;
+        const IS_UPDATE = false;
+        const IS_ONLINE_SERVER = false;
+
+        const SYSTEM_USER_ID = 0;
+        const ENCRIPTION_BUFFER = false;
+
+        const Point_Price = 0.14; //Cint USA
+        const Like_to_Point = 50;
+
+        const NORMAL_SCORE = 0;
+        const VIP_SCORE = 50;
+        const MINIMAM_SEND_TO_STOCK = 1;
+        const MAXIMAM_SEND_TO_STOCK = 1000000;
+        const SHOW_UNLIKE = true;
+        const SHOW_LIKE = true;
+        const SHOW_TOP_IN_GLOBEL = false;
+        const SHOW_TOP_IN_ZONE = true;
+        const SHOW_STOCK_IN_USERS_LIST = false;
+        const SHOW_POINTS_IN_USER_LIST = false;
+
+        const WELCOME_MESSAGE_IN_STATUS = "I am SuperWoW Now :)";
+        const SERVER_ERROR_TITEL_MESSAGE = "404 Page Not Found";
+        const SERVER_ERROR_MESSAGE = "Page Not Found";
+        const SERVER_ERROR_NUMBER = "404";
+
+        const SORRY_FOR_UPDATE = "We Are Sorry But Server in Uptodate Please try later";
+        const LIMITED_FOR_NETWORK = '127.0.0.';
+

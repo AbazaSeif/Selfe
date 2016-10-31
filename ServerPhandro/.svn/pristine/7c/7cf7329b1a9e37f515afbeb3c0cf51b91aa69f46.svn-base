@@ -1,0 +1,131 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+
+/**
+ * Description of AndroServer
+ *
+ * @author abaza
+ */
+class Core {
+
+    var $Interface = null;
+    var $UserGroup = null;
+    var $Tools = null;
+    var $UserMangment = null;
+
+    public function __construct($Interface) {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+        $this->Interface = $Interface;
+
+        if (is_null($this->UserGroup)) {
+            $this->UserGroup = new Creating_New();
+        }
+
+        if (is_null($this->Tools)) {
+            $this->Tools = new Tools();
+        }
+
+        if (is_null($this->UserMangment)) {
+            $this->UserMangment = new UserMangment();
+        }
+
+        register_shutdown_function('__destruct');
+    }
+
+    public function Test() {
+        $this->Tools->Show(APPLICATION_NAME . ' Server Version ' . APPLICATION_VERSION . '<br>');
+        $this->Interface->Buffer(SUCCESS);
+    }
+
+    public function User_Group($Type) {
+        $Buffer = null;
+        if (is_string($Type)) {
+            switch ($Type) {
+                case 'N'://Create new user
+                    $Buffer = $this->UserGroup->Create_New_User();
+                    break;
+                case 'E'://Edit Data user
+                    $Buffer = $this->UserGroup->Edite_User();
+                    break;
+                case 'D'://Delete user account
+                    $Buffer = $this->UserGroup->Delete_User();
+                    break;
+                case 'U'://Upload image
+                    $Buffer = $this->UserGroup->Upload_Image();
+                    break;
+                case 'G'://download image
+                    $Buffer = $this->UserGroup->Get_Image();
+                    break;
+                    ;
+                case 'V'://upload video
+                    $Buffer = $this->UserGroup->Upload_Video();
+                    break;
+                case 'S'://get video
+                    $Buffer = $this->UserGroup->Get_Video();
+                    break;
+            }
+            if (isset($Buffer)) {
+                $this->Interface->Buffer($Buffer);
+            } else {
+                $this->Tools->Show("No Buffer");
+            }
+        }
+    }
+
+    public function User_Mangment_Group($Type) {
+        $Buffer = null;
+        //USER_ID_1 -> USER_ID_2
+        //Type of var $Type
+        switch ($Type) {
+            case 'G': //Get Information
+                $Buffer = $this->UserMangment->Get_User_Information();
+                break;
+            case 'A'://Get Photo Album for user
+                $Buffer = $this->UserMangment->Get_User_Albume();
+                break;
+            case 'SC': //Set Comment in Photo
+                break;
+            case 'DC': //Delete Comment in Photo
+                break;
+            case 'EC': //Edite Comment in Photo
+                break;
+            case 'C': //Change Status (Online , Offline)
+                break;
+            case 'S': //Set Statuse Text for User
+                break;
+            case 'F': //set firend for user
+                break;
+            case 'U': //set unfirend for user
+                break;
+            case 'P': //set Ponanc for User
+                break;
+            case 'M': //Message for User
+                break;
+            case 'B'://Block for User
+                break;
+            case 'T': //Gift for user
+                break;
+            case 'I': //Set Icon for user
+                break;
+        }
+        if (isset($Buffer)) {
+            $this->Interface->Buffer($Buffer);
+        } else {
+            $this->Tools->Show("No Buffer");
+        }
+    }
+
+    function __destruct() {
+        unset($this->Interface);
+        unset($this->Tools);
+        unset($this->UserGroup);
+        unset($this->UserMangment);
+    }
+
+}

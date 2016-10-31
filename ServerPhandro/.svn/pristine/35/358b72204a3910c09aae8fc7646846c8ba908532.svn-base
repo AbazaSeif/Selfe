@@ -1,0 +1,75 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of FileType_Image
+ *
+ * @author abaza
+ */
+class FileType_Image {
+
+    protected $FileName = null;
+    protected $UUID = null;
+    protected $Tools = null;
+
+    function __construct() {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+        if (is_null($this->Tools)) {
+            $this->Tools = new Tools();
+        }
+        if (is_null($this->UUID)) {
+            $this->UUID = new UUID();
+        }
+        register_shutdown_function('__destruct');
+    }
+
+    public function Reseved_Image_User($UserPath, $UUID, $Image) {
+        if (is_null($this->FileName)) {
+            $this->FileName = $this->Tools->generateRandomString();
+        }
+
+        $base = $Image;
+        $filename = $this->FileName . ".png";
+        $binary = base64_decode($base);
+        header('Content-Type: bitmap; charset=utf-8');
+        $ImageName = $UserPath . DIRECTORY_SEPARATOR . $filename;
+        $file = fopen($ImageName, 'wb');
+        fwrite($file, $binary);
+        fclose($file);
+        return $ImageName;
+    }
+
+    public function Reseved_Image($Image) {
+        
+    }
+
+    public function Send_Image_User($Path, $UUID) {
+        $FileName = pathinfo($Path);
+        $ImageName = $FileName['basename'];
+        $DirPath = DIR_IMAGE . DIRECTORY_SEPARATOR . $UUID;
+        $URL = "http://" . $_SERVER['HTTP_HOST'] . DIRECTORY_SEPARATOR . APPLICATION_NAME . DIRECTORY_SEPARATOR . $DirPath . DIRECTORY_SEPARATOR . $ImageName;
+        return $URL;
+    }
+
+    public function Send_Image($Path) {
+        
+    }
+
+    function __destruct() {
+        unset($this->FileName);
+        unset($this->Tools);
+        unset($this->UUID);
+    }
+
+}

@@ -1,0 +1,232 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of UserMangment
+ *
+ * @author abaza
+ */
+class UserMangment {
+
+    var $Database = null;
+    var $Tools = null;
+    var $Filter = null;
+    var $UUID = null;
+
+    function __construct() {
+        if (is_null($this->Filter)) {
+            $this->Filter = new Filtering();
+        }
+
+        if (is_null($this->Tools)) {
+            $this->Tools = new Tools();
+        }
+
+        if (is_null($this->UUID)) {
+            $this->UUID = new UUID();
+        }
+
+        if (is_null($this->Database)) {
+            $Configration = Configration();
+            $this->Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+            if (!isset($this->Database)) {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Database Not Connected : " . $this->Database->ReturnError());
+                die($this->Tools->ShowDie($this->Tools->ShowDie("ERROR Database")));
+            }
+        }
+    }
+
+    function __destruct() {
+        unset($this->Database);
+        unset($this->Tools);
+        unset($this->Filter);
+        unset($this->UUID);
+    }
+
+    public function setNotification($From, $To, $Action, $Label) {
+        $Serial = $this->UUID->generate_license();
+        $Data = array(
+            FILED_NOTIFICATIONS_FROM => $From,
+            FILED_NOTIFICATIONS_TO => $To,
+            FILED_NOTIFICATIONS_DATE => $this->Tools->getToday(),
+            FILED_NOTIFICATIONS_ACTION => $Action,
+            FILED_NOTIFICATIONS_ISNEW => ON,
+            FILED_NOTIFICATIONS_LABEL => $Label,
+            FILED_NOTIFICATIONS_SERIAL => $Serial
+        );
+
+        $Notifcation = $this->Tools->removeNull($Data);
+        if (!is_null($Notifcation)) {
+            $this->Database->insert(TABLE_NOTIFICATIONS, $Notifcation);
+            return $Serial;
+        } else {
+            return null;
+        }
+    }
+
+    public function getNotification() {
+        $Quiry = array(
+            FILED_NOTIFICATIONS_TO => $this->Filter->FilterData(KEY_NOTIFICATIONS_TO),
+            FILED_NOTIFICATIONS_SERIAL => $this->Filter->FilterData(KEY_NOTIFICATIONS_SERIAL),
+            FILED_NOTIFICATIONS_ISNEW => ON
+        );
+        
+        $Data = $this->Tools->removeNull($Quiry);
+        if(!is_null($Data)){
+            $Retern = $this->Database->select(TABLE_NOTIFICATIONS, $Data);
+            if(count($Retern) > 0){
+                
+                $Retern = $this->Tools->RemoveKeyInArray(FILED_NOTIFICATIONS_ACTION, $Retern);
+                $Retern = $this->Tools->RemoveKeyInArray(FILED_NOTIFICATIONS_ID, $Retern);
+                $Retern = $this->Tools->RemoveKeyInArray(FILED_NOTIFICATIONS_ISNEW, $Retern);
+                $Retern = $this->Tools->RemoveKeyInArray(FILED_NOTIFICATIONS_TO, $Retern);
+                
+                
+                return $Retern;
+            }else{
+                return NO_NEW;
+            }
+        }
+    }
+
+    public function WhoIs($ID, $Filed = null) {
+        if (isset($ID)) {
+            $Data = array(
+                FILED_USER_ID => $ID
+            );
+
+            $tmp = $this->Database->select(TABLE_USER, $Data);
+            $User = $this->Tools->removeNull($tmp);
+            if (!is_null($User)) {
+                if (is_null($Filed)) {
+                    return $User;
+                } else {
+                    return $User[$Filed];
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public function Get_User_Information() {
+        $UserID = array(
+            FILED_UID => $this->Filter->FilterData(KEY_UID)
+        );
+        $Main = array(
+            FILED_USER_ID => $UserID[FILED_UID]
+        );
+
+
+        $UserID = $this->Tools->removeNull($UserID);
+        if (is_null($UserID)) {
+            die(ShowError());
+        } else {
+            $TableUser = $this->Database->select(TABLE_USER, $Main);
+            $TablePhone = $this->Database->select(TABLE_PHONE, $UserID);
+            $TableSTOK = $this->Database->select(TABLE_USER_STOCK, $UserID);
+            $TableGIFT = $this->Database->select(TABLE_USER_GIFT, $UserID);
+            $TableMessage = $this->Database->select(TABLE_MESSAGE, $UserID);
+            $TableFriend = $this->Database->select(TABLE_FRIENDS, $UserID);
+
+            $UserInfo = array_merge($TableGIFT, $TablePhone, $TableSTOK, $TableUser, $TableMessage, $TableFriend);
+            $UserInfo = $this->Tools->removeNull($UserInfo);
+
+            $UserInfo = $this->Tools->RemoveKeyInArray(FILED_UID, $UserInfo);
+
+            return $UserInfo;
+        }
+    }
+
+    public function Get_User_Albume() {
+        $UserUID = array();
+        $Images = array();
+        $Commands = array();
+        $RetarnImage = array();
+
+        $temp = array(
+            FILED_UID => $this->Filter->FilterData(KEY_UID)
+        );
+
+        $UserUID = $this->Tools->removeNull($temp);
+        if (!is_null($UserUID)) {
+            $Images = $this->Database->select(TABLE_USER_PHOTO, $UserUID);
+        }
+
+        if (!is_null($Images)) {
+            if (is_array($Images)) {
+                foreach ($Images as $RecImage) {
+                    $ID = $RecImage[FILED_USER_PHOTO_ID];
+                    $ImageCommand = array(FILED_USER_PHOTO_COMMENT_UPID => $ID);
+                    $Commands = $this->Database->select(TABLE_USER_PHOTO_COMMENT, $ImageCommand);
+                    $Commands = $this->Tools->removeNull($Commands);
+                    $element = array(
+                        [$RecImage, $Commands]
+                    );
+                    if (is_null($Commands)) {
+                        array_push($RetarnImage, $RecImage);
+                    } else {
+                        array_push($RetarnImage, $element);
+                    }
+                }
+
+                return $RetarnImage;
+            }
+        }
+    }
+
+    public function Set_Comment_in_photo() {
+        $Image = array();
+        $ImageTemp = array(
+            FILED_USER_PHOTO_COMMENT_FROM => $this->Filter->FilterData(KEY_USER_PHOTO_COMMENT_FROM),
+            FILED_USER_PHOTO_COMMENT_UPID => $this->Filter->FilterData(KEY_USER_PHOTO_COMMENT_UPID),
+            FILED_USER_PHOTO_COMMENT_COMMENT => $this->Filter->FilterData(KEY_USER_PHOTO_COMMENT_COMMENT),
+            FILED_USER_PHOTO_COMMENT_DATE => $this->Tools->getToday(),
+            FILED_USER_PHOTO_COMMENT_LIKE => 0,
+            FILED_USER_PHOTO_COMMENT_UNLIKE => 0
+        );
+
+        $Image = $this->Tools->removeNull($ImageTemp);
+
+        if (!is_null($Image)) {
+            if (empty($Image[FILED_USER_PHOTO_COMMENT_COMMENT]) || strlen($Image[FILED_USER_PHOTO_COMMENT_COMMENT]) == 0) {
+                $this->Tools->System_Log("ERROR : Comment is Empty !!!", __FUNCTION__, __LINE__);
+                return FAIL . FILED_USER_PHOTO_COMMENT_COMMENT;
+            }
+            if (empty($Image[FILED_USER_PHOTO_COMMENT_UPID])) {
+                $this->Tools->System_Log("ERROR : Not found UPID ?", __FUNCTION__, __LINE__);
+                return FAIL . FILED_USER_PHOTO_COMMENT_UPID;
+            }
+
+            if ($this->Database->insert(TABLE_USER_PHOTO_COMMENT, $Image)) {
+                $Comment_ID = $this->Database->lastInsertID();
+                $this->Tools->System_Log("Insert new comment to image " . $Image[FILED_USER_PHOTO_COMMENT_UPID] . " is DONE.", __FUNCTION__, __LINE__);
+
+                $Name = $this->WhoIs($Image[FILED_USER_PHOTO_COMMENT_FROM]);
+                $SerialNumber = $this->setNotification($Image[FILED_USER_PHOTO_COMMENT_FROM], $Name[FILED_USER_ID], NOTIF_COMMENT, sprintf(LABEL_USER_COMMENT, $Name[FILED_USER_NAME]));
+
+                $Retern = array(
+                    KEY_USER_PHOTO_COMMENT_ID => $Comment_ID,
+                    KEY_NOTIFICATIONS_SERIAL => (is_null($SerialNumber) ? "NULL" : $SerialNumber)
+                );
+
+                return $Retern;
+            }
+        } else {
+            $this->Tools->System_Log("No Data is set .... i think it is Attack", __FUNCTION__, __LINE__);
+            return FAIL . SET_COMMENT_IN_PHOTO;
+        }
+    }
+
+}

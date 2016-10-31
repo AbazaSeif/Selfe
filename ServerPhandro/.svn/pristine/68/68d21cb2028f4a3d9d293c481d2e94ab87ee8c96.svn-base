@@ -1,0 +1,302 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Filtering
+ *
+ * @author abaza
+ */
+class Filtering {
+
+    function __construct() {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+    }
+
+    function __get($name) {
+        $input = mysql_real_escape_string($name);
+        $input = htmlspecialchars($input, ENT_IGNORE, 'utf-8');
+        $input = strip_tags($input);
+//        $input = stripslashes($input);
+        return $input;
+    }
+
+    public function FilterData($Var) {
+        $Data = '';
+        $temp = null;
+
+        if (isset($Var) || !empty($Var)) {
+            $temp = filter_input(INPUT_GET, $Var);
+            if (isset($temp)) {
+                if (is_string($temp)) {
+//TODO: Must Clear Whaitspace from $temp
+                    $Data = trim($temp);
+
+                    return $this->__get($Data);
+                }
+
+                if (is_numeric($Data)) {
+                    if (is_float($Data)) {
+                        return (float) $Data;
+                    } elseif (is_int($Data)) {
+                        return (int) $Data;
+                    } else {
+                        return $Data;
+                    }
+                }
+                if (is_object($Data)) {
+                    return (object) $Data;
+                }
+            } else {
+                $CommandServer = "HTTP_" . strtoupper($Var);
+                $temp = $_SERVER;
+                if (is_array($temp)) {
+                    $Data = $temp[$CommandServer];
+                    if (!empty($Data)) {
+                        return mysql_real_escape_string($Data);
+                    } else {
+                        return NULL;
+                    }
+                }
+                return NULL;
+            }
+        } else {
+            return NULL;
+        }
+    }
+
+    public function isBlackList() {
+        $IP_ADDR = array(
+            FILED_SYSTEM_BLOCK_IP_ADDRESS_IP_ADDRESS => $_SERVER['REMOTE_ADDR'],
+        );
+        $Configration = Configration();
+        $Database = $this->Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+        $RET = $Database->select(TABLE_SYSTEM_BLOCK_IP_ADDRESS, $IP_ADDR);
+        unset($Database);
+        unset($Configration);
+
+        if (!is_null($RET)) {
+            if (($RET[FILED_SYSTEM_BLOCK_IP_ADDRESS_BLOCK_IP]) == ON) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    public function setBlackList($IP_ADDRESS) {
+        $IP_ADDR = array(
+            FILED_SYSTEM_BLOCK_IP_ADDRESS_BLOCK_IP => ON,
+            FILED_SYSTEM_BLOCK_IP_ADDRESS_BROWSER => $_SERVER['HTTP_USER_AGENT'],
+//            FILED_SYSTEM_BLOCK_IP_ADDRESS_COUNTRY => $this->detect_location($IP_ADDRESS),
+            FILED_SYSTEM_BLOCK_IP_ADDRESS_DATETIME => $GLOBALS[CLASS_TOOLS]->getToday(),
+            FILED_SYSTEM_BLOCK_IP_ADDRESS_IP_ADDRESS => $IP_ADDRESS,
+            FILED_SYSTEM_BLOCK_IP_ADDRESS_REQU => print_r($_REQUEST, true)
+        );
+        $Configration = Configration();
+        $Database = $this->Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+
+        $Database->insert(TABLE_SYSTEM_BLOCK_IP_ADDRESS, $IP_ADDR);
+
+        unset($Database);
+        unset($Configration);
+    }
+
+    /*
+     * detect_location();
+      //  returns "CITY, STATE" based on user IP
+
+      detect_location('xxx.xxx.xxx.xxx');
+      //  returns "CITY, STATE" based on IP you provide
+
+      detect_location(NULL, TRUE);    //   based on user IP
+      //  returns array(8) { ["city"] => "CITY", ["state"] => "STATE", ["country"] => "US", ["zip"] => "xxxxx", ["latitude"] => "xx.xxxxxx", ["longitude"] => "-xx.xxxxxx", ["timezone"] => "-07:00", ["hostname"] => "xx-xx-xx-xx.host.name.net" }
+
+      detect_location('xxx.xxx.xxx.xxx', TRUE);   //   based on IP you provide
+      //  returns array(8) { ["city"] => "CITY", ["state"] => "STATE", ["country"] => "US", ["zip"] => "xxxxx", ["latitude"] => "xx.xxxxxx", ["longitude"] => "-xx.xxxxxx", ["timezone"] => "-07:00", ["hostname"] => "xx-xx-xx-xx.host.name.net" }
+     */
+
+//    public function detect_location($ip = NULL, $asArray = FALSE) {
+//        if (empty($ip)) {
+//            if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+//                $ip = $_SERVER['HTTP_CLIENT_IP'];
+//            } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+//                $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+//            } else {
+//                $ip = $_SERVER['REMOTE_ADDR'];
+//            }
+//        } elseif (!is_string($ip) || strlen($ip) < 1 || $ip == '127.0.0.1' || $ip == 'localhost') {
+//            $ip = '8.8.8.8';
+//        }
+//
+//        $url = 'http://ipinfodb.com/ip_locator.php?ip=' . urlencode($ip);
+//        $i = 0;
+//        $content;
+//        $curl_info;
+//
+//        while (empty($content) && $i < 5) {
+//            $ch = curl_init();
+//            $curl_opt = array(
+//                CURLOPT_FOLLOWLOCATION => 1,
+//                CURLOPT_HEADER => 0,
+//                CURLOPT_RETURNTRANSFER => 1,
+//                CURLOPT_URL => $url,
+//                CURLOPT_TIMEOUT => 1,
+//                CURLOPT_REFERER => 'http://' . $_SERVER['HTTP_HOST'],
+//            );
+//            if (isset($_SERVER['HTTP_USER_AGENT']))
+//                $curl_opt[CURLOPT_USERAGENT] = $_SERVER['HTTP_USER_AGENT'];
+//            curl_setopt_array($ch, $curl_opt);
+//            $content = curl_exec($ch);
+//            if (!is_null($curl_info))
+//                $curl_info = curl_getinfo($ch);
+//            curl_close($ch);
+//        }
+//
+//        $araResp = array();
+//        if (preg_match('{<li>City : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['city'] = trim($regs[1]);
+//        if (preg_match('{<li>State/Province : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['state'] = trim($regs[1]);
+//        if (preg_match('{<li>Country : ([^<]*)}i', $content, $regs))
+//            $araResp['country'] = trim($regs[1]);
+//        if (preg_match('{<li>Zip or postal code : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['zip'] = trim($regs[1]);
+//        if (preg_match('{<li>Latitude : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['latitude'] = trim($regs[1]);
+//        if (preg_match('{<li>Longitude : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['longitude'] = trim($regs[1]);
+//        if (preg_match('{<li>Timezone : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['timezone'] = trim($regs[1]);
+//        if (preg_match('{<li>Hostname : ([^<]*)</li>}i', $content, $regs))
+//            $araResp['hostname'] = trim($regs[1]);
+//
+//        $strResp = ($araResp['city'] != '' && $araResp['state'] != '') ? ($araResp['city'] . ', ' . $araResp['state']) : 'UNKNOWN';
+//
+//        return $asArray ? $araResp : $strResp;
+//    }
+
+    public function getBrowser() {
+        $u_agent = $_SERVER['HTTP_USER_AGENT'];
+        $bname = 'Unknown';
+        $platform = 'Unknown';
+        $version = "";
+
+//First get the platform?
+        if (preg_match('/linux/i', $u_agent)) {
+            $platform = 'linux';
+        } elseif (preg_match('/macintosh|mac os x/i', $u_agent)) {
+            $platform = 'mac';
+        } elseif (preg_match('/windows|win32/i', $u_agent)) {
+            $platform = 'windows';
+        }
+
+// Next get the name of the useragent yes seperately and for good reason
+        if (preg_match('/MSIE/i', $u_agent) && !preg_match('/Opera/i', $u_agent)) {
+            $bname = 'Internet Explorer';
+            $ub = "MSIE";
+            if (!CAN_GET_DATA_FROM_BROWSER) {
+                die(ShowError());
+            }
+        } elseif (preg_match('/Firefox/i', $u_agent)) {
+            $bname = 'Mozilla Firefox';
+            $ub = "Firefox";
+            if (!CAN_GET_DATA_FROM_BROWSER) {
+                die(ShowError());
+            }
+        } elseif (preg_match('/Chrome/i', $u_agent)) {
+            $bname = 'Google Chrome';
+            $ub = "Chrome";
+            if (!CAN_GET_DATA_FROM_BROWSER) {
+                die(ShowError());
+            }
+        } elseif (preg_match('/Safari/i', $u_agent)) {
+            $bname = 'Apple Safari';
+            $ub = "Safari";
+            if (!CAN_GET_DATA_FROM_BROWSER) {
+                die(ShowError());
+            }
+        } elseif (preg_match('/Opera/i', $u_agent)) {
+            $bname = 'Opera';
+            $ub = "Opera";
+            if (!CAN_GET_DATA_FROM_BROWSER) {
+                die(ShowError());
+            }
+        } elseif (preg_match('/Netscape/i', $u_agent)) {
+            $bname = 'Netscape';
+            $ub = "Netscape";
+            if (!CAN_GET_DATA_FROM_BROWSER) {
+                die(ShowError());
+            }
+        }
+
+// finally get the correct version number
+        $known = array('Version', $ub, 'other');
+        $pattern = '#(?<browser>' . join('|', $known) .
+                ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+        if (!preg_match_all($pattern, $u_agent, $matches)) {
+// we have no matching number just continue
+        }
+
+// see how many we have
+        $i = count($matches['browser']);
+        if ($i != 1) {
+//we will have two since we are not using 'other' argument yet
+//see if version is before or after the name
+            if (strripos($u_agent, "Version") < strripos($u_agent, $ub)) {
+                $version = $matches['version'][0];
+            } else {
+                $version = $matches['version'][1];
+            }
+        } else {
+            $version = $matches['version'][0];
+        }
+
+// check if we have a number
+        if ($version == null || $version == "") {
+            $version = "?";
+        }
+
+        $DataBrowser = array(
+            'userAgent' => $u_agent,
+            'name' => $bname,
+            'version' => $version,
+            'platform' => $platform,
+            'pattern' => $pattern
+        );
+        if (CAN_GET_DATA_FROM_BROWSER) {
+            return $DataBrowser;
+        } else {
+            $attackbrowser = "browser try to get information: " . $DataBrowser['name'] . " " . $DataBrowser['version'] . " on " . $DataBrowser['platform'] . " reports: <br >" . $DataBrowser['userAgent'];
+
+            $GLOBALS[CLASS_TOOLS]->System_Log($attackbrowser, __FUNCTION__, __LINE__, Tools::NOTICE);
+        }
+    }
+
+    public function GetIP() {
+        foreach (array('HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR') as $key) {
+            if (array_key_exists($key, $_SERVER) === true) {
+                foreach (array_map('trim', explode(',', $_SERVER[$key])) as $ip) {
+                    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) !== false) {
+                        return $ip;
+                    }else{
+                        return $ip;
+                    }
+                }
+            }
+        }
+    }
+
+}

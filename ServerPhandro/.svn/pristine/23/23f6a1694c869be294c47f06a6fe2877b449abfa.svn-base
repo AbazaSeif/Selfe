@@ -1,0 +1,328 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Friend_Class
+ *
+ * @author abaza
+ */
+class Friend_Class {
+
+    private $UserManger = null;
+
+    function __construct() {
+        if (is_null($this->UserManger)) {
+            $this->UserManger = new UserMangment();
+        }
+    }
+
+    function __destruct() {
+        if (!is_null($this->UserManger)) {
+            unset($this->UserManger);
+        }
+    }
+
+    public function WhoFriends($UserID) {
+        $Check1 = array(
+            FILED_FRIENDS_UID => $UserID,
+            FILED_FRIENDS_ACCEPT => ACCEPT
+        );
+        $Check2 = array(
+            FILED_FRIENDS_FRIEND => $UserID,
+            FILED_FRIENDS_ACCEPT => ACCEPT
+        );
+
+        $DataFriend1 = $GLOBALS[CLASS_DATABASE]->select(TABLE_FRIENDS, $Check1);
+        $DataFriend2 = $GLOBALS[CLASS_DATABASE]->select(TABLE_FRIENDS, $Check2);
+        if ((!is_null($DataFriend1)) && ((!is_null($DataFriend2)))) {
+            return $GLOBALS[CLASS_TOOLS]->MeargArray($DataFriend1, $DataFriend2);
+        } elseif (!is_null($DataFriend1)) {
+            return $DataFriend1;
+        } elseif (!is_null($DataFriend2)) {
+            return $DataFriend2;
+        } else {
+            return null;
+        }
+    }
+
+    public function isFriends($User_ID, $User_Friend_ID) {
+        $Check = array(
+            FILED_FRIENDS_UID => $User_ID,
+            FILED_FRIENDS_FRIEND => $User_Friend_ID,
+            FILED_FRIENDS_ACCEPT => ACCEPT
+        );
+        $ORCheck = array(
+            FILED_FRIENDS_FRIEND => $User_ID,
+            FILED_FRIENDS_UID => $User_Friend_ID,
+            FILED_FRIENDS_ACCEPT => ACCEPT
+        );
+
+        if ($Check[FILED_FRIENDS_UID] == $Check[FILED_FRIENDS_FRIEND]) {
+            return true;
+        }
+
+        if (($GLOBALS[CLASS_DATABASE]->isExist(TABLE_FRIENDS, $Check)) || ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_FRIENDS, $ORCheck))) {
+            return true;
+        }
+
+        if (!$this->UserManger->isThisUserExist($User_ID)) {
+            return false;
+        }
+        if (!$this->UserManger->isThisUserExist($User_Friend_ID)) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public function Get_User_friends() {
+        $Buffer = $ListFriend = array();
+        $tmpData = [FILED_PHONE_IMEI => $GLOBALS[CLASS_FILTER]->FilterData(KEY_PHONE_IMEI)
+            ];
+
+        $Data = $GLOBALS[CLASS_TOOLS]->removeNull($tmpData);
+
+        if (!is_null($Data)) {
+            $Quiry = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, $Data, '', 1);
+            if (!is_null($Quiry)) {
+                $MY_ID = intval($Quiry[FILED_PHONE_UID]);
+                $FRIENDS = $GLOBALS[CLASS_DATABASE]->select(TABLE_FRIENDS, [FILED_FRIENDS_UID => $MY_ID, FILED_FRIENDS_FRIEND => $MY_ID], '', '', false, 'OR');
+                if (!is_null($FRIENDS)) {
+                    if (is_array($FRIENDS[0])) {
+                        foreach ($FRIENDS as $friend) {
+                            $FRIEND_ID = $friend[FILED_FRIENDS_FRIEND];
+                            $UID = $friend[FILED_FRIENDS_UID];
+                            if ($this->isFriends($FRIEND_ID, $MY_ID)) {
+                                if ($FRIEND_ID == $MY_ID) {
+                                    $Name = $this->UserManger->WhoIs($UID, FILED_USER_NAME);
+                                    $Starus = $this->UserManger->Get_User_Status_Now($UID);
+                                    $ListFriend = [FILED_USER_ID => $UID, FILED_USER_NAME => $Name, FILED_USER_ONLINE_STATUS => $Starus[FILED_USER_ONLINE_STATUS],
+                                        FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND => $Starus[FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND]];
+                                } else {
+                                    $Name = $this->UserManger->WhoIs($FRIEND_ID, FILED_USER_NAME);
+                                    $Starus = $this->UserManger->Get_User_Status_Now($FRIEND_ID);
+                                    $ListFriend = [FILED_USER_ID => $UID, FILED_USER_NAME => $Name, FILED_USER_ONLINE_STATUS => $Starus[FILED_USER_ONLINE_STATUS],
+                                        FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND => $Starus[FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND]];
+                                }
+                                array_push($Buffer, $ListFriend);
+                            }
+                        }
+                    } else {
+                        $FRIEND_ID = $FRIENDS[FILED_FRIENDS_FRIEND];
+                        $UID = $FRIENDS[FILED_FRIENDS_UID];
+                        if ($this->isFriends($FRIEND_ID, $MY_ID)) {
+                            if ($FRIEND_ID == $MY_ID) {
+                                $Name = $this->UserManger->WhoIs($UID, FILED_USER_NAME);
+                                $Starus = $this->UserManger->Get_User_Status_Now($UID);
+                                $ListFriend = [FILED_USER_ID => $UID, FILED_USER_NAME => $Name, FILED_USER_ONLINE_STATUS => $Starus[FILED_USER_ONLINE_STATUS],
+                                    FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND => $Starus[FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND]];
+                            } else {
+                                $Name = $this->UserManger->WhoIs($FRIEND_ID, FILED_USER_NAME);
+                                $Starus = $this->UserManger->Get_User_Status_Now($FRIEND_ID);
+                                $ListFriend = [FILED_USER_ID => $UID, FILED_USER_NAME => $Name, FILED_USER_ONLINE_STATUS => $Starus[FILED_USER_ONLINE_STATUS],
+                                    FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND => $Starus[FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND]];
+                            }
+                            array_push($Buffer, $ListFriend);
+                        }
+                    }
+                    return $Buffer;
+                } else {
+                    return NOT_FOUND;
+                }
+            } else {
+                return NOT_FOUND;
+            }
+        } else {
+            return FAIL;
+        }
+    }
+
+    public function Set_Friend() {
+        $Data = array(
+            FILED_FRIENDS_UID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_UID),
+            FILED_FRIENDS_FRIEND => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_FRIEND),
+            FILED_FRIENDS_DATE => $GLOBALS[CLASS_TOOLS]->getToday(),
+            FILED_FRIENDS_FAVORIT => OFF,
+            FILED_FRIENDS_ACCEPT => WAITING
+        );
+
+        if ($this->isFriends($Data[FILED_FRIENDS_UID], $Data[FILED_FRIENDS_FRIEND])) {
+            return FAIL;
+        }
+
+        $Label = sprintf(MessagesSystem(NEW_FRIEND), $this->UserManger->WhoIs($Data[FILED_FRIENDS_UID], FILED_USER_NAME));
+
+        if ($GLOBALS[CLASS_DATABASE]->insert(TABLE_FRIENDS, $Data)) {
+            $this->UserManger->setNotification($Data[FILED_FRIENDS_UID], $Data[FILED_FRIENDS_FRIEND], NOTIF_FRIEND, $Label);
+            $this->UserManger->LogSUCCESS("Friend Relationshep is Creating Done", __FUNCTION__, __LINE__);
+            return SUCCESS;
+        } else {
+            $this->UserManger->LogERROR("ERROR : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Set_Unfriend() {
+        $Data = array(
+            FILED_FRIENDS_UID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_UID),
+            FILED_FRIENDS_FRIEND => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_FRIEND)
+        );
+
+        $Check = array(
+            FILED_FRIENDS_UID => $Data[FILED_FRIENDS_UID],
+            FILED_FRIENDS_FRIEND => $Data[FILED_FRIENDS_FRIEND]
+        );
+        $ORCheck = array(
+            FILED_FRIENDS_FRIEND => $Data[FILED_FRIENDS_UID],
+            FILED_FRIENDS_UID => $Data[FILED_FRIENDS_FRIEND]
+        );
+
+        if ($Check[FILED_FRIENDS_UID] == $Check[FILED_FRIENDS_FRIEND]) {
+            return FAIL;
+        }
+
+        if (!$this->isFriends($Data[FILED_FRIENDS_UID], $Data[FILED_FRIENDS_FRIEND])) {
+            return FAIL;
+        }
+
+        if ($GLOBALS[CLASS_DATABASE]->delete(TABLE_FRIENDS, $Data)) {
+            if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_FRIENDS, $ORCheck)) {
+                if ($GLOBALS[CLASS_DATABASE]->delete(TABLE_FRIENDS, $ORCheck)) {
+                    $this->UserManger->LogSUCCESS("Done For set Unfriend", __FUNCTION__, __LINE__);
+                    return SUCCESS;
+                } else {
+                    $this->UserManger->LogERROR("ERROR can not Delete . MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+            } else {
+                return SUCCESS;
+            }
+        } else {
+            $this->UserManger->LogERROR("ERROR can not Delete . MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Set_Friend_Favorit() {
+        $Where = array(
+            FILED_FRIENDS_UID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_UID),
+            FILED_FRIENDS_FRIEND => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_FRIEND)
+        );
+        $Data = array(
+            FILED_FRIENDS_UID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_UID),
+            FILED_FRIENDS_FRIEND => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_FRIEND),
+            FILED_FRIENDS_FAVORIT => ON
+        );
+
+        if (!$this->isFriends($Data[FILED_FRIENDS_UID], $Data[FILED_FRIENDS_FRIEND])) {
+            return FAIL;
+        }
+
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_FRIENDS, $Where)) {
+            if ($GLOBALS[CLASS_DATABASE]->update(TABLE_FRIENDS, $Data, $Where)) {
+                return SUCCESS;
+            } else {
+                $this->UserManger->LogERROR("ERROR can not Update user favorit . MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                return FAIL;
+            }
+        } else {
+            $this->UserManger->LogERROR("ERROR : User try to Update favorit but he is not his friend", __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Set_Friend_Unfavorit() {
+        $Where = array(
+            FILED_FRIENDS_UID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_UID),
+            FILED_FRIENDS_FRIEND => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_FRIEND)
+        );
+        $Data = array(
+            FILED_FRIENDS_UID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_UID),
+            FILED_FRIENDS_FRIEND => $GLOBALS[CLASS_FILTER]->FilterData(KEY_FRIENDS_FRIEND),
+            FILED_FRIENDS_FAVORIT => OFF
+        );
+
+        if (!$this->UserManger->isThisUserExist($Data[FILED_FRIENDS_UID])) {
+            return FAIL;
+        }
+        if (!$this->UserManger->isThisUserExist($Data[FILED_FRIENDS_FRIEND])) {
+            return FAIL;
+        }
+
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_FRIENDS, $Where)) {
+            if ($GLOBALS[CLASS_DATABASE]->update(TABLE_FRIENDS, $Data, $Where)) {
+                return SUCCESS;
+            } else {
+                $this->UserManger->LogERROR("ERROR can not Update user favorit . MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                return FAIL;
+            }
+        } else {
+            $this->UserManger->LogERROR("ERROR : User try to Update favorit but he is not his friend", __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Accept_friend() {
+        
+    }
+
+    public function Refused_friend() {
+        
+    }
+
+    public function Get_Friends_Post($User_ID) {
+        $Buffer = array();
+        $Friends = $this->WhoFriends($User_ID);
+        //I get User Friends
+        if (!is_null($Friends)) {
+            if (is_array($Friends[0])) {
+                //test for know if is a lot of friend or only one friend
+                foreach ($Friends as $friend) { //More than One friend
+                    $ID = 0;
+                    //this Block for skip user ID himsilf
+                    if (($friend[FILED_FRIENDS_UID]) == $User_ID) {
+                        $ID = $friend[FILED_FRIENDS_FRIEND];
+                    } elseif (($friend[FILED_FRIENDS_FRIEND]) == $User_ID) {
+                        $ID = $friend[FILED_FRIENDS_UID];
+                    }
+                    //Get User friend Post
+                    $PostClass = new Post();
+                    $Post = $PostClass->Get_Posts_User($ID);
+
+                    if (!is_null($Post)) {
+                        array_push($Buffer, $Post);
+                    }
+                    array_multisort($Buffer, SORT_STRING);
+                }
+                unset($PostClass);
+            } else { //Only One friend
+                $ID = 0;
+                //this Block for skip user ID himsilf
+                if (($Friends[FILED_FRIENDS_UID]) == $User_ID) {
+                    $ID = $Friends[FILED_FRIENDS_FRIEND];
+                } elseif (($Friends[FILED_FRIENDS_FRIEND]) == $User_ID) {
+                    $ID = $Friends[FILED_FRIENDS_UID];
+                }
+                //Get User friend Post
+                $PostClass = new Post();
+                $Post = $PostClass->Get_Posts_User($ID);
+
+                if (!is_null($Post)) {
+                    array_push($Buffer, $Post);
+                }
+                array_multisort($Buffer, SORT_STRING);
+                unset($PostClass);
+            }
+
+            return $Buffer;
+        } else {
+            return null;
+        }
+    }
+
+}

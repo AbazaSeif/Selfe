@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+
+android {
+    buildToolsVersion "23.0.3"
+    compileSdkVersion 23
+
+    dataBinding {
+        enabled = true
+    }
+
+    defaultConfig {
+        applicationId "com.aprivate.wow"
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+ext {
+    supportLibVersion = "23.2.0"
+    espressoVersion = "2.2.2"
+    androidTestVersion = "0.4"
+    hamcrestVersion = "1.3"
+    junitVersion = "4.12"
+    glideVersion = "3.6.0"
+}
+
+dependencies {
+    compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'junit:junit:4.12'
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:cardview-v7:${supportLibVersion}"
+    compile "com.android.support:design:${supportLibVersion}"
+    compile "com.android.support:recyclerview-v7:${supportLibVersion}"
+    compile "com.github.bumptech.glide:glide:${glideVersion}"
+    compile 'de.hdodenhof:circleimageview:1.3.0'
+    compile 'com.jakewharton:butterknife:7.0.1'
+    compile "com.android.support.test.espresso:espresso-idling-resource:${espressoVersion}"
+    androidTestCompile("com.android.support.test.espresso:espresso-core:${espressoVersion}")
+    {
+        exclude module: "espresso-idling-resource"
+        exclude group: "com.android.support"
+    }
+    androidTestCompile("com.android.support.test.espresso:espresso-contrib:${espressoVersion}") {
+        exclude module: "espresso-core"
+        exclude module: "recyclerview-v7"
+        exclude group: "com.android.support"
+    }
+    androidTestCompile("com.android.support.test:rules:${androidTestVersion}") {
+        exclude group: "com.android.support"
+    }
+    androidTestCompile("com.android.support.test:runner:${androidTestVersion}") {
+        exclude group: "com.android.support"
+    }
+    compile project(':library')
+    compile project(':libraryBar')
+    compile project(':sweetsheet')
+    compile project(':library-button-proccess')
+    compile project(':dragger')
+    compile project(':folding-cell')
+}

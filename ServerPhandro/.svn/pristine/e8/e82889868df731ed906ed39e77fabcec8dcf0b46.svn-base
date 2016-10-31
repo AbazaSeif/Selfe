@@ -1,0 +1,67 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of FileType_Image
+ *
+ * @author abaza
+ */
+class FileType_Image {
+
+    protected $FileName = null;
+
+    function __construct() {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+    }
+
+    public function Reseved_Image_User($UserPath, $UUID, $Image) {
+        if (is_null($this->FileName)) {
+            $this->FileName = $GLOBALS['Tools']->generateRandomString();
+        }
+
+        $base = $Image;
+        $filename = $this->FileName . ".png";
+        $binary = base64_decode($base);
+        header('Content-Type: bitmap; charset=utf-8');
+        $ImageName = $UserPath . DIRECTORY_SEPARATOR . $filename;
+        $file = fopen($ImageName, 'wb');
+        fwrite($file, $binary);
+        fclose($file);
+        return $ImageName;
+    }
+
+    public function Send_Image_User($Path, $UUID = NULL) {
+        $URL = '';
+        if (!is_null($UUID)) {
+            $FileName = pathinfo($Path);
+            $ImageName = $FileName['basename'];
+            $DirPath = DIR_IMAGE . DIRECTORY_SEPARATOR . $UUID;
+            $URL = "http://" . $_SERVER['HTTP_HOST'] . DIRECTORY_SEPARATOR . APPLICATION_NAME . DIRECTORY_SEPARATOR . $DirPath . DIRECTORY_SEPARATOR . $ImageName;
+        } else {
+            $FileName = pathinfo($Path);
+            $ImageName = $FileName['basename'];
+            $Dir = strrchr($FileName['dirname'], DIRECTORY_SEPARATOR);
+            $DirPath = DIR_IMAGE . $Dir;
+            $URL = "http://" . $_SERVER['HTTP_HOST'] . DIRECTORY_SEPARATOR . APPLICATION_NAME . DIRECTORY_SEPARATOR . $DirPath . DIRECTORY_SEPARATOR . $ImageName;
+        }
+        return $URL;
+    }
+
+    function __destruct() {
+        if (!is_null($this->FileName)) {
+            unset($this->FileName);
+        }
+    }
+
+}

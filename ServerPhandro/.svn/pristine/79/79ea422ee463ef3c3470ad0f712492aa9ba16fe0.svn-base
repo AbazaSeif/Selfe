@@ -1,0 +1,286 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Search_Class
+ *
+ * @author abaza
+ */
+class Search_Class {
+
+    private $UserMang = null;
+
+    function __construct() {
+        if (is_null($this->UserMang)) {
+            $this->UserMang = new UserMangment();
+        }
+    }
+
+    function __destruct() {
+        if (!is_null($this->UserMang)) {
+            unset($this->UserMang);
+        }
+    }
+
+    public function GetResult() {
+        $Loop = 0;
+        $Result = array();
+
+        $User = array(
+            FILED_USER_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_NAME),
+            FILED_USER_PHONE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_PHONE),
+            FILED_USER_UUID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_UUID)
+        );
+
+        $Country = array(
+            FILED_COUNTRY_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_COUNTRY_NAME),
+            FILED_COUNTRY_CODE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_COUNTRY_CODE)
+        );
+
+        $Network = array(
+            FILED_MOBILE_NETWORK_CODE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_MOBILE_NETWORK_CODE),
+            FILED_MOBILE_NETWORK_COUNTRY_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_MOBILE_NETWORK_COUNTRY_NAME),
+            FILED_MOBILE_NETWORK_NETWORK_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_MOBILE_NETWORK_NETWORK_NAME)
+        );
+
+        $User = $GLOBALS[CLASS_TOOLS]->removeNull($User);
+        $Country = $GLOBALS[CLASS_TOOLS]->removeNull($Country);
+        $Network = $GLOBALS[CLASS_TOOLS]->removeNull($Network);
+
+        $UserOnly = $CountryOnly = $MobileOnly = array();
+
+        if (!is_null($User)) {
+            $UserOnly = $this->UserOnly($User);
+        }
+
+        if (!is_null($Country)) {
+            $CountryOnly = $this->CountryOnly($Country);
+        }
+
+        if (!is_null($Network)) {
+            $MobileOnly = $this->NetworkOnly($Network);
+        }
+
+        return $this->Implimintation($UserOnly, $CountryOnly, $MobileOnly);
+    }
+
+    private function Implimintation($User = null, $Country = null, $Network = null) {
+        $Filnal = array();
+        if (!is_null($User)) {
+            if (is_array($User[0])) {
+                foreach ($User as $element) {
+                    if (!is_null($Country)) {
+                        foreach ($Country as $eleCountry) {
+                            $ID1 = intval($element[0][FILED_USER_ID]);
+                            $ID2 = intval($eleCountry[0][FILED_USER_ID]);
+                            if ($ID1 === $ID2) {
+                                array_push($Filnal, $eleCountry);
+                                $ID1 = 0;
+                                $ID2 = 0;
+                            }
+                        }
+                    }
+                    if (!is_null($Network)) {
+                        foreach ($Network as $eleNetwork) {
+                            $ID1 = intval($element[0][FILED_USER_ID]);
+                            $ID2 = intval($eleNetwork[0][FILED_USER_ID]);
+                            if ($ID1 === $ID2) {
+                                array_push($Filnal, $eleNetwork);
+                                $ID1 = 0;
+                                $ID2 = 0;
+                            }
+                        }
+                    }
+                }
+            } else {
+                //Not Array
+            }
+        }
+        if (count($Filnal) > 0) {
+            return $Filnal;
+        } else {
+            return NOT_FOUND;
+        }
+    }
+
+    private function UserOnly($Quiry) {
+        $Result = array();
+        $Loop = 0;
+        $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+        $DataImpliment = $this->GetUserInformation($Quiry);
+        if (is_array($DataImpliment[0])) {
+            foreach ($DataImpliment as $User) {
+                $Resulttemp[$Loop++] = $User;
+                $Resulttemp[$Loop++] = $this->GetProfileImageForUser($User[FILED_USER_ID]);
+                $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($User[FILED_USER_ID]);
+                $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+                $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                $Loop = 0;
+                $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+            }
+        } else {
+            $Resulttemp[$Loop++] = $DataImpliment;
+            $Resulttemp[$Loop++] = $this->GetProfileImageForUser($DataImpliment[FILED_USER_ID]);
+            $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($DataImpliment[FILED_USER_ID]);
+            $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+            $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+            $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+            $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+            $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+            array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+        }
+
+        return $Result;
+    }
+
+    private function CountryOnly($Quiry) {
+        $Result = array();
+        $Loop = 0;
+        $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+        $ReternCountry = $this->GetCountry($Quiry);
+        if (!is_null($ReternCountry)) {
+            $WhereInPhoneTable = array(
+                FILED_PHONE_COUNTRY => $ReternCountry[FILED_COUNTRY_ID]
+            );
+            $Phones = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, $WhereInPhoneTable);
+            if (!is_null($Phones)) {
+                if (is_array($Phones[0])) {
+                    foreach ($Phones as $SubPhone) {
+                        $UserID = array(
+                            FILED_USER_ID => $SubPhone[FILED_PHONE_UID]
+                        );
+                        $Resulttemp[$Loop++] = $this->GetUserInformation($UserID);
+                        $Resulttemp[$Loop++] = $this->GetProfileImageForUser($UserID[FILED_USER_ID]);
+                        $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($UserID[FILED_USER_ID]);
+                        $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+                        $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                        $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                        $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                        $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp3);
+                        array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp4));
+                        $Loop = 0;
+                        $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+                    }
+                } else {
+                    $UserID = array(
+                        FILED_USER_ID => $Phones[FILED_PHONE_UID]
+                    );
+                    $Resulttemp[$Loop++] = $this->GetUserInformation($UserID);
+                    $Resulttemp[$Loop++] = $this->GetProfileImageForUser($UserID[FILED_USER_ID]);
+                    $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($UserID[FILED_USER_ID]);
+                    $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+                    $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                    $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                    $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                    $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp3);
+                    array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp4));
+                    $Loop = 0;
+                    $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+                }
+            }
+        }
+        return $Result;
+    }
+
+    private function NetworkOnly($Quiry) {
+        $Result = array();
+        $Loop = 0;
+        $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+        $ReternCountry = $this->GetNetwork($Quiry);
+        if (!is_null($ReternCountry)) {
+            $WhereInPhoneTable = array(
+                FILED_PHONE_NETWORK => $ReternCountry[FILED_MOBILE_NETWORK_ID]
+            );
+            $Phones = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, $WhereInPhoneTable);
+            if (!is_null($Phones)) {
+                if (is_array($Phones[0])) {
+                    foreach ($Phones as $SubPhone) {
+                        $UserID = array(
+                            FILED_USER_ID => $SubPhone[FILED_PHONE_UID]
+                        );
+                        $Resulttemp[$Loop++] = $this->GetUserInformation($UserID);
+                        $Resulttemp[$Loop++] = $this->GetProfileImageForUser($UserID[FILED_USER_ID]);
+                        $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($UserID[FILED_USER_ID]);
+                        $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+                        $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                        $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                        $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                        array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3));
+                        $Loop = 0;
+                        $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = null;
+                    }
+                } else {
+                    $UserID = array(
+                        FILED_USER_ID => $Phones[FILED_PHONE_UID]
+                    );
+                    $Resulttemp[$Loop++] = $this->GetUserInformation($UserID);
+                    $Resulttemp[$Loop++] = $this->GetProfileImageForUser($UserID[FILED_USER_ID]);
+                    $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($UserID[FILED_USER_ID]);
+                    $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+                    $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                    $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                    $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                    array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3));
+                    $Loop = 0;
+                    $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = null;
+                }
+            }
+        }
+        return $Result;
+    }
+
+    private function GetUserInformation($User) {
+        return $GLOBALS[CLASS_DATABASE]->select(TABLE_USER, $User, '', '', true);
+    }
+
+    private function GetCountry($Country) {
+        return $GLOBALS[CLASS_DATABASE]->select(TABLE_COUNTRY, $Country);
+    }
+
+    private function GetNetwork($Country) {
+        return $GLOBALS[CLASS_DATABASE]->select(TABLE_MOBILE_NETWORK, $Country);
+    }
+
+    private function GetProfileImageForUser($UserID) {
+        $Data = $this->UserMang->WhoIs($UserID);
+
+        $UserProfile = array(
+            FILED_USER_PHOTO_IS_PROFILE => ON,
+            FILED_USER_PHOTO_UID => $UserID
+        );
+
+        $Maltimedia = new Maltimedia_module();
+
+        $Retern = $GLOBALS[CLASS_DATABASE]->select(TABLE_USER_PHOTO, $UserProfile);
+        if (is_null($Retern)) {
+            return null;
+        }
+        $URL = $Maltimedia->Send_Image_User($Retern[FILED_USER_PHOTO_PHOTO_PATH], PHOTO, $Data[FILED_USER_UUID]);
+
+        unset($Maltimedia);
+        unset($Retern);
+
+        return $URL;
+    }
+
+    public function Search_Message($Text) {
+        if (isset($Text)) {
+            $Result = $GLOBALS[CLASS_TOOLS]->removeNull($GLOBALS[CLASS_DATABASE]->select(TABLE_MESSAGE, [FILED_MESSAGE_MESSAGE => trim($Text)], '', '', true));
+            if (!is_null($Result)) {
+                return $Result;
+            } else {
+                return false;
+            }
+        }
+    }
+
+}

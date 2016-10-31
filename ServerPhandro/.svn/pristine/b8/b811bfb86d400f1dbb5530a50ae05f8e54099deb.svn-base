@@ -1,0 +1,27 @@
+<?php
+
+include MAIN_DIR . '/System/system_check.php';
+require MAIN_DIR . '/conf/Configration.php';
+include MAIN_DIR . '/Security/Anti_Attack.php';
+require MAIN_DIR . '/System/geoip/geoip.inc';
+require MAIN_DIR . '/System/geoip/geolocation.php';
+require MAIN_DIR . '/System/geoip/localTime.php';
+require MAIN_DIR . '/Security/Filtering.php';
+include MAIN_DIR . '/Database/SQLClass.php';
+require MAIN_DIR . '/News/Post.php';
+require MAIN_DIR . '/UserManger/Creating_New.php';
+require MAIN_DIR . '/UserManger/UserMangment.php';
+require MAIN_DIR . '/UserManger/Class_Login.php';
+require MAIN_DIR . '/Message/Message_Class.php';
+require MAIN_DIR . '/System/Core.php';
+require MAIN_DIR . '/System/Tools.php';
+require MAIN_DIR . '/System/UUID.php';
+require MAIN_DIR . '/System/ErrorPage.php';
+require MAIN_DIR . '/System/Maltimedia_module.php';
+require MAIN_DIR . '/System/Filesystem.php';
+require MAIN_DIR . '/Search/Search_Class.php';
+require MAIN_DIR . '/Sync/Syncronization.php';
+require MAIN_DIR . '/Friend/Friend_Class.php';
+require MAIN_DIR . '/Group/Class_Group.php';
+include MAIN_DIR . '/qrcode/qrlib.php';
+

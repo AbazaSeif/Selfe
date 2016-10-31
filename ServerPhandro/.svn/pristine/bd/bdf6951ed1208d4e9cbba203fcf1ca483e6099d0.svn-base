@@ -1,0 +1,383 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+
+/**
+ * Description of AndroServer
+ *
+ * @author abaza
+ */
+class Core {
+
+    var $Interface = null;
+    var $UserGroup = null;
+    var $UserMangment = null;
+    var $Friends = null;
+    var $Multimedia = null;
+    var $Syncronization = null;
+    var $Message = null;
+    var $Searching = null;
+    var $Login = null;
+    var $Buffer = null;
+
+    public function __construct($Interface) {
+
+        $this->Interface = $Interface;
+        if (is_null($this->UserGroup)) {
+            if (class_exists(Creating_New)) {
+                $this->UserGroup = new Creating_New();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->UserMangment)) {
+            if (class_exists(UserMangment)) {
+                $this->UserMangment = new UserMangment();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->Login)) {
+            if (class_exists(Class_Login)) {
+                $this->Login = new Class_Login();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->Multimedia)) {
+            if (class_exists(Maltimedia_module)) {
+                $this->Multimedia = new Maltimedia_module();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->Searching)) {
+            if (class_exists(Search_Class)) {
+                $this->Searching = new Search_Class();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->Message)) {
+            if (class_exists(Message_Class)) {
+                $this->Message = new Message_Class();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->Syncronization)) {
+            if (class_exists(Syncronization)) {
+                $this->Syncronization = new Syncronization();
+            } else {
+                die(ShowError());
+            }
+        }
+
+        if (is_null($this->Friends)) {
+            if (class_exists(Friend_Class)) {
+                $this->Friends = new Friend_Class();
+            } else {
+                die(ShowError());
+            }
+        }
+    }
+
+    function __destruct() {
+        if (!is_null($this->Buffer)) {
+            unset($this->Buffer);
+        }
+        if (!is_null($this->Interface)) {
+            unset($this->Interface);
+        }
+        if (!is_null($this->UserGroup)) {
+            unset($this->UserGroup);
+        }
+        if (!is_null($this->UserMangment)) {
+            unset($this->UserMangment);
+        }
+        if (!is_null($this->Multimedia)) {
+            unset($this->Multimedia);
+        }
+        if (!is_null($this->Searching)) {
+            unset($this->Searching);
+        }
+        if (!is_null($this->Message)) {
+            unset($this->Message);
+        }
+        if (!is_null($this->Syncronization)) {
+            unset($this->Syncronization);
+        }
+        if (!is_null($this->Friends)) {
+            unset($this->Friends);
+        }
+    }
+
+    public function Test() {
+        $this->UserMangment->Calculat_Total_Of_Ponans_User();
+        $GLOBALS[CLASS_TOOLS]->Show(SystemVariable(FILED_SYSTEM_APPLICATION_NAME) . ' Server Version ' . SystemVariable(FILED_SYSTEM_VERSION) . '<br>');
+        $this->Interface->Buffer(SUCCESS);
+    }
+
+    public function User_Group($Type) {
+        if (is_string($Type)) {
+            switch ($Type) {
+                case NEW_USER://Create new user
+                    $this->Buffer = $this->UserGroup->Create_New_User();
+                    break;
+                case EDIT_USER://Edit Data user
+                    $this->Buffer = $this->UserGroup->Edite_User();
+                    break;
+                case DELETE_USER://Delete user account
+                    $this->Buffer = $this->UserGroup->Delete_User();
+                    break;
+            }
+        }
+        $this->Outdata();
+    }
+
+    public function Multimedia_Group($Type) {
+        switch ($Type) {
+            case UPLOAD_MALTIMEDIA://Upload image
+                $this->Buffer = $this->Multimedia->Maltimedia();
+                break;
+            case UPLOAD_FROM_URL:
+                $this->Buffer = $this->Multimedia->Get_From_URL();
+                break;
+            case GET_IMAGE://download image
+                $this->Buffer = $this->Multimedia->Get_Multimedia(PHOTO);
+                break;
+            case GET_VIDEO://get video
+                $this->Buffer = $this->Multimedia->Get_Multimedia(VIDEO);
+                break;
+            case GET_AUDIO:
+                $this->Buffer = $this->Multimedia->Get_Multimedia(AUDIO);
+                break;
+        }
+        $this->Outdata();
+    }
+
+    public function Search($Type) {
+        $this->Buffer = $this->Searching->GetResult();
+        $this->Outdata();
+    }
+
+    public function User_Mangment_Group($Type) {
+        switch ($Type) {
+            case GET_USER_LIST://Get all user list in the zone
+                $this->Buffer = $this->UserMangment->Get_User_List();
+                break;
+            case GET_USER_INFO: //Get Information
+                $this->Buffer = $this->UserMangment->Get_User_Information();
+                break;
+            case GET_ALBUMES://Get Photo Album for user
+                $this->Buffer = $this->UserMangment->Get_User_Albume();
+                break;
+            case SET_COMMENT_IN_PHOTO: //Set Comment in Photo
+                $this->Buffer = $this->UserMangment->Set_Comment_in_photo();
+                break;
+            case DELETE_COMMENT_IN_PHOTO: //Delete Comment in Photo
+                $this->Buffer = $this->UserMangment->Delet_Comment_in_Photo();
+                break;
+            case EDIT_COMMENT_IN_PHOTO: //Edite Comment in Photo
+                $this->Buffer = $this->UserMangment->Edit_Comment_in_Photo();
+                break;
+            case SET_COMMENT_IN_AUDIO: //Set Comment in Audio
+                $this->Buffer = $this->UserMangment->Set_Comment_in_Audio();
+                break;
+            case DELETE_COMMENT_IN_AUDIO: //Delete Comment in Audio
+                $this->Buffer = $this->UserMangment->Delet_Comment_in_Audio();
+                break;
+            case EDIT_COMMENT_IN_AUDIO : //Edite Comment in Audio
+                $this->Buffer = $this->UserMangment->Edit_Comment_in_Audio();
+                break;
+            case SET_COMMENT_IN_VIDEO: //Set Comment in Video
+                $this->Buffer = $this->UserMangment->Set_Comment_in_Video();
+                break;
+            case DELETE_COMMENT_IN_VIDEO: //Delete Comment in Video
+                $this->Buffer = $this->UserMangment->Delet_Comment_in_Video();
+                break;
+            case EDIT_COMMENT_IN_VIDEO : //Edite Comment in Video
+                $this->Buffer = $this->UserMangment->Edit_Comment_in_Video();
+                break;
+            case GET_NOTIFICATION: //Get Notification 
+                $this->Buffer = $this->UserMangment->getNotification();
+                break;
+            case STATUS_CHANGE: //Change Status (Online , Offline)
+                $this->Buffer = $this->UserMangment->Change_Status_Line();
+                break;
+            case SET_PONANS: //set Ponas for User
+                $this->Buffer = $this->UserMangment->Set_Ponans_For_User();
+                break;
+            case GET_PONANS: //get Ponas for User
+                $this->Buffer = $this->UserMangment->Get_Ponans_For_User();
+                break;
+        }
+        $this->Outdata();
+    }
+
+    /**
+     * BufferCountrys
+     * it is only buffer the country in the Database table without change anything
+     * only it convert flag name to URL fot flag
+     */
+    public function BufferCountrys() {
+
+        $this->Buffer = array();
+        $BufferCountry = $GLOBALS[CLASS_TOOLS]->removeNull($GLOBALS[CLASS_DATABASE]->select(TABLE_COUNTRY));
+        foreach ($BufferCountry as $Country) {
+            $Flag = DIRECTORY_SEPARATOR . DIR_FLAGS . DIRECTORY_SEPARATOR . FLAGS_BUFFER_SIZE . DIRECTORY_SEPARATOR . $Country[FILED_COUNTRY_PATH_FLAG];
+            $URL = $GLOBALS[CLASS_TOOLS]->CreateURL($Flag);
+            $Country = $GLOBALS[CLASS_TOOLS]->ChangeValueInArray(FILED_COUNTRY_PATH_FLAG, $URL, $Country);
+            $Country = $GLOBALS[CLASS_TOOLS]->ChangeValueInArray(FILED_COUNTRY_NAME, ucfirst($Country[FILED_COUNTRY_NAME]), $Country);
+            array_push($this->Buffer, $Country);
+        }
+        $this->Outdata();
+    }
+
+    /**
+     * BufferNetwork
+     * it is not change anything only get Networks name in Table database 
+     * to array and also not duplicat the network name
+     */
+    public function BufferNetworks() {
+        $this->Buffer = array();
+        $BufferNetwork = $GLOBALS[CLASS_TOOLS]->removeNull($GLOBALS[CLASS_DATABASE]->select(TABLE_MOBILE_NETWORK));
+        foreach ($BufferNetwork as $Network) {
+            if (!in_array($Network[FILED_MOBILE_NETWORK_NETWORK_NAME], $this->Buffer)) {
+                $NetworkDitels = array(
+                    $Network[FILED_MOBILE_NETWORK_CODE],
+                    $Network[FILED_MOBILE_NETWORK_COUNTRY_NAME]
+                );
+                if (array_key_exists($Network[FILED_MOBILE_NETWORK_NETWORK_NAME], $this->Buffer)) {
+                    array_push($this->Buffer[$Network[FILED_MOBILE_NETWORK_NETWORK_NAME]], $NetworkDitels);
+                } else {
+                    $this->Buffer[$Network[FILED_MOBILE_NETWORK_NETWORK_NAME]] = [$NetworkDitels];
+                }
+            }
+        }
+        $this->Outdata();
+    }
+
+    public function Message_Unit($Type) {
+        switch ($Type) {
+            case SET_MESSAGE:
+                $this->Buffer = $this->Message->set_message();
+                break;
+            case GET_MESSAGE:
+                $this->Buffer = $this->Message->get_new_message();
+                break;
+            case GET_ALL_MESSAGE:
+                $this->Buffer = $this->Message->get_all_message();
+                break;
+            case DEL_MESSAGE:
+                $this->Buffer = $this->Message->delete_message();
+                break;
+        }
+        $this->Outdata();
+    }
+
+    public function Gift_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Icon_User_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Money_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Conntact_Unit($Type) {
+        $this->Outdata();
+    }
+
+    public function Login_Unit($Type) {
+
+        switch ($Type) {
+            case NORMAL_LOGIN : //normal login for Android Users
+                $this->Buffer = $this->Login->Normal_Login();
+                break;
+            case PASSWORD_LOGIN: //Login if IMEI or SIM Card Serial Number is Exist in Database
+                $this->Buffer = $this->Login->Password_Login();
+                break;
+        }
+        $this->Outdata();
+    }
+
+    private function Outdata() {
+        if (isset($this->Buffer)) {
+            $this->Interface->Buffer($this->Buffer);
+        }
+        exit();
+    }
+
+    public function Sync_Unit($type) {
+        switch ($type) {
+            case SYNC_ALL:
+                $this->Buffer = $this->Syncronization->SyncAll();
+                break;
+            case SYNC_COUNTRY:
+                $this->Buffer = $this->Syncronization->SyncCountrys();
+                break;
+            case SYNC_MEMBER_IN_COUNTRY:
+                $this->Buffer = $this->Syncronization->SyncMemberInCountry();
+                break;
+            case SYNC_COMMENT:
+                $this->Buffer = $this->Syncronization->SyncComment();
+                break;
+            case SYNC_FRINDS:
+                $this->Buffer = $this->Syncronization->SyncFriend();
+                break;
+            case SYNC_GIFTS:
+                $this->Buffer = $this->Syncronization->SyncGifts();
+                break;
+            case SYNC_MESSAGE:
+                $this->Buffer = $this->Syncronization->SyncMessage();
+                break;
+            case SYNC_NEWS:
+                $this->Buffer = $this->Syncronization->SyncNews();
+                break;
+            case SYNC_NOTIFICATION:
+                $this->Buffer = $this->Syncronization->SyncNotification();
+                break;
+            case SYNC_PONANS:
+                $this->Buffer = $this->Syncronization->SyncPonans();
+                break;
+            case SYNC_STOCK:
+                $this->Buffer = $this->Syncronization->SyncStock();
+                break;
+        }
+        $this->Outdata();
+    }
+
+    public function Friends($type) {
+        switch ($type) {
+            case GET_USER_FRIENDS: //Get User Friends
+                $this->Buffer = $this->Friends->Get_User_friends();
+                break;
+            case MAKE_FRIEND: //set firend for user
+                $this->Buffer = $this->Friends->Set_Friend();
+                break;
+            case MAKE_UNFRIEND: //set unfirend for user
+                $this->Buffer = $this->Friends->Set_Unfriend();
+                break;
+            case SET_FRIEND_FAVORIT: //set favort friend
+                $this->Buffer = $this->Friends->Set_Friend_Favorit();
+                break;
+            case SET_FRIEND_UNFAVORIT: //set unfavort friend
+                $this->Buffer = $this->Friends->Set_Friend_Unfavorit();
+                break;
+        }
+    }
+
+}

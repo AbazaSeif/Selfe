@@ -1,0 +1,203 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Tools
+ *
+ * @author abaza
+ */
+class Tools {
+
+    protected $DebugMode = false;
+
+    function __construct() {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+
+        register_shutdown_function('__destruct');
+    }
+
+    function __destruct() {
+        unset($this->DebugMode);
+    }
+
+    public function getToday() {
+        return date('d-m-Y');
+    }
+
+    public function getTime() {
+        return date('H:i:s');
+    }
+
+    public function GetKeys($Array) {
+        $ArrayKeys = array_keys($Array);
+        return $ArrayKeys;
+    }
+
+    public function isKeyExists($Key, $Array) {
+        if (array_key_exists($Key, $Array)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getValue($Key, $Array) {
+        foreach ($Array as $key => $value) {
+            if ($key == $Key) {
+                return $value;
+            }
+        }
+        return NULL;
+    }
+
+    public function removeNull($Array) {
+        $FilterData = array();
+        foreach ($Array as $key => $value) {
+            if (!is_null($value) || !empty($value)) {
+                $FilterData[$key] = $value;
+            }
+        }
+        if (count($FilterData) > 0) {
+            return $FilterData;
+        } else {
+            return NULL;
+        }
+    }
+
+    public function ChangeValueInArray($Key, $New_Value, $Array) {
+        $NewArray = null;
+
+        foreach ($Array as $key => $value) {
+            if ($key == $Key) {
+                $NewArray[$key] = $New_Value;
+            } else {
+                $NewArray[$key] = $value;
+            }
+        }
+        return $NewArray;
+    }
+
+    public function RemoveKeyInArray($Key, $Array) {
+        $NewArray = null;
+
+        foreach ($Array as $key => $value) {
+            if ($key != $Key) {
+                $NewArray[$key] = $value;
+            }
+        }
+        return $NewArray;
+    }
+
+    public function ShowDie($Message) {
+        $this->Show($Message);
+    }
+
+    public function Show($Message) {
+        echo $Message . '<br>';
+        $this->System_Log($Message, __FUNCTION__, __LINE__);
+    }
+
+    public function ShowBuffer($Message) {
+        $this->System_Log($Message, __FUNCTION__, __LINE__);
+        print json_encode($Message);
+    }
+
+    public function setDebug($debug) {
+        $this->DebugMode = $debug;
+    }
+
+    public function isDebug() {
+        return $this->DebugMode;
+    }
+
+    public function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    public function HeaderDebug() {
+        if ($this->DebugMode) {
+            $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+            $url = $_SERVER['REQUEST_URI'];
+            if ($this->DebugMode) {
+                printf('<br><b>IP Address </b>: %s', $ip);
+                printf('<br><b>URL </b>: %s <br><ul>', $url);
+            }
+        }
+    }
+
+    public function Count_Debug_time() {
+        try {
+            $fp = fopen(SYSTEM_FILE_TIME_FOR_DEBUG, "r");
+
+            $count = fgets($fp, 1024);
+
+            fclose($fp);
+
+            $fw = fopen(SYSTEM_FILE_TIME_FOR_DEBUG, "w");
+            $cnew = $count + 1;
+            $countnew = fputs($fw, $count + 1);
+            fclose($fw);
+            return $cnew;
+        } catch (Exception $error) {
+            $this->System_Log($error, __FUNCTION__, __LINE__);
+            return 0;
+        }
+    }
+
+    public function System_Log($Echo, $Function, $Line, $WithRequest = false) {
+        $myfile = null;
+
+        if (LOG_SYSTEM) {
+            $Time = $this->getTime();
+            $Date = $this->getToday();
+            $ip = filter_input(INPUT_SERVER, 'REMOTE_ADDR');
+            $url = $_SERVER['REQUEST_URI'];
+
+            $bro = $_SERVER['HTTP_USER_AGENT'];
+            $re = print_r($_REQUEST, true);
+
+            $Message = null;
+            if (is_array($Echo)) {
+                $Result = print_r($Echo, true);
+                if ($WithRequest) {
+                    $Message = '( ' . $Time . ' | ' . $Date . ' )( ' . $ip . ' ) (' . $Function . ') (' . $Line . ') Array : [' . $Result . '].  URL : ' . $url . '. Request : ' . $re . PHP_EOL;
+                } else {
+                    $Message = '( ' . $Time . ' | ' . $Date . ' )( ' . $ip . ' ) (' . $Function . ') (' . $Line . ') Array : [' . $Result . '].  URL : ' . $url . '.' . PHP_EOL;
+                }
+            } else {
+                if ($WithRequest) {
+                    $Message = '( ' . $Time . ' | ' . $Date . ' )( ' . $ip . ' ) (' . $Function . ') (' . $Line . ') Message : ' . $Echo . '. URL : ' . $url . '. Request : ' . $re . PHP_EOL;
+                } else {
+                    $Message = '( ' . $Time . ' | ' . $Date . ' )( ' . $ip . ' ) ( ' . $Function . ') (' . $Line . ') Message : ' . $Echo . '. URL : ' . $url . '.' . PHP_EOL;
+                }
+            }
+
+            try {
+                $myfile = fopen(SYSTEM_FILE_LOG, 'a');
+                fwrite($myfile, $Message);
+                fflush($myfile);
+                fclose($myfile);
+            } catch (Exception $error) {
+                chmod($myfile, 0777);
+            }
+        }
+    }
+
+}

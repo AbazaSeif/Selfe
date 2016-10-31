@@ -1,0 +1,352 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Class_Group
+ *
+ * @author abaza
+ */
+class Class_Group extends Zone {
+
+    var $GUID = null;
+    var $DIR_OPRATION = null;
+
+    public function Create_New_Group($Data = null) {
+        $Group = array();
+
+        if (is_null($this->DIR_OPRATION)) {
+            if (class_exists(FileSystem)) {
+                $this->DIR_OPRATION = new FileSystem();
+            }
+        }
+        if (is_null($this->UUID)) {
+            if (class_exists(UUID)) {
+                $this->UUID = new UUID();
+            }
+        }
+
+        $GUID = $this->UUID->GUID();
+
+        $tmp = [
+            FILED_GROUPS_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_NAME),
+            FILED_GROUPS_LOGO_IMAGE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_LOGO_IMAGE),
+            FILED_GROUPS_ADMIN => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_ADMIN),
+            FILED_GROUPS_GUID => $GUID,
+            FILED_GROUPS_PRIVACY => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_PRIVACY),
+            FILED_GROUPS_HIDE => OFF
+        ];
+
+        if (!is_null($Data)) {
+            $Group = $GLOBALS[CLASS_TOOLS]->removeNull($Data);
+        } else {
+            $Group = $GLOBALS[CLASS_TOOLS]->removeNull($tmp);
+        }
+
+        if ($Group[FILED_GROUPS_PRIVACY] > NETWORK_ONLY) {
+            return FAIL . KEY_GROUPS_PRIVACY;
+        }
+
+        if (!$GLOBALS[CLASS_TOOLS]->isKeyExists(FILED_GROUPS_GUID, $Group)) {
+            $Group[FILED_GROUPS_GUID] = $GUID;
+        }
+
+        if (!$GLOBALS[CLASS_TOOLS]->in_Array($Group, FILED_GROUPS_NAME, FILED_GROUPS_ADMIN)) {
+            $this->LogERROR("Not found basic fileds", __FUNCTION__, __LINE__);
+            return FAIL . FILED_GROUPS_NAME;
+        }
+
+        $Test_Exist = [FILED_GROUPS_ADMIN => $Group[FILED_GROUPS_ADMIN], FILED_GROUPS_NAME => $Group[FILED_GROUPS_NAME], FILED_GROUPS_HIDE => OFF];
+        $Test_Delete_Group = [FILED_GROUPS_ADMIN => $Group[FILED_GROUPS_ADMIN], FILED_GROUPS_NAME => $Group[FILED_GROUPS_NAME], FILED_GROUPS_HIDE => ON];
+
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_GROUPS, $Test_Exist)) {
+            return GROUP_EXIST;
+        }
+
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_GROUPS, $Test_Delete_Group)) {
+            $Old_Group = $GLOBALS[CLASS_DATABASE]->select(TABLE_GROUPS, $Test_Delete_Group);
+            $Reopen_Group = $GLOBALS[CLASS_TOOLS]->ChangeValueInArray(FILED_GROUPS_HIDE, OFF, $Old_Group);
+            if ($GLOBALS[CLASS_DATABASE]->update(TABLE_GROUPS, $Reopen_Group, $Old_Group)) {
+                $Sync = new Syncronization();
+                return $Sync->SyncUserGroups($Group[FILED_GROUPS_ADMIN]);
+            } else {
+                $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                return FAIL;
+            }
+        }
+
+        if ($this->Create_Dir($GUID)) {
+            if ($GLOBALS[CLASS_DATABASE]->insert(TABLE_GROUPS, $Group)) {
+                $Sync = new Syncronization();
+                return $Sync->SyncUserGroups($Group[FILED_GROUPS_ADMIN]);
+            } else {
+                $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                return FAIL;
+            }
+        } else {
+            $this->LogERROR("Can't Create Dir for Group", __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Delete_Group($Group_ID = 0, $Admin = 0) {
+        $tmp = $GLOBALS[CLASS_TOOLS]->removeNull([
+            FILED_GROUPS_ID => (empty($Group_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_ID) : $Group_ID),
+            FILED_GROUPS_ADMIN => (empty($Admin) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_ADMIN) : $Admin),
+            FILED_GROUPS_HIDE => OFF
+        ]);
+        $User = $tmp[FILED_GROUPS_ADMIN];
+        if (!is_null($tmp)) {
+            if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_GROUPS, $tmp)) {
+                $Data = $GLOBALS[CLASS_DATABASE]->select(TABLE_GROUPS, $tmp);
+                $DeleGroup = $GLOBALS[CLASS_TOOLS]->ChangeValueInArray(FILED_GROUPS_HIDE, ON, $Data);
+                $UserID = $DeleGroup[FILED_GROUPS_ADMIN];
+                if ($GLOBALS[CLASS_DATABASE]->update(TABLE_GROUPS, $DeleGroup, $tmp)) {
+                    $Sync = new Syncronization();
+                    return $Sync->SyncUserGroups($UserID);
+                } else {
+                    $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                    return FAIL;
+                }
+            } else {
+                if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_GROUPS, [FILED_GROUPS_ID => $tmp[FILED_GROUPS_ID]])) {
+                    $Member = $GLOBALS[CLASS_DATABASE]->select(TABLE_MEMBER_GROUPS, [FILED_MEMBER_GROUP_IDG => $tmp[FILED_GROUPS_ID], FILED_MEMBER_GROUP_UID => $User]);
+                    if (!is_null($Member)) {
+                        if ($Member[FILED_MEMBER_GROUP_VALUE] == MEMBER_PROCURATOR) {
+                            $tmp = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_GROUPS_ADMIN, $tmp);
+                            $Data = $GLOBALS[CLASS_DATABASE]->select(TABLE_GROUPS, $tmp);
+                            $DeleGroup = $GLOBALS[CLASS_TOOLS]->ChangeValueInArray(FILED_GROUPS_HIDE, ON, $Data);
+                            if ($GLOBALS[CLASS_DATABASE]->update(TABLE_GROUPS, $DeleGroup, $tmp)) {
+                                $Sync = new Syncronization();
+                                return $Sync->SyncUserGroups($User);
+                            } else {
+                                $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                                return FAIL;
+                            }
+                        } else {
+                            return GROUP_NOT_EXIST;
+                        }
+                    } else {
+                        return GROUP_NOT_EXIST;
+                    }
+                } else {
+                    return GROUP_NOT_EXIST;
+                }
+            }
+        } else {
+            return FAIL;
+        }
+    }
+
+    public function Edite_Group($Group_ID = 0, $Data = null) {
+        $Group = array();
+
+        $tmp = [
+            FILED_GROUPS_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_NAME),
+            FILED_GROUPS_LOGO_IMAGE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_LOGO_IMAGE),
+            FILED_GROUPS_ADMIN => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_ADMIN),
+            FILED_GROUPS_PRIVACY => $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_PRIVACY),
+            FILED_GROUPS_HIDE => OFF
+        ];
+
+        $Where = [
+            FILED_GROUPS_ID => (empty($Group_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_GROUPS_ID) : $Group_ID)
+        ];
+
+        if (!is_null($Data)) {
+            $Group = $GLOBALS[CLASS_TOOLS]->removeNull($Data);
+        } else {
+            $Group = $GLOBALS[CLASS_TOOLS]->removeNull($tmp);
+        }
+
+        if (is_null($Group)) {
+            return FAIL;
+        }
+
+        if ($Group[FILED_GROUPS_PRIVACY] > NETWORK_ONLY) {
+            return FAIL . KEY_GROUPS_PRIVACY;
+        }
+
+        if (!$GLOBALS[CLASS_TOOLS]->in_Array($Where, FILED_GROUPS_ID)) {
+            $this->LogERROR("Not found Group ID fileds", __FUNCTION__, __LINE__);
+            return FAIL . KEY_GROUPS_ID;
+        }
+        if (!$GLOBALS[CLASS_TOOLS]->in_Array($Group, FILED_GROUPS_NAME, FILED_GROUPS_ADMIN)) {
+            $this->LogERROR("Not found basic fileds", __FUNCTION__, __LINE__);
+            return FAIL . FILED_GROUPS_NAME;
+        }
+
+        $Test_Exist = [FILED_GROUPS_ADMIN => $Group[FILED_GROUPS_ADMIN], FILED_GROUPS_NAME => $Group[FILED_GROUPS_NAME], FILED_GROUPS_HIDE => ON];
+
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_GROUPS, $Test_Exist)) {
+            if ($GLOBALS[CLASS_DATABASE]->update(TABLE_GROUPS, $Group, $Where)) {
+                $Sync = new Syncronization();
+                return $Sync->SyncUserGroups($Group[FILED_GROUPS_ADMIN]);
+            } else {
+                $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                return FAIL;
+            }
+        } else {
+            return GROUP_NOT_EXIST;
+        }
+    }
+
+    public function Add_to_Group($Group_ID = null, $User_ID = null) {
+        $tmp = [
+            FILED_MEMBER_GROUP_IDG => ((is_null($Group_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_IDG) : $Group_ID)),
+            FILED_MEMBER_GROUP_UID => ((is_null($User_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_UID) : $User_ID)),
+            FILED_MEMBER_GROUP_VALUE => MEMBER_JUNIOR
+        ];
+
+        $UserData = $GLOBALS[CLASS_TOOLS]->removeNull($tmp);
+        if (!$GLOBALS[CLASS_TOOLS]->in_Array($UserData, FILED_MEMBER_GROUP_IDG, FILED_MEMBER_GROUP_UID)) {
+            $this->LogERROR("Not Group ID or User ID", __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_MEMBER_GROUPS, $UserData)) {
+            return ALREADY_EXISTS;
+        }
+        $Group = $GLOBALS[CLASS_DATABASE]->select(TABLE_GROUPS, [FILED_GROUPS_ID => $UserData[FILED_MEMBER_GROUP_IDG]]);
+        if (!is_null($Group)) {
+            if ($Group[FILED_GROUPS_ADMIN] == $UserData[FILED_MEMBER_GROUP_UID]) {
+                return YOU_ARE_ADMIN;
+            }
+        } else {
+            $this->LogERROR("Result Not Normal" . print_r($tmp, true), __FUNCTION__, __LINE__);
+            return ShowError();
+        }
+        $Admin = $Group[FILED_GROUPS_ADMIN];
+        $User = $UserData[FILED_MEMBER_GROUP_UID];
+        $Privace = $Group[FILED_GROUPS_PRIVACY];
+        $Result = null;
+        switch ($Privace) {
+            case EVERYONE:
+                $Result = $GLOBALS[CLASS_DATABASE]->insert(TABLE_MEMBER_GROUPS, $UserData);
+                break;
+            case FRIEND_ONLY:
+                $UserF = new Friend_Class();
+                if ($UserF->isFriends($Admin, $User)) {
+                    $Result = $GLOBALS[CLASS_DATABASE]->insert(TABLE_MEMBER_GROUPS, $UserData);
+                } else {
+                    return FAIL;
+                }
+                break;
+            case ZONE_ONLY:
+                if ($this->isTheSimeZone($Admin, $User)) {
+                    $Result = $GLOBALS[CLASS_DATABASE]->insert(TABLE_MEMBER_GROUPS, $UserData);
+                } else {
+                    return FAIL;
+                }
+                break;
+            case NETWORK_ONLY:
+                if ($this->isTheSimeNetwork($Admin, $User)) {
+                    $Result = $GLOBALS[CLASS_DATABASE]->insert(TABLE_MEMBER_GROUPS, $UserData);
+                } else {
+                    return FAIL;
+                }
+                break;
+        }
+
+
+        if ($Result) {
+            return SUCCESS;
+        } else {
+            $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Remove_from_Group($Group_ID = null, $User_ID = null) {
+        $tmp = [
+            FILED_MEMBER_GROUP_IDG => ((is_null($Group_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_IDG) : $Group_ID)),
+            FILED_MEMBER_GROUP_UID => ((is_null($User_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_UID) : $User_ID)),
+        ];
+
+        $UserData = $GLOBALS[CLASS_TOOLS]->removeNull($tmp);
+        if (!$GLOBALS[CLASS_TOOLS]->in_Array($UserData, FILED_MEMBER_GROUP_IDG, FILED_MEMBER_GROUP_UID)) {
+            $this->LogERROR("Not Group ID or User ID", __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+
+        if ($GLOBALS[CLASS_DATABASE]->isExist(TABLE_MEMBER_GROUPS, $UserData)) {
+            if ($GLOBALS[CLASS_DATABASE]->delete(TABLE_MEMBER_GROUPS, $UserData)) {
+                return SUCCESS;
+            } else {
+                $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+                return FAIL;
+            }
+        } else {
+            $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    public function Update_Level($MemberID = null, $Group_ID = null, $User_ID = null, $Value = null) {
+        $tmp = [
+            FILED_MEMBER_GROUP_ID => ((is_null($MemberID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_ID) : $MemberID)),
+            FILED_MEMBER_GROUP_IDG => ((is_null($Group_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_IDG) : $Group_ID)),
+            FILED_MEMBER_GROUP_UID => ((is_null($User_ID) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_UID) : $User_ID)),
+            FILED_MEMBER_GROUP_VALUE => ((is_null($Value) ? $GLOBALS[CLASS_FILTER]->FilterData(KEY_MEMBER_GROUP_VALUE) : $Value))
+        ];
+
+        $UserData = $GLOBALS[CLASS_TOOLS]->removeNull($tmp);
+        if (!$GLOBALS[CLASS_TOOLS]->in_Array($UserData, FILED_MEMBER_GROUP_IDG, FILED_MEMBER_GROUP_UID, FILED_MEMBER_GROUP_VALUE)) {
+            $this->LogERROR("Not Group ID or User ID", __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+
+        if ($UserData[FILED_MEMBER_GROUP_VALUE > MEMBER_PROCURATOR]) {
+            return FAIL;
+        }
+
+        $GLOBALS[CLASS_TOOLS]->removeNull($Where = [
+            FILED_MEMBER_GROUP_ID => ((is_null($MemberID) ? $UserData[FILED_MEMBER_GROUP_ID] : $MemberID)),
+            FILED_MEMBER_GROUP_IDG => $UserData[FILED_MEMBER_GROUP_IDG],
+            FILED_MEMBER_GROUP_UID => $UserData[FILED_MEMBER_GROUP_UID]
+        ]);
+
+        if ($GLOBALS[CLASS_DATABASE]->update(TABLE_MEMBER_GROUPS, $UserData, $Where)) {
+            return SUCCESS;
+        } else {
+            $this->LogERROR("ERROR MySQL : " . $GLOBALS[CLASS_DATABASE]->ReturnError(), __FUNCTION__, __LINE__);
+            return FAIL;
+        }
+    }
+
+    private function Create_Dir($GUID) {
+        $Path = opendir(PATH_GROUPS);
+        if (!$Path) {
+            $this->LogERROR("ERROR", "Can't Open File " . PATH_GROUPS, __FUNCTION__, __LINE__);
+            die($GLOBALS[CLASS_TOOLS]->ShowDie($GLOBALS[CLASS_TOOLS]->ShowDie("Can't Open File " . PATH_GROUPS)));
+            closedir();
+        } else {
+            closedir();
+            $New_Dir = PATH_GROUPS . DIRECTORY_SEPARATOR . $GUID;
+            if (!$this->DIR_OPRATION->exists($New_Dir)) {
+                $Retern = $this->DIR_OPRATION->mkdir($New_Dir);
+            } else {
+                $this->DIR_OPRATION->move($New_Dir, $New_Dir . '_bk');
+                $this->Create_Dir($GUID);
+            }
+
+            $QrBarcode = PATH_GROUPS . DIRECTORY_SEPARATOR . $GUID . DIRECTORY_SEPARATOR . BARCODE;
+            if (!$this->DIR_OPRATION->exists($QrBarcode)) {
+                if ($this->DIR_OPRATION->mkdir($QrBarcode)) {
+                    $filename = $QrBarcode . DIRECTORY_SEPARATOR . $GUID . '.png';
+                    QRCode::png($GUID, $filename, 'H', 5);
+                }
+            }
+
+            return $Retern;
+        }
+    }
+
+    private function LogERROR($Message, $Function, $Line) {
+        $GLOBALS[CLASS_TOOLS]->System_Log($Message, __CLASS__ . "::" . $Function, $Line, Tools::ERROR);
+    }
+
+}

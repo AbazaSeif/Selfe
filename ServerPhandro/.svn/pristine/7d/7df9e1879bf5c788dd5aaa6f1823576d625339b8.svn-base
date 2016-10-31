@@ -1,0 +1,311 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Search_Class
+ *
+ * @author abaza
+ */
+class Search_Class {
+
+    private $UserMang = null;
+
+    function __construct() {
+        if (is_null($this->UserMang)) {
+            $this->UserMang = new UserMangment();
+        }
+    }
+
+    function __destruct() {
+        if (!is_null($this->UserMang)) {
+            unset($this->UserMang);
+        }
+    }
+
+    public function GetResult() {
+        $Loop = 0;
+        $Result = array();
+        $FlagUser = $FlagCountry = $FlagNetwork = false;
+
+        $User = array(
+            FILED_USER_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_NAME),
+            FILED_USER_PHONE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_PHONE),
+            FILED_USER_AGE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_AGE),
+            FILED_USER_UUID => $GLOBALS[CLASS_FILTER]->FilterData(KEY_USER_UUID)
+        );
+
+        $Country = array(
+            FILED_COUNTRY_NAME => strtoupper($GLOBALS[CLASS_FILTER]->FilterData(KEY_COUNTRY_NAME)),
+            FILED_COUNTRY_ISO => $GLOBALS[CLASS_FILTER]->FilterData(KEY_COUNTRY_ISO)
+        );
+
+        $Network = array(
+            FILED_MOBILE_NETWORK_CODE => $GLOBALS[CLASS_FILTER]->FilterData(KEY_MOBILE_NETWORK_CODE),
+            FILED_MOBILE_NETWORK_COUNTRY_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_MOBILE_NETWORK_COUNTRY_NAME),
+            FILED_MOBILE_NETWORK_NETWORK_NAME => $GLOBALS[CLASS_FILTER]->FilterData(KEY_MOBILE_NETWORK_NETWORK_NAME)
+        );
+
+        $User = $GLOBALS[CLASS_TOOLS]->removeNull($User);
+        $Country = $GLOBALS[CLASS_TOOLS]->removeNull($Country);
+        $Network = $GLOBALS[CLASS_TOOLS]->removeNull($Network);
+
+        $UserOnly = $CountryOnly = $MobileOnly = array();
+
+        if (!is_null($User)) {
+            $FlagUser = true;
+            $UserOnly = $this->UserOnly($User);
+        }
+
+        if (!is_null($Country)) {
+            $FlagCountry = true;
+            $CountryOnly = $this->CountryOnly($Country);
+        }
+
+        if (!is_null($Network)) {
+            $FlagNetwork = true;
+            $MobileOnly = $this->NetworkOnly($Network);
+        }
+
+        return $this->Implimintation($UserOnly, $CountryOnly, $MobileOnly, [0 => $FlagUser, 1 => $FlagCountry, $FlagNetwork]);
+    }
+
+    private function Implimintation($User = null, $Country = null, $Network = null, $Flags = array()) {
+        $Filnal = array();
+        $UserLeng = count($User);
+        $CountryLeng = count($Country);
+        $NetworkLeng = count($Network);
+
+        if (($UserLeng > 0) && ($Flags[0] == TRUE)) {
+            if (is_array($User[0])) {
+                foreach ($User as $elementUser) {
+                    $ID = $elementUser[0][FILED_USER_ID];
+                    $UserRes = array();
+                    if ($CountryLeng > 0) {
+                        if ($NetworkLeng > 1) {
+                            if (is_array($Network[0])) {
+                                foreach ($Network as $ElementNetwork) {
+                                    $UserRes = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $ID, FILED_PHONE_COUNTRY => $Country[FILED_COUNTRY_ID], FILED_PHONE_NETWORK => $ElementNetwork[FILED_MOBILE_NETWORK_ID]]);
+                                    if (!is_null($UserRes)) {
+                                        array_push($Filnal, $elementUser);
+                                    }
+                                }
+                            } else {
+                                $UserRes = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $ID, FILED_PHONE_COUNTRY => $Country[FILED_COUNTRY_ID], FILED_PHONE_NETWORK => $Network[FILED_MOBILE_NETWORK_ID]]);
+                                if (!is_null($UserRes)) {
+                                    array_push($Filnal, $elementUser);
+                                }
+                            }
+                        } elseif ($NetworkLeng === 1) {
+                            $UserRes = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $ID, FILED_PHONE_COUNTRY => $Country[FILED_COUNTRY_ID], FILED_PHONE_NETWORK => $Network[FILED_MOBILE_NETWORK_ID]]);
+                            if (!is_null($UserRes)) {
+                                array_push($Filnal, $elementUser);
+                            }
+                        } else {
+                            $UserRes = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $ID, FILED_PHONE_COUNTRY => $Country[FILED_COUNTRY_ID]]);
+                            if (!is_null($UserRes)) {
+                                array_push($Filnal, $elementUser);
+                            }
+                        }
+                    } elseif ($NetworkLeng > 0) {
+                        if (is_array($Network[0])) {
+                            foreach ($Network as $ElementNetwork) {
+                                $UserRes = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $ID, FILED_PHONE_NETWORK => $ElementNetwork[FILED_MOBILE_NETWORK_ID]]);
+                                if (!is_null($UserRes)) {
+                                    array_push($Filnal, $elementUser);
+                                }
+                            }
+                        } else {
+                            $UserRes = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $ID, FILED_PHONE_NETWORK => $Network[FILED_MOBILE_NETWORK_ID]]);
+                            if (!is_null($UserRes)) {
+                                array_push($Filnal, $elementUser);
+                            }
+                        }
+                    } else {
+                        array_push($Filnal, $elementUser[0]);
+                    }
+                }
+            }
+        } elseif (($CountryLeng > 0) && ($Flags[1] == true)) {
+            $CountryID = $Country[FILED_COUNTRY_ID];
+            if ($Flags[2] == true) {
+                $NetworkID = $Network[FILED_MOBILE_NETWORK_ID];
+                $UsersPhones = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_COUNTRY => $CountryID, FILED_PHONE_NETWORK => $NetworkID]);
+            } else {
+                $UsersPhones = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_COUNTRY => $CountryID]);
+            }
+            if (!is_null($UsersPhones)) {
+                if (is_array($UsersPhones[0])) {
+                    foreach ($UsersPhones as $ElementCountry) {
+                        $UID = $ElementCountry[FILED_PHONE_UID];
+                        $Users = $this->UserMang->WhoIs($UID, null, KEY_TABLE_USER);
+                        if (!is_null($Users)) {
+                            $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Users);
+                            $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                            $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                            $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                            $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                            array_push($Filnal, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                        }
+                    }
+                } else {
+                    $UID = $UsersPhones[FILED_PHONE_UID];
+                    $Users = $this->UserMang->WhoIs($UID, null, KEY_TABLE_USER);
+                    if (!is_null($Users)) {
+                        $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Users);
+                        $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                        $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                        $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                        $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                        array_push($Filnal, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                    }
+                }
+            }
+        } elseif (($NetworkLeng > 0) && ($Flags[2] == true)) {
+            if (is_array($Network[0])) {
+                foreach ($Network as $elementNet) {
+                    $NetworkID = $elementNet[FILED_MOBILE_NETWORK_ID];
+                    $Users = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_NETWORK => $NetworkID]);
+                    if (is_array($Users[0])) {
+                        foreach ($Users as $elementUserPhone) {
+                            $UID = $elementUserPhone[FILED_PHONE_UID];
+                            $Data = $this->UserMang->WhoIs($UID, null, KEY_TABLE_USER);
+                            if (!is_null($Data)) {
+                                $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Data);
+                                $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                                $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                                $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                                $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                                array_push($Filnal, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                            }
+                        }
+                    } else {
+                        $UID = $elementUserPhone[FILED_PHONE_UID];
+                        $Data = $this->UserMang->WhoIs($UID, null, KEY_TABLE_USER);
+                        if (!is_null($Data)) {
+                            $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Data);
+                            $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                            $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                            $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                            $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                            array_push($Filnal, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                        }
+                    }
+                }
+            } else {
+                $NetworkID = $Network[FILED_MOBILE_NETWORK_ID];
+                $Users = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_NETWORK => $NetworkID]);
+                if (is_array($Users[0])) {
+                    foreach ($Users as $elementUserPhone) {
+                        $UID = $elementUserPhone[FILED_PHONE_UID];
+                        $Data = $this->UserMang->WhoIs($UID, null, KEY_TABLE_USER);
+                        if (!is_null($Data)) {
+                            $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Data);
+                            $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                            $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                            $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                            $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                            array_push($Filnal, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                        }
+                    }
+                } else {
+                    $UID = $Users[FILED_PHONE_UID];
+                    $Data = $this->UserMang->WhoIs($UID, null, KEY_TABLE_USER);
+                    if (!is_null($Data)) {
+                        $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Data);
+                        $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                        $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                        $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                        $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                        array_push($Filnal, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                    }
+                }
+            }
+        }
+
+        if (count($Filnal) > 0) {
+            arsort($Filnal);
+            return $Filnal;
+        } else {
+            return NOT_FOUND;
+        }
+    }
+
+    private function UserOnly($Quiry) {
+        $Result = array();
+        $Loop = 0;
+        $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+        $DataImpliment = $this->GetUserInformation($Quiry);
+        if (is_array($DataImpliment[0])) {
+            foreach ($DataImpliment as $User) {
+                $Resulttemp[$Loop++] = $User;
+                $Resulttemp[$Loop++] = $this->UserMang->Get_User_Profile_Photo($User[FILED_USER_ID]);
+                $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($User[FILED_USER_ID]);
+                $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+                $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+                $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+                $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+                $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+                array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+                $Loop = 0;
+                $Resulttemp = $ClearArray = $Result_temp1 = $Result_temp2 = $Result_temp3 = $Result_temp4 = null;
+            }
+        } else {
+            $Resulttemp[$Loop++] = $DataImpliment;
+            $Resulttemp[$Loop++] = $this->UserMang->Get_User_Profile_Photo($DataImpliment[FILED_USER_ID]);
+            $Resulttemp[$Loop++] = $this->UserMang->Get_User_Stock_Now($DataImpliment[FILED_USER_ID]);
+            $ClearArray = $GLOBALS[CLASS_TOOLS]->removeNull($Resulttemp);
+            $Result_temp1 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_UUID, $ClearArray);
+            $Result_temp2 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_PASSWORD, $Result_temp1);
+            $Result_temp3 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_DIR_PATH, $Result_temp2);
+            $Result_temp4 = $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_FAMOUS, $Result_temp3);
+            array_push($Result, $GLOBALS[CLASS_TOOLS]->RemoveKeyInArray(FILED_USER_IS_VIP, $Result_temp4));
+        }
+
+        return $Result;
+    }
+
+    private function CountryOnly($Quiry) {
+        $ReternCountry = $this->GetCountry($Quiry);
+        if (!is_null($ReternCountry)) {
+            return $ReternCountry;
+        }
+        return null;
+    }
+
+    private function NetworkOnly($Quiry) {
+        $ReternCountry = $this->GetNetwork($Quiry);
+        if (!is_null($ReternCountry)) {
+            return $ReternCountry;
+        }
+        return null;
+    }
+
+    private function GetUserInformation($User) {
+        return $GLOBALS[CLASS_DATABASE]->select(TABLE_USER, $User, '', '', true);
+    }
+
+    private function GetCountry($Country) {
+        return $GLOBALS[CLASS_DATABASE]->select(TABLE_COUNTRY, $Country, '', '', true);
+    }
+
+    private function GetNetwork($Country) {
+        return $GLOBALS[CLASS_DATABASE]->select(TABLE_MOBILE_NETWORK, $Country, '', '', true);
+    }
+
+    public function Search_Message($Text) {
+        if (isset($Text)) {
+            $Result = $GLOBALS[CLASS_TOOLS]->removeNull($GLOBALS[CLASS_DATABASE]->select(TABLE_MESSAGE, [FILED_MESSAGE_MESSAGE => trim($Text)], '', '', true));
+            if (!is_null($Result)) {
+                return $Result;
+            } else {
+                return false;
+            }
+        }
+    }
+
+}

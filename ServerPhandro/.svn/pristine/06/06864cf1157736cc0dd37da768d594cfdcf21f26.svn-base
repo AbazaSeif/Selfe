@@ -1,0 +1,25 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Class_Updateing
+ *
+ * @author abaza
+ */
+class Class_Updateing {
+    //put your code here
+    
+    
+    public function Update_Network_Count(){
+        //SELECT COUNT(*) FROM Table_Mobile_Network where _COUNTRY_NAME = 'Brazil';
+//        $Where = array(FILED_MOBILE_NETWORK_COUNTRY_NAME => $Country);
+//        $Count = $GLOBEL[CLASS_DATABASE]->countRows(TABLE_MOBILE_NETWORK,$Where);
+//        $CountValue = array(FILED_NUMBER_OF_NETWORK => $Count);
+//        $GLOBEL[CLASS_DATABASE]->update(TABLE_COUNTRY,$CountValue,$Where);
+    }
+}

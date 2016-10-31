@@ -1,0 +1,25 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+define("NORMAL_SCORE", "0");
+define("VIP_SCORE", "50");
+
+define("MINIMAM_SEND_TO_STOCK", "1");
+define("MAXIMAM_SEND_TO_STOCK", "1000000");
+
+define("SHOW_UNLIKE", true);
+define("SHOW_LIKE", true);
+
+define("SHOW_TOP_IN_GLOBEL", false);
+define("SHOW_TOP_IN_ZONE", true);
+
+define("SHOW_STOCK_IN_USERS_LIST", false);
+
+define("ENCRIPTION_BUFFER", false);
+
+

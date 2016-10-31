@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:dragger_layout="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/dragger_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    dragger_layout:drag_view_id="@+id/drag_view"
+    dragger_layout:shadow_view_id="@+id/shadow_view">
+
+    <FrameLayout
+        android:id="@+id/shadow_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"/>
+    <!--<include-->
+    <!--layout="@layout/toolbar"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"/>-->
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:background="@drawable/background"
+        android:fitsSystemWindows="true">
+
+
+        <!-- Signup Button -->
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="31dp"
+            android:id="@+id/txtName"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:hint="@string/name"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="phone"
+            android:ems="10"
+            android:layout_below="@+id/txtName"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="15dp"
+            android:id="@+id/txtPhone"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:hint="@string/phone_number"/>
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:layout_below="@+id/txtPhone"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="19dp"
+            android:id="@+id/txtEmail"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:hint="@string/email_address"/>
+
+        <include
+            android:id="@+id/include2"
+            layout="@layout/selectsex"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="92dp"
+            android:layout_below="@+id/txtEmail"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"/>
+
+        <com.dd.processbutton.iml.ActionProcessButton
+            android:id="@+id/btn_signup"
+            android:layout_width="match_parent"
+            android:layout_height="50sp"
+            android:text="@string/Create_Account"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            custom:pb_textComplete="@string/Success"
+            custom:pb_textError="@string/Failed"
+            custom:pb_textProgress="@string/Loading"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="30dp"/>
+
+        <TextView
+            android:text="@string/i_have_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/link_login"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:textAppearance="@style/Selfie.TextAppearance.ListItem"/>
+
+    </RelativeLayout>
+</FrameLayout>

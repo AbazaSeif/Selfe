@@ -1,0 +1,258 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Maltimedia_module
+ *
+ * @author abaza
+ */
+class Maltimedia_module {
+
+    var $UID = null;
+    var $IsProfile = null;
+    var $Privace = null;
+    var $Commant = null;
+    var $FileType = null;
+    var $FileImagePath = null;
+    var $FilePath = null;
+    var $Dir = null;
+    var $FileAllow = null;
+    var $DIR_OPRATION = null;
+
+    function __set($name, $class) {
+        if (is_null($name)) {
+            if (class_exists($class)) {
+                $name = new $class;
+                return $name;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    function __construct() {
+//        $this->DIR_OPRATION = (is_null($this->DIR_OPRATION = self::__set($this->DIR_OPRATION, FileSystem)) ? die(ShowError()) : $this->DIR_OPRATION);
+        $this->DIR_OPRATION = new FileSystem();
+        $this->FileAllow = FileAllow();
+
+        register_shutdown_function('__destruct');
+    }
+
+    public function Maltimedia() {
+        $Data = $_SERVER['HTTP_INFOR']; //UID , IS Profile , Privcey , Comment
+
+        list($this->UID, $this->IsProfile, $this->Privace, $this->Commant, $this->FileType) = explode(":", $Data);
+
+        if ($this->Filtration()) {
+            $this->FileType();
+            return $this->RoutingDir();
+        }
+        exit();
+    }
+
+    private function Filtration() {
+        if (!isset($this->UID)) {
+            return FAIL . KEY_UID;
+        }
+        if (!isset($this->IsProfile)) {
+            return FAIL . KEY_USER_PHOTO_IS_PROFILE;
+        }
+        if (!isset($this->Privace)) {
+            return FAIL . KEY_USER_PHOTO_PRIVACY;
+        }
+
+        if (!is_int($this->UID)) {
+            $this->UID = intval($this->UID);
+        }
+
+        if (!is_int($this->IsProfile)) {
+            $this->IsProfile = intval($this->IsProfile);
+        }
+
+        if (!is_int($this->Privace)) {
+            $this->Privace = intval($this->Privace);
+        }
+
+        if (is_string($this->Commant)) {
+            $this->Commant = mysql_real_escape_string($this->Commant);
+        } else {
+            $this->Commant = "";
+        }
+
+        if (is_string($this->FileType)) {
+            $this->FileType = strtolower($this->FileType);
+        }
+        return true;
+    }
+
+    private function FileType() {
+        if (is_array($this->FileAllow)) {
+            foreach ($this->FileAllow as $Array => $file) {
+                if (in_array($this->FileType, $file)) {
+                    $this->Dir = $Array;
+                    return $this->Dir;
+                }
+            }
+        } else {
+            $GLOBALS['Tools']->System_Log("ERROR Not found File Allow Array", __CLASS__ . " " . __FUNCTION__, __LINE__, Tools::ERROR);
+            $this->Dir = null;
+        }
+    }
+
+    private function RoutingDir() {
+        if (!empty($this->Dir)) {
+            $SearchForUser = array(
+                FILED_USER_ID => $this->UID
+            );
+            if ($GLOBALS['Database']->isExist(TABLE_USER, $SearchForUser)) {
+                $UserInfor = $GLOBALS['Database']->select(TABLE_USER, $SearchForUser);
+                $ImagePath = $UserInfor[FILED_USER_DIR_PATH];
+
+                if ($this->Dir == PHOTO && $this->IsProfile == ON) {
+                    $ProfileImage = array(
+                        FILED_UID => $this->UID,
+                        FILED_USER_PHOTO_IS_PROFILE => ON
+                    );
+
+                    $RetImage = $GLOBALS['Database']->select(TABLE_USER_PHOTO, $ProfileImage, '', 1);
+                    if (!is_null($RetImage)) {
+                        $RetImage = $GLOBALS['Tools']->ChangeValueInArray(FILED_USER_PHOTO_IS_PROFILE, OFF, $RetImage);
+                        $RetImage = $GLOBALS['Tools']->RemoveKeyInArray(FILED_USER_PHOTO_ID, $RetImage);
+                        $GLOBALS['Database']->update(TABLE_USER_PHOTO, $RetImage, $ProfileImage);
+                    }
+                }
+
+                $this->FilePath = $ImagePath . DIRECTORY_SEPARATOR . $this->Dir;
+                if (!$this->DIR_OPRATION->exists($this->FilePath)) {
+                    if (!$this->DIR_OPRATION->mkdir($this->FilePath)) {
+                        $GLOBALS['Tools']->System_Log("Can not Make Dir " . $this->FilePath, __CLASS__ . " " . __FUNCTION__, __LINE__, Tools::ERROR);
+                        return FAIL;
+                    }
+                }
+
+                if ($this->SavingFile()) {
+                    if (!is_null($this->FileImagePath)) {
+                        $DataImage = $GLOBALS['Tools']->removeNull($this->GetDatabaseData());
+
+                        $Ret = false;
+
+                        switch ($this->Dir) {
+                            case AUDIO:
+                                $Ret = $GLOBALS['Database']->insert(TABLE_USER_AUDIO, $DataImage);
+                                break;
+                            case VIDEO:
+                                $Ret = $GLOBALS['Database']->insert(TABLE_USER_VIDEO, $DataImage);
+                                break;
+                            case PHOTO:
+                                $Ret = $GLOBALS['Database']->insert(TABLE_USER_PHOTO, $DataImage);
+                                break;
+                        }
+
+                        if ($Ret) {
+                            $ImageID = array(
+                                KEY_USER_PHOTO_ID => $GLOBALS['Database']->lastInsertID(),
+                            );
+                            return $ImageID;
+                        } else {
+                            $GLOBALS['Tools']->System_Log("Error in Save image " . $GLOBALS['Database']->ReturnError(), __CLASS__ . " " . __FUNCTION__, __LINE__, Tools::ERROR);
+                            return FAIL . FILE_IMAGE;
+                        }
+                    } else {
+                        $GLOBALS['Tools']->System_Log("Error in Write image file", __CLASS__ . " " . __FUNCTION__, __LINE__, Tools::ERROR);
+                        return FAIL . FILE_IMAGE;
+                    }
+                }
+            }
+        }
+    }
+
+    private function SavingFile() {
+        $file = '';
+
+        $name = basename($_FILES['uploaded_file']['name']);
+
+        $file = $this->FilePath . DIRECTORY_SEPARATOR . $name;
+
+        if ($this->DIR_OPRATION->exists($file)) {
+            $name = $GLOBALS['Tools']->generateRandomString() . '.' . $this->FileType;
+            $file = $this->FilePath . DIRECTORY_SEPARATOR . $name;
+        }
+
+        $this->FileImagePath = $file;
+
+        if (move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $this->FileImagePath)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function GetDatabaseData() {
+        $Data = array();
+        switch ($this->Dir) {
+            case AUDIO:
+                $Data = array(
+                    FILED_UID => $this->UID,
+                    FILED_USER_AUDIO_AUDIO_PATH => $this->FileImagePath,
+                    FILED_USER_AUDIO_COMMENT => $this->Commant,
+                    FILED_USER_AUDIO_TIME_OF_LIKE => 0,
+                    FILED_USER_AUDIO_TIME_OF_UNLIKE => 0,
+                    FILED_USER_AUDIO_PRIVACY => $this->Privace //0=public 1=me only 2=friends 3=friends of friends 4=all world
+                );
+                break;
+            case VIDEO:
+                $Data = array(
+                    FILED_UID => $this->UID,
+                    FILED_USER_VIDEO_VIDEO_PATH => $this->FileImagePath,
+                    FILED_USER_VIDEO_COMMENT => $this->Commant,
+                    FILED_USER_VIDEO_TIME_OF_LIKE => 0,
+                    FILED_USER_VIDEO_TIME_OF_UNLIKE => 0,
+                    FILED_USER_VIDEO_PRIVACY => $this->Privace //0=public 1=me only 2=friends 3=friends of friends 4=all world
+                );
+                break;
+            case PHOTO:
+                $Data = array(
+                    FILED_UID => $this->UID,
+                    FILED_USER_PHOTO_PHOTO_PATH => $this->FileImagePath,
+                    FILED_USER_PHOTO_IS_PROFILE => $this->IsProfile,
+                    FILED_USER_PHOTO_COMMENT => $this->Commant,
+                    FILED_USER_PHOTO_TIME_OF_LIKE => 0,
+                    FILED_USER_PHOTO_TIME_OF_UNLIKE => 0,
+                    FILED_USER_PHOTO_PRIVACY => $this->Privace //0=public 1=me only 2=friends 3=friends of friends 4=all world
+                );
+                break;
+        }
+        return $Data;
+    }
+
+    public function url_save_image($inPath, $outPath) { //Download images from remote server
+        $in = fopen($inPath, "rb");
+        $out = fopen($outPath, "wb");
+        while ($chunk = fread($in, 8192)) {
+            fwrite($out, $chunk, 8192);
+        }
+        fclose($in);
+        fclose($out);
+    }
+
+    function __destruct() {
+        unset($this->UID);
+        unset($this->IsProfile);
+        unset($this->Privace);
+        unset($this->Commant);
+        unset($this->FileType);
+        unset($this->FileImagePath);
+        unset($this->FilePath);
+        unset($this->Dir);
+        unset($this->FileAllow);
+        unset($this->DIR_OPRATION);
+    }
+
+}

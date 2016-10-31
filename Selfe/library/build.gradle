@@ -1,0 +1,57 @@
+apply plugin: 'com.android.library'
+
+ext {
+    PUBLISH_GROUP_ID = 'com.blunderer'
+    PUBLISH_ARTIFACT_ID = 'materialdesignlibrary'
+    PUBLISH_VERSION = '2.0.4'
+    supportLibVersion = "23.2.0"
+}
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.3'
+    defaultConfig {
+        minSdkVersion 14
+        targetSdkVersion 23
+        versionCode 1
+        versionName '1.0'
+        renderscriptTargetApi 20
+        renderscriptSupportModeEnabled true
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    lintOptions {
+        abortOnError false
+    }
+    productFlavors {
+    }
+}
+
+dependencies {
+    compile "com.android.support:appcompat-v7:${supportLibVersion}"
+    compile "com.android.support:support-v4:${supportLibVersion}"
+    compile "com.android.support:cardview-v7:${supportLibVersion}"
+    compile 'com.astuetz:pagerslidingtabstrip:1.0.1'
+    compile 'fr.baloomba:viewpagerindicator:2.4.2'
+    compile 'tk.zielony:carbon:0.6.0'
+    compile 'com.joooonho:selectableroundedimageview:1.0.1'
+    compile 'com.github.bumptech.glide:glide:3.6.0'
+}
+//apply from: 'https://raw.githubusercontent.com/blundell/release-android-library/master/android-release-aar.gradle'
+// This is the actual solution, as in http://stackoverflow.com/a/19037807/1002054
+//task clearJar(type: Delete) {
+//    delete 'build/libs/Matirial.jar'
+//}
+//
+//task makeJar(type: Copy) {
+//    from('build/bundles/release/')
+//    into('build/libs/')
+//    include('classes.jar')
+//    rename ('classes.jar', 'Matirial.jar')
+//}
+//
+//makeJar.dependsOn(clearJar, build)

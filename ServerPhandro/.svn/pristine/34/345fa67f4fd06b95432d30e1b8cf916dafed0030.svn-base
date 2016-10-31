@@ -1,0 +1,168 @@
+<?php
+
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Zone
+ *
+ * @author abaza
+ */
+class Zone {
+
+    var $UserManger;
+
+    public function Friend_List($UID) {
+        if ($UID == 0) {
+            return null;
+        }
+        $UserNetwork = 0;
+        if ((!is_null($UID))) {
+            $this->UserManger = new UserMangment();
+            $Users = $CountryTable = $NetworkTable = [];
+
+            $Countrys = $GLOBALS[CLASS_DATABASE]->select(TABLE_USER_COUNTRY_ZONE, [FILED_USER_COUNTRY_ZONE_UID => $UID]);
+            if (!is_null($Countrys)) {
+                if (is_array($Countrys[0])) {
+                    foreach ($Countrys as $CountryCode) {
+                        $PhoneUsers = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_COUNTRY => $CountryCode[FILED_USER_COUNTRY_ZONE_COUNTRY]]);
+                        if (!is_null($PhoneUsers)) {
+                            if (is_array($PhoneUsers[0])) {
+                                foreach ($PhoneUsers as $UserUID) {
+                                    if ($UserUID[FILED_PHONE_UID] == $UID) {
+                                        $UserNetwork = $UserUID[FILED_PHONE_NETWORK];
+                                        continue;
+                                    }
+                                    $User = $this->UserManger->WhoIs($UserUID[FILED_PHONE_UID], null, KEY_TABLE_USER);
+                                    if (!in_array($User, $CountryTable)) {
+                                        array_push($CountryTable, $User);
+                                    }
+                                }
+                            } else {
+                                if ($PhoneUsers[FILED_PHONE_UID] == $UID) {
+                                    $UserNetwork = $UserUID[FILED_PHONE_NETWORK];
+                                    continue;
+                                }
+                                $User = $this->UserManger->WhoIs($PhoneUsers[FILED_PHONE_UID], null, KEY_TABLE_USER);
+                                if (!in_array($User, $CountryTable)) {
+                                    array_push($CountryTable, $User);
+                                }
+                            }
+                        } else {
+                            continue;
+                        }
+                    }
+                }
+            }
+#=========================================+
+#======= Get Friend in One Network =======|
+#=========================================+
+            if ($UserNetwork == 0) {
+                $tmp = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $UID]);
+                if (!is_null($tmp)) {
+                    $UserNetwork = $tmp[FILED_PHONE_NETWORK];
+                }
+            }
+
+            if ($UserNetwork !== 0) {
+                $UserNetworkQuiry = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_NETWORK => $UserNetwork]);
+                if (!is_null($UserNetworkQuiry)) {
+                    if (is_array($UserNetworkQuiry[0])) {
+                        foreach ($UserNetworkQuiry as $Network) {
+                            if ($Network[FILED_PHONE_UID] == $UID) {
+                                continue;
+                            }
+                            $User = $this->UserManger->WhoIs($Network[FILED_PHONE_UID], null, KEY_TABLE_USER);
+                            if (!in_array($User, $NetworkTable)) {
+                                array_push($NetworkTable, $User);
+                            }
+                        }
+                    } else {
+                        if ($UserNetworkQuiry[FILED_PHONE_UID] != $UID) {
+                            $User = $this->UserManger->WhoIs($UserNetworkQuiry[FILED_PHONE_UID], null, KEY_TABLE_USER);
+                            if (!in_array($User, $NetworkTable)) {
+                                array_push($NetworkTable, $User);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //Final
+            if (count($CountryTable) > 0) {
+                $Users[KEY_TABLE_COUNTRY] = $GLOBALS[CLASS_TOOLS]->removeNull($CountryTable);
+            }
+            if (count($NetworkTable) > 0) {
+                $Users[KEY_TABLE_MOBILE_NETWORK] = $GLOBALS[CLASS_TOOLS]->removeNull($NetworkTable);
+            }
+            //Delete not important fileds
+            if (count($Users) > 0) {
+                return $Users;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public function User_Zone($UID1, $UID2) {
+
+        if ((!is_null($UID1)) && (!is_null($UID2))) {
+            $Countrys_For_User_One = $GLOBALS[CLASS_DATABASE]->select(TABLE_USER_COUNTRY_ZONE, [FILED_USER_COUNTRY_ZONE_UID => $UID1]);
+            $Countrys_For_User_Two = $GLOBALS[CLASS_DATABASE]->select(TABLE_USER_COUNTRY_ZONE, [FILED_USER_COUNTRY_ZONE_UID => $UID2]);
+
+            if ((!is_null($Countrys_For_User_One)) && (!is_null($Countrys_For_User_Two))) {
+                if (is_array($Countrys_For_User_One[0])) {
+                    $Index = 0;
+                    foreach ($Countrys_For_User_One as $Contry) {
+
+                        if (is_array($Countrys_For_User_Two[$Index])) {
+                            
+                        }
+                    }
+                }
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    private function isThisZoneBlock() {
+        
+    }
+
+    private function isThisUserInCountactList() {
+        //From Phone Number
+    }
+
+    public function User_Network() {
+        
+    }
+
+    public function isTheSimeZone($User1, $User2) {
+        $Country_User_1 = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $User1]);
+        $Country_User_2 = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $User2]);
+        if ($Country_User_1[FILED_PHONE_COUNTRY] == $Country_User_2[FILED_PHONE_COUNTRY]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function isTheSimeNetwork($User1, $User2) {
+        $Country_User_1 = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $User1]);
+        $Country_User_2 = $GLOBALS[CLASS_DATABASE]->select(TABLE_PHONE, [FILED_PHONE_UID => $User2]);
+        if ($Country_User_1[FILED_PHONE_NETWORK] == $Country_User_2[FILED_PHONE_NETWORK]) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+}

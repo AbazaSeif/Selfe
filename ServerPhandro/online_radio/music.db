@@ -1,0 +1,17 @@
+a:3:
+{   i:0;a:8:
+    {   s:8:"filename";s:58:"Boston Pops-John Williams - Super Mario Brothers Theme.mp3";
+        s:8:"filesize";i:361071;s:8:"playtime";d:30.040749999999999;
+        s:10:"audiostart";i:582;s:8:"audioend";i:361071;s:11:"audiolength";i:360489;s:6:"artist";s:25:"Boston Pops-John Williams";s:5:"title";s:26:"Super Mario Brothers Theme";
+    }
+    i:1;a:8:
+    {   s:8:"filename";s:27:"Debussy - Clair de Lune.mp3";
+        s:8:"filesize";i:361009;s:8:"playtime";d:30.040749999999999;
+        s:10:"audiostart";i:520;s:8:"audioend";i:361009;s:11:"audiolength";i:360489;s:6:"artist";s:7:"Debussy";s:5:"title";s:13:"Clair de Lune";
+    }
+    i:2;a:8:
+    {   s:8:"filename";s:21:"Dido - White Flag.mp3";
+        s:8:"filesize";i:360997;s:8:"playtime";d:30.040749999999999;
+        s:10:"audiostart";i:508;s:8:"audioend";i:360997;s:11:"audiolength";i:360489;s:6:"artist";s:4:"Dido";s:5:"title";s:10:"White Flag";
+    }
+}

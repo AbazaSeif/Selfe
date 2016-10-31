@@ -1,0 +1,45 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Adminstration
+ *
+ * @author abaza
+ */
+class Adminstration {
+
+    private $AdminPassword = "trinitron";
+    private $Database = null;
+    private $DIR_OPRATION = null;
+
+    public function __construct($Password) {
+        if (getcwd() == dirname(__FILE__)) {
+            die(ShowError());
+        }
+        if ((strcmp($this->AdminPassword, $Password)) != 0) {
+            die($this->Tools->ShowDie(MessagesSystem(SERVER_ERROR_MESSAGE)));
+        } else {
+            $Configration = Configration();
+            if (is_null($this->Database)) {
+                $this->Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+                if (!isset($this->Database)) {
+                    die($this->Tools->ShowDie("ERROR Database"));
+                }
+            }
+
+            if (is_null($this->DIR_OPRATION)) {
+                $this->DIR_OPRATION = new FileSystem();
+            }
+        }
+    }
+
+}

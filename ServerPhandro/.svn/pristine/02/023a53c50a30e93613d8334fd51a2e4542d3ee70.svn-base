@@ -1,0 +1,1102 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+
+define("GET_PHONE_TYPE_FROM_IMEI", "http://www.imei.info/?imei=");
+
+define("DEFUALT_COOKIE", "superwow");
+define("DEFUALT_COOKIE_ONLINE", "superwowonline");
+
+define("DEBUG", "XDEBUG_SESSION_START"); //=netbeans-xdebug
+define("MAIN_COMMAND", "type");
+define("MAIN_COMMAND_MEDIA", "HTTP_TYPE");
+
+//Defination Globel Class
+define("CLASS_DATABASE", "Database");
+define("CLASS_TOOLS", "Tools");
+define("CLASS_FILTER", "Filter");
+define("PASSWORD_LENGTH", 7);
+//
+//              +--------------+
+//              |    Switchs   |
+//              +--------------+
+//              |______KEY_____+
+//              |     FILED    |
+//              +--------------+
+//              |______KEY_____|
+//              |     FILED    |
+//              +--------------+
+
+
+
+/* * ****************************************************************************
+ * *****************************************************************************
+ * *****************************************************************************
+ * *****************************************************************************
+ * ***************************************************************************** */
+//*****************
+//File Multimedia**
+//*****************
+define("PHOTO", "PHOTO");
+define("AUDIO", "AUDIO");
+define("VIDEO", "VIDEO");
+define("BARCODE", "BARCODE");
+
+//Group Switch User (1)
+define("NEW_USER", "_1NU_");
+define("EDIT_USER", "_1EU_");
+define("DELETE_USER", "_1DU_");
+define("UPLOAD_MALTIMEDIA", "_1UM_");
+define("UPLOAD_FROM_URL", "_1UFU_");
+define("GET_IMAGE", "_1GI_");
+define("GET_VIDEO", "_1GV_");
+define("GET_AUDIO", "_1GA_");
+
+//Group Switch Giftes (2)
+define("GET_GIFTES", "_2GG_");
+define("GET_MUSIC", "_2GM_");
+define("GET_PONANS", "_2GP_");
+define("SET_MUSIC", "_2SM_");
+define("SET_GIFTES", "_2SG_");
+define("SET_PONANS", "_2SP_");
+
+
+//Group Switch Status (3)
+define("STATUS_TEXT", "_3ST_");
+define("STATUS_CHANGE", "_3SC_");
+define("GET_STATUS", "_3GS_");
+
+
+//Group Switch Friend (4)
+define("MAKE_FRIEND", "_4MF_");
+define("MAKE_UNFRIEND", "_4MU_");
+define("SEND_MESSAGE", "_4SM_");
+define("SET_FRIEND_FAVORIT", "_4SFF_");
+define("SET_FRIEND_UNFAVORIT", "_4SFU_");
+
+
+//Group Switch Notifcations (5)
+define("LIKE", "_5LI_");
+define("UNLIKE", "_5UL_");
+define("SET_MESSAGE", "_5SM_");
+define("GET_MESSAGE", "_5GM_");
+define("GET_ALL_MESSAGE", "_5GAM_");
+define("DEL_MESSAGE", "_5DM_");
+
+
+//Group Switch System (6)
+define("TEST", "__test");
+define("SUCCESS", "_6OK_");
+define("NO_NEW", "_6NN_");
+define("NOT_FOUND", "_6NF_");
+define("NOT_FRINDS", "_6NFRE_");
+define("UPDATE", "_6UDA_");
+define("FAIL", "_6FI_");
+define("RETERN", "_6RET_");
+define("PHONE_EXIST", "_6PE_");
+define("DATABASE", "_6MSDBE_");
+define("FILESYSTEM", "_6FSE_");
+define("FILE_IMAGE", "_6FIE_");
+define("URL_ERROR", "_6UER_");
+define("USER_NOT_ACTIVATION", "_6UNA_");
+define("ON", 1);
+define("OFF", 0);
+define("SERVER_MESSAGE_NOTE", "SMN");
+
+//Group Switch Informations (7)
+define("USER_SEARCH", "_7US_");
+define("COUNTRY_BUFFER_LIST", "_7CBL_");
+define("NETWORK_BUFFER_LIST", "_7NBL_");
+define("GET_USER_LIST", "_7GULI_");
+define("GET_USER_FRIENDS", "_7GUFR_");
+define("GET_USER_INFO", "_7GUI_");
+define("GET_ALBUMES", "_7GA_");
+define("SET_COMMENT_IN_PHOTO", "_7SCIP_");
+define("SET_COMMENT_IN_AUDIO", "_7SCIA_");
+define("SET_COMMENT_IN_VIDEO", "_7SCIV_");
+define("EDIT_COMMENT_IN_PHOTO", "_7ECIP_");
+define("EDIT_COMMENT_IN_AUDIO", "_7ECIA_");
+define("EDIT_COMMENT_IN_VIDEO", "_7ECIV_");
+define("DELETE_COMMENT_IN_PHOTO", "_7DCIP_");
+define("DELETE_COMMENT_IN_AUDIO", "_7DCIA_");
+define("DELETE_COMMENT_IN_VIDEO", "_7DCIV_");
+define("GET_COUNTRYS", "_7GC_");
+define("PHONE_IMEI", "_7PI_");
+define("PHONE_SIM_SERIAL_NUMBER", "_7PSSN_");
+define("PHONE_NETWORK_COUNTRY_ISO", "_7PNCI_");
+define("PHONE_NETWORK_ISO", "_7PNI_");
+define("PHONE_NETWORK_NAME", "_7PNN_");
+define("GET_NOTIFICATION", "_7GNOT_");
+define("SYNC_COUNTRY", "_7SNKC_");
+define("SYNC_MEMBER_IN_COUNTRY", "_7SNKMIC_");
+define("SYNC_MESSAGE", "_7SNKMSG_");
+define("SYNC_NEWS", "_7SNKNEWS_");
+define("SYNC_NOTIFICATION", "_7SNKNOTIF_");
+define("SYNC_FRINDS", "_7SNKFRIND_");
+define("SYNC_PONANS", "_7SNKPONS_");
+define("SYNC_STOCK", "_7SNKSTOK_");
+define("SYNC_COMMENT", "_7SNKCOMM_");
+define("SYNC_GIFTS", "_7SNKGIF_");
+define("SYNC_ALL", "_7SNKALL_");
+//Group Login (8)
+define("NORMAL_LOGIN", "_S8NL_");
+define("PASSWORD_LOGIN", "_S8PL_");
+///////////////////////////////
+// Action for Notifications ///
+///////////////////////////////
+define("NOTIF_COMMENT", 0);
+define("NOTIF_GIFT", 1);
+define("NOTIF_STOCK", 2);
+define("NOTIF_MESSAGE", 3);
+define("NOTIF_FRIEND", 4);
+
+
+//////////////////////////////////
+// Message Label for Notification
+//////////////////////////////////
+define("LABEL_USER_COMMENT", "User %s comment on your photo.");
+
+/* * *****************************************************************************
+ * *****************************************************************************
+ * *****************************************************************************
+ * *****************************************************************************
+ * ***************************************************************************** */
+define("FILED_UID", "_UID");
+define("KEY_UID", "_KUID_");
+
+define("TABLE_SYSTEM_LOG", "Table_System_Log");
+define("FILED_SYSTEM_LOG_DATE", "_DATE");
+define("FILED_SYSTEM_LOG_ACTION", "_ACTION");
+define("FILED_SYSTEM_LOG_REQUEST", "_REQUEST");
+define("FILED_SYSTEM_LOG_INFO", "_INFO");
+define("FILED_SYSTEM_LOG_IP_CLIENT", "_IP_CLIENT");
+define("FILED_SYSTEM_LOG_COUNTRY_ID", "_COUNTRY_ID");
+define("FILED_SYSTEM_LOG_LEVEL", "_LEVEL");
+
+define("TABLE_USER_LOG", "Table_User_Log");
+define("FILED_USER_LOG_DATE", "_DATE");
+define("FILED_USER_LOG_ACTION", "_ACTION");
+
+define("TABLE_SYSTEM_BLOCK_IP_ADDRESS", "System_Block_IP");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_ID", "ID");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_IP_ADDRESS", "_IP_ADDRESS");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_COUNTRY", "_COUNTRY");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_BROWSER", "_BROWSER");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_DATETIME", "_DATETIME");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_REQU", "_REQU");
+define("FILED_SYSTEM_BLOCK_IP_ADDRESS_BLOCK_IP", "_BLOCK_IP");
+
+//GROUP 1 CONTACT
+define("TABLE_CONTACT_LIST", "Table_Contact_List");
+define("KEY_TABLE_CONTACT_LIST", "CONTACTLIST");
+
+define("FILED_CONTACT_LIST_NAME", "_NAME");
+define("KEY_CONTACT_LIST_NAME", "_K1CLN_");
+
+define("FILED_CONTACT_LIST_PHONE_1", "_PHONE_1");
+define("KEY_CONTACT_LIST_PHONE_1", "_K1CLP1_");
+
+define("FILED_CONTACT_LIST_PHONE_2", "_PHONE_2");
+define("KEY_CONTACT_LIST_PHONE_2", "_K1CLP2_");
+//=====================================================================
+//GROUP 2 COUNTRY
+define("TABLE_COUNTRY", "Table_Country");
+define("KEY_TABLE_COUNTRY", "COUNTRY");
+
+define("FILED_COUNTRY_ID", "ID");
+define("KEY_COUNTRY_ID", "_K2CI_");
+
+define("FILED_COUNTRY_NAME", "_NAME");
+define("KEY_COUNTRY_NAME", "_K2CN_");
+
+define("FILED_COUNTRY_NICENAME", "_NICENAME");
+define("KEY_COUNTRY_NICENAME", "_K2CNIN_");
+
+define("FILED_COUNTRY_PATH_FLAG", "_PATH_FLAG");
+define("KEY_COUNTRY_PATH_FLAG", "_K2CPF_");
+
+define("FILED_COUNTRY_ISO", "_ISO");
+define("KEY_COUNTRY_ISO", "_K2CISO_");
+
+define("FILED_COUNTRY_ISO3", "_ISO3");
+define("KEY_COUNTRY_ISO3", "_K2CISO3_");
+
+define("FILED_COUNTRY_NUMCODE", "_NUMCODE");
+define("KEY_COUNTRY_NUMCODE", "_K2CNUMC_");
+
+define("FILED_COUNTRY_PHONECODE", "_PHONECODE");
+define("KEY_COUNTRY_PHONECODE", "_K2CPHC_");
+
+define("FILED_COUNTRY_MEMBERS", "_MEMBERS");
+define("KEY_COUNTRY_MEMBERS", "_K2CM_");
+
+define("FILED_COUNTRY_NUMBER_OF_NETWORK", "_NUMBER_OF_NETWORK");
+define("KEY_COUNTRY_NUMBER_OF_NETWORK", "_K2NON_");
+
+define("FILED_COUNTRY_CORRENSE", "_CORRENSE");
+define("KEY_COUNTRY_CORRENSE", "_K2CCOR_");
+
+define("FILED_COUNTRY_PRICE", "_PRICE");
+define("KEY_COUNTRY_PRICE", "_K2CP_");
+
+define("FILED_COUNTRY_BLOCK", "_BLOCK");
+//====================================================================
+//GROUP 3 GIFTES
+define("TABLE_GIFTES", "Table_Giftes");
+define("KEY_TABLE_GIFTES", "GIFTES");
+
+define("FILED_GIFTES_TYPE", "_TYPE");
+define("KEY_GIFTES_TYPE", "_K3GT_");
+
+define("FILED_GIFTES_CATEGORY", "_CATEGORY");
+define("KEY_GIFTES_CATEGORY", "_K3GC_");
+
+define("FILED_GIFTES_GIFT_PATH", "_GIFT_PATH");
+define("KEY_GIFTES_GIFT_PATH", "_K3GGP_");
+
+define("FILED_GIFTES_PRICE", "_PRICE");
+define("KEY_GIFTES_PRICE", "_K3GP_");
+
+define("FILED_GIFTES_LIMITED", "_LIMITED");
+define("KEY_GIFTES_LIMITED", "_K3GL_");
+
+define("FILED_GIFTES_TO_USER", "_TO_USER");
+define("KEY_GIFTES_TO_USER", "_K3GTU_");
+//====================================================================
+//GROUP 4 MPBILE NETWORK
+define("TABLE_MOBILE_NETWORK", "Table_Mobile_Network");
+define("KEY_TABLE_MOBILE_NETWORK", "MOBILENETWORK");
+
+define("FILED_MOBILE_NETWORK_ID", "ID");
+define("KEY_MOBILE_NETWORK_ID", "_K4MNI_");
+
+define("FILED_MOBILE_NETWORK_NETWORK_NAME", "_NETWORK_NAME");
+define("KEY_MOBILE_NETWORK_NETWORK_NAME", "_K4MNNN_");
+
+define("FILED_MOBILE_NETWORK_CODE", "_CODE");
+define("KEY_MOBILE_NETWORK_CODE", "_K4MNC_");
+
+define("FILED_MOBILE_NETWORK_COUNTRY_NAME", "_COUNTRY_NAME");
+define("KEY_MOBILE_NETWORK_COUNTRY_NAME", "_K4MNCN_");
+//====================================================================
+//GROUP 5 PHONE
+define("TABLE_PHONE", "Table_Phone");
+define("KEY_TABLE_PHONE", "PHONE");
+
+define("FILED_PHONE_UID", "_UID");
+define("KEY_PHONE_UID", "_K5PU_");
+
+define("FILED_PHONE_IMEI", "_IMEI");
+define("KEY_PHONE_IMEI", "_K5PI_");
+
+define("FILED_PHONE_SIM_SERIAL", "_SIM_SERIAL");
+define("KEY_PHONE_SIM_SERIAL", "_K5PSS_");
+
+define("FILED_PHONE_SUBSCRIBERID", "_SUBSCRIBERID");
+define("KEY_PHONE_SUBSCRIBERID", "_K5PSSI_");
+
+define("FILED_PHONE_NETWORK", "_NETWORK");
+define("KEY_PHONE_NETWORK", "_K5PN_");
+
+define("FILED_PHONE_COUNTRY", "_COUNTRY");
+define("KEY_PHONE_COUNTRY", "_K5PC_");
+//====================================================================
+//GROUP 6 SYSTEM
+define("TABLE_SYSTEM", "Table_System");
+define("KEY_TABLE_SYSTEM", "SYSTEM");
+
+define("FILED_SYSTEM_ACTIV", "_ACTIV");
+define("KEY_SYSTEM_ACTIV", "_K6SA_");
+
+define("FILED_SYSTEM_VERSION", "_VERSION");
+define("KEY_SYSTEM_VERSION", "_K6SV_");
+
+define("FILED_SYSTEM_APPLICATION_NAME", "_APPLICATION_NAME");
+define("KEY_SYSTEM_APPLICATION_NAME", "_K6SAN_");
+
+define("FILED_SYSTEM_SERVER_CURRENT_PATH", "_SERVER_CURRENT_PATH");
+define("KEY_SYSTEM_SERVER_CURRENT_PATH", "_K6SSCP_");
+
+define("FILED_SYSTEM_SERVER_NEW_PATH", "_SERVER_NEW_PATH");
+define("KEY_SYSTEM_SERVER_NEW_PATH", "_K6SSNP_");
+
+define("FILED_SYSTEM_POWER_BY", "_POWER_BY");
+define("KEY_SYSTEM_POWER_BY", "_K6SPB_");
+
+define("FILED_SYSTEM_INCRIMENT_PRICE_AFTER", "_INCRIMENT_PRICE_AFTER");
+define("KEY_SYSTEM_INCRIMENT_PRICE_AFTER", "_K6SIPA_");
+
+define("FILED_SYSTEM_INCRIMENT_PRICE", "_INCRIMENT_PRICE");
+define("KEY_SYSTEM_INCRIMENT_PRICE", "_K6SIP_");
+
+define("FILED_SYSTEM_LOG_SYSTEM", "_LOG_SYSTEM");
+define("KEY_SYSTEM_LOG_SYSTEM", "_K6SLS_");
+
+define("FILED_SYSTEM_CAN_GET_DATA_FROM_BROWSER", "_CAN_GET_DATA_FROM_BROWSER");
+define("KEY_SYSTEM_CAN_GET_DATA_FROM_BROWSER", "_K6SCGDFB_");
+
+define("FILED_SYSTEM_IS_UPDATE", "_IS_UPDATE");
+define("KEY_SYSTEM_IS_UPDATE", "_K6SIU_");
+
+define("FILED_SYSTEM_IS_ONLINE_SERVER", "_IS_ONLINE_SERVER");
+define("KEY_SYSTEM_IS_ONLINE_SERVER", "_K6SIOS_");
+
+define("FILED_SYSTEM_SYSTEM_USER_ID", "_SYSTEM_USER_ID");
+define("KEY_SYSTEM_SYSTEM_USER_ID", "_K6SSUI_");
+
+define("FILED_SYSTEM_ENCRIPTION_BUFFER", "_ENCRIPTION_BUFFER");
+define("KEY_SYSTEM_ENCRIPTION_BUFFER", "_K6SEB_");
+
+define("FILED_SYSTEM_POINT_PRICE", "_POINT_PRICE");
+define("KEY_SYSTEM_POINT_PRICE", "_K6SPP_");
+
+define("FILED_SYSTEM_LIKE_TO_POINT", "_LIKE_TO_POINT");
+define("KEY_SYSTEM_LIKE_TO_POINT", "_K6SLTP_");
+
+define("FILED_SYSTEM_NORMAL_SCORE", "_NORMAL_SCORE");
+define("KEY_SYSTEM_NORMAL_SCORE", "_K6SNS_");
+
+define("FILED_SYSTEM_VIP_SCORE", "_VIP_SCORE");
+define("KEY_SYSTEM_VIP_SCORE", "_K6SVS_");
+
+define("FILED_SYSTEM_MINIMAM_SEND_TO_STOCK", "_MINIMAM_SEND_TO_STOCK");
+define("KEY_SYSTEM_MINIMAM_SEND_TO_STOCK", "_K6SMSTS_");
+
+define("FILED_SYSTEM_MAXIMAM_SEND_TO_STOCK", "_MAXIMAM_SEND_TO_STOCK");
+define("KEY_SYSTEM_MAXIMAM_SEND_TO_STOCK", "_K6SMASTS_");
+
+define("FILED_SYSTEM_SHOW_UNLIKE", "_SHOW_UNLIKE");
+define("KEY_SYSTEM_SHOW_UNLIKE", "_K6SSU_");
+
+define("FILED_SYSTEM_SHOW_LIKE", "_SHOW_LIKE");
+define("KEY_SYSTEM_SHOW_LIKE", "_K6SSL_");
+
+define("FILED_SYSTEM_SHOW_TOP_IN_GLOBEL", "_SHOW_TOP_IN_GLOBEL");
+define("KEY_SYSTEM_SHOW_TOP_IN_GLOBEL", "_K6SSTIG_");
+
+define("FILED_SYSTEM_SHOW_TOP_IN_ZONE", "_SHOW_TOP_IN_ZONE");
+define("KEY_SYSTEM_SHOW_TOP_IN_ZONE", "_K6SSTIZ_");
+
+define("FILED_SYSTEM_SHOW_STOCK_IN_USERS_LIST", "_SHOW_STOCK_IN_USERS_LIST");
+define("KEY_SYSTEM_SHOW_STOCK_IN_USERS_LIST", "_K6SSSIUL_");
+
+define("FILED_SYSTEM_SHOW_POINTS_IN_USER_LIST", "_SHOW_POINTS_IN_USER_LIST");
+define("KEY_SYSTEM_SHOW_POINTS_IN_USER_LIST", "_K6SSPIUL_");
+
+define("FILED_SYSTEM_LIMITED_FOR_NETWORK", "_LIMITED_FOR_NETWORK");
+define("KEY_SYSTEM_LIMITED_FOR_NETWORK", "_K6SLFN_");
+
+define("FILED_SYSTEM_ICON_FOR_VIP", "_ICON_FOR_VIP");
+define("KEY_SYSTEM_ICON_FOR_VIP", "_K6SIFV_");
+
+define("FILED_SYSTEM_ICON_FOR_FAMUS", "_ICON_FOR_FAMUS");
+define("KEY_SYSTEM_ICON_FOR_FAMUS", "_K6SIFF_");
+
+define("FILED_SYSTEM_ICON_FOR_LEVEL_1", "_ICON_FOR_LEVEL_1");
+define("KEY_SYSTEM_ICON_FOR_LEVEL_1", "_K6SIFL1_");
+
+define("FILED_SYSTEM_ICON_FOR_LEVEL_2", "_ICON_FOR_LEVEL_2");
+define("KEY_SYSTEM_ICON_FOR_LEVEL_2", "_K6SIFL2_");
+
+define("FILED_SYSTEM_ICON_FOR_LEVEL_3", "_ICON_FOR_LEVEL_3");
+define("KEY_SYSTEM_ICON_FOR_LEVEL_3", "_K6SIFL3_");
+
+define("FILED_SYSTEM_ICON_FOR_LEVEL_4", "_ICON_FOR_LEVEL_4");
+define("KEY_SYSTEM_ICON_FOR_LEVEL_4", "_K6SIFL4_");
+
+define("FILED_SYSTEM_ICON_FOR_LEVEL_5", "_ICON_FOR_LEVEL_5");
+define("KEY_SYSTEM_ICON_FOR_LEVEL_5", "_K6SIFL5_");
+
+define("FILED_SYSTEM_ICON_FOR_LEVEL_6", "_ICON_FOR_LEVEL_6");
+define("KEY_SYSTEM_ICON_FOR_LEVEL_6", "_K6SIFL6_");
+
+
+//====================================================================
+//GROUP 7 TOP USERS
+define("TABLE_TOP_USERS", "Table_Top_Users");
+define("KEY_TABLE_TOP_USERS", "TOPUSERS");
+
+define("FILED_TOP_USERS_COUNTRY_ID", "_COUNTRY_ID");
+define("KEY_TOP_USERS_COUNTRY_ID", "_K7TUCI_");
+
+define("FILED_TOP_USERS_TOP_BOY_NAME", "_TOP_BOY_NAME");
+define("KEY_TOP_USERS_TOP_BOY_NAME", "_K7TUTBN_");
+
+define("FILED_TOP_USERS_TOP_GIRL_NAME", "_TOP_GIRL_NAME");
+define("KEY_TOP_USERS_TOP_GIRL_NAME", "_K7TUTGN_");
+
+define("FILED_TOP_USERS_TOP_BOY_VALUE", "_TOP_BOY_VALUE");
+define("KEY_TOP_USERS_TOP_BOY_VALUE", "_K7TUTBV_");
+
+define("FILED_TOP_USERS_TOP_GIRL_VALUE", "_TOP_GIRL_VALUE");
+define("KEY_TOP_USERS_TOP_GIRL_VALUE", "_K7TUTGV_");
+
+define("FILED_TOP_USERS_DATE", "_DATE");
+define("KEY_TOP_USERS_DATE", "_K7TUD_");
+//====================================================================
+//GROUP 8 USER
+define("TABLE_USER", "Table_User");
+define("KEY_TABLE_USER", "USER");
+
+define("FILED_USER_ID", "ID");
+define("KEY_USER_ID", "_K8UI_");
+
+define("FILED_USER_UUID", "_UUID");
+define("KEY_USER_UUID", "_K8UU_");
+
+define("FILED_USER_NAME", "_NAME");
+define("KEY_USER_NAME", "_K8UN_");
+
+define("FILED_USER_PHONE", "_PHONE");
+define("KEY_USER_PHONE", "_K8UP_");
+
+define("FILED_USER_AGE", "_AGE");
+define("KEY_USER_AGE", "_K8A_");
+
+define("FILED_USER_EMAIL_ADDRESS", "_EMAIL_ADDRESS");
+define("KEY_USER_EMAIL_ADDRESS", "_K8EAD_");
+
+define("FILED_USER_SEX", "_SEX");
+define("KEY_USER_SEX", "_K8US_");
+
+define("FILED_USER_PASSWORD", "_PASSWORD");
+define("KEY_USER_PASSWORD", "_K8UPS_");
+
+define("FILED_USER_ACTIVATION", "_STATUS");
+define("KEY_USER_ACTIVATION", "_K8USA_");
+
+define("FILED_USER_DIR_PATH", "_DIR_PATH");
+define("KEY_USER_DIR_PATH", "_K8UDP_");
+
+define("FILED_USER_IS_FAMOUS", "_IS_FAMOUS");
+define("KEY_USER_IS_FAMOUS", "_K8UIF_");
+
+define("FILED_USER_IS_VIP", "_IS_VIP");
+define("KEY_USER_IS_VIP", "_K8UIV_");
+
+define("FILED_USER_LANGUAGE", "_LANGUAGE");
+define("KEY_USER_LANGUAGE", "_K8ULANG_");
+//====================================================================
+//GROUP 9 USER ONLINE
+define("TABLE_USER_ONLINE", "Table_Users_Online");
+define("KEY_TABLE_USER_ONLINE", "USERSONLINE");
+
+define("FILED_USER_ONLINE_ID", "_UID");
+define("KEY_USER_ONLINE_ID", "_K9UOI_");
+
+define("FILED_USER_ONLINE_STATUS", "_STATUS");
+define("KEY_USER_ONLINE_STATUS", "_K9UOS_");
+
+define("FILED_USER_ONLINE_WHAT_IS_IN_YOUR_MIND", "_WHAT_IS_IN_YOUR_MIND");
+define("KEY_USER_ONLINE_WHAT_IS_IN_YOUR_MIND", "_K9UOWIIYM_");
+//====================================================================
+//GROUP 10 GIFT HISTORY
+define("TABLE_USER_GIFT", "Table_User_Gift");
+define("KEY_TABLE_USER_GIFT", "USERGIFT");
+
+define("FILED_USER_GIFT_FROM_UUID", "_FROM_UUID");
+define("KEY_USER_GIFT_FROM_UUID", "_K10UGFU_");
+//====================================================================
+//GROUP 11 USER PHOTO
+define("TABLE_USER_PHOTO", "Table_User_Photo");
+define("KEY_TABLE_USER_PHOTO", "USERPHOTO");
+
+define("FILED_USER_PHOTO_ID", "ID");
+define("KEY_USER_PHOTO_ID", "_K11UPI_");
+
+define("FILED_USER_PHOTO_UID", "_UID");
+define("KEY_USER_PHOTO_UID", "_K11UPUI_");
+
+define("FILED_USER_PHOTO_COMMENT", "_COMMENT");
+define("KEY_USER_PHOTO_COMMENT", "_K11UPC_");
+
+define("FILED_USER_PHOTO_PHOTO_PATH", "_PHOTO_PATH");
+define("KEY_USER_PHOTO_PHOTO_PATH", "_K11UPPP_");
+
+define("FILED_USER_PHOTO_IS_PROFILE", "_IS_PROFILE");
+define("KEY_USER_PHOTO_IS_PROFILE", "_K11UPIP_");
+
+define("FILED_USER_PHOTO_TIME_OF_LIKE", "_TIME_OF_LIKE");
+define("KEY_USER_PHOTO_TIME_OF_LIKE", "_K11UPTOL_");
+
+define("FILED_USER_PHOTO_TIME_OF_UNLIKE", "_TIME_OF_UNLIKE");
+define("KEY_USER_PHOTO_TIME_OF_UNLIKE", "_K11UPTOU_");
+
+define("FILED_USER_PHOTO_PRIVACY", "_PRIVACY");
+define("KEY_USER_PHOTO_PRIVACY", "_K11UPP_");
+
+define("FILED_USER_PHOTO_INATTACH", "_INATTACH");
+define("KEY_USER_PHOTO_INATTACH", "_K11UPINT_");
+//====================================================================
+//GROUP 12 USER STOCK
+define("TABLE_USER_STOCK", "Table_User_Stock");
+define("KEY_TABLE_USER_STOCK", "USERSTOCK");
+
+define("FILED_USER_STOCK_UID", "_UID");
+define("KEY_USER_STOCK_UID", "_K12USU_");
+
+define("FILED_USER_STOCK_MONEY_STOCK", "_MONEY_STOCK");
+define("KEY_USER_STOCK_MONEY_STOCK", "_K12USMS_");
+
+define("FILED_USER_STOCK_DATE_CHARGE_MONEY_STOK", "_DATE_CHARGE_MONEY_STOK");
+define("KEY_USER_STOCK_DATE_CHARGE_MONEY_STOK", "_K12USDCMS_");
+
+define("FILED_USER_STOCK_VALUE_WAS_CHARGE_MONEY_STOCK", "_VALUE_WAS_CHARGE_MONEY_STOCK");
+define("KEY_USER_STOCK_VALUE_WAS_CHARGE_MONEY_STOCK", "_K12USVWCMS_");
+//====================================================================
+//GROUP 13 USER VIDEO
+define("TABLE_USER_VIDEO", "Table_User_Video");
+define("KEY_TABLE_USER_VIDEO", "USERVIDEO");
+
+define("FILED_USER_VIDEO_ID", "ID");
+define("KEY_USER_VIDEO_ID", "_K13UVI_");
+
+define("FILED_USER_VIDEO_UID", "_UID");
+define("KEY_USER_VIDEO_UID", "_K13UVUI_");
+
+define("FILED_USER_VIDEO_VIDEO_PATH", "_VIDEO_PATH");
+define("KEY_USER_VIDEO_VIDEO_PATH", "_K13UVVP_");
+
+define("FILED_USER_VIDEO_COMMENT", "_COMMENT");
+define("KEY_USER_VIDEO_COMMENT", "_K13UVC_");
+
+define("FILED_USER_VIDEO_TIME_OF_LIKE", "_TIME_OF_LIKE");
+define("KEY_USER_VIDEO_TIME_OF_LIKE", "_K13UVTOL_");
+
+define("FILED_USER_VIDEO_TIME_OF_UNLIKE", "_TIME_OF_UNLIKE");
+define("KEY_USER_VIDEO_TIME_OF_UNLIKE", "_K13UVTOU_");
+
+define("FILED_USER_VIDEO_PRIVACY", "_PRIVACY");
+define("KEY_USER_VIDEO_PRIVACY", "_K13UVP_");
+
+define("FILED_USER_VIDEO_INATTACH", "_INATTACH");
+define("KEY_USER_VIDEO_INATTACH", "_K13UVINTT_");
+//====================================================================
+//GROUP 14 MESSAGE
+define("TABLE_MESSAGE", "Table_Messages");
+define("KEY_TABLE_MESSAGE", "MESSAGES");
+
+define("FILED_MESSAGE_ID", "ID");
+define("KEY_MESSAGE_ID", "_K14MI_");
+
+define("FILED_MESSAGE_UID", "_UID");
+define("KEY_MESSAGE_UID", "_K14MU_");
+
+define("FILED_MESSAGE_TO", "_TO");
+define("KEY_MESSAGE_TO", "_K14MT_");
+
+define("FILED_MESSAGE_FROM", "_FROM");
+define("KEY_MESSAGE_FROM", "_K14MF_");
+
+define("FILED_MESSAGE_MESSAGE", "_MESSAGE");
+define("KEY_MESSAGE_MESSAGE", "_K14MM_");
+
+define("FILED_MESSAGE_ATTACH", "_ATTACH");
+define("KEY_MESSAGE_ATTACH", "_K14MATA_");
+
+define("FILED_MESSAGE_DATE", "_DATE");
+define("KEY_MESSAGE_DATE", "_K14MDA_");
+
+define("FILED_MESSAGE_TIME", "_TIME");
+define("KEY_MESSAGE_TIME", "_K14MTI_");
+
+define("FILED_MESSAGE_NEW", "_NEW");
+define("KEY_MESSAGE_NEW", "_K14MN_");
+
+define("FILED_MESSAGE_HIDE", "_HIDE");
+define("KEY_MESSAGE_HIDE", "_K14MH_");
+//====================================================================
+//GROUP 15 NOTIFICATIONS
+define("TABLE_NOTIFICATIONS", "Table_Notifications");
+define("KEY_TABLE_NOTIFICATIONS", "NOTIFICATIONS");
+
+define("FILED_NOTIFICATIONS_ID", "ID");
+define("KEY_NOTIFICATIONS_ID", "_K15NI_");
+
+define("FILED_NOTIFICATIONS_FROM", "_FROM");
+define("KEY_NOTIFICATIONS_FROM", "_K15NF_");
+
+define("FILED_NOTIFICATIONS_TO", "_TO");
+define("KEY_NOTIFICATIONS_TO", "_K15NT_");
+
+define("FILED_NOTIFICATIONS_LABEL", "_LABEL");
+define("KEY_NOTIFICATIONS_LABEL", "_K15NL_");
+
+define("FILED_NOTIFICATIONS_DATE", "_DATE");
+define("KEY_NOTIFICATIONS_DATE", "_K15ND");
+
+define("FILED_NOTIFICATIONS_ACTION", "_ACTION");
+define("KEY_NOTIFICATIONS_ACTION", "_K15NA_");
+
+define("FILED_NOTIFICATIONS_SERIAL", "_SERIAL");
+define("KEY_NOTIFICATIONS_SERIAL", "_K15NS_");
+
+define("FILED_NOTIFICATIONS_ISNEW", "_ISNEW");
+define("KEY_NOTIFICATIONS_ISNEW", "_K15NIN_");
+
+
+//====================================================================
+//GROUP 16 FRIENDS
+define("TABLE_FRIENDS", "Table_User_Friends");
+define("KEY_TABLE_FRIENDS", "USERFRIENDS");
+
+define("FILED_FRIENDS_ID", "ID");
+define("KEY_FRIENDS_ID", "_K16FI_");
+
+define("FILED_FRIENDS_UID", "_UID");
+define("KEY_FRIENDS_UID", "_K16FU_");
+
+define("FILED_FRIENDS_FRIEND", "_FRIEND");
+define("KEY_FRIENDS_FRIEND", "_K16FF_");
+
+define("FILED_FRIENDS_DATE", "_DATE");
+define("KEY_FRIENDS_DATE", "_K16FD_");
+
+define("FILED_FRIENDS_FAVORIT", "_FAVORIT");
+define("KEY_FRIENDS_FAVORIT", "_K16FFV_");
+
+define("FILED_FRIENDS_ACCEPT", "_ACCEPT");
+define("KEY_FRIENDS_ACCEPT", "_K16FACC_");
+//====================================================================
+//GROUP 17 COMMANT PHOTOS
+define("TABLE_USER_PHOTO_COMMENT", "Table_User_Photo_comment");
+define("KEY_TABLE_USER_PHOTO_COMMENT", "USERPHOTOCOMMENT");
+
+define("FILED_USER_PHOTO_COMMENT_ID", "ID");
+define("KEY_USER_PHOTO_COMMENT_ID", "_K17UPCI_");
+
+define("FILED_USER_PHOTO_COMMENT_UPID", "_UPID");
+define("KEY_USER_PHOTO_COMMENT_UPID", "_K17UPCU_");
+
+define("FILED_USER_PHOTO_COMMENT_FROM", "_FROM");
+define("KEY_USER_PHOTO_COMMENT_FROM", "_K17UPCFR_");
+
+define("FILED_USER_PHOTO_COMMENT_COMMENT", "_COMMENT");
+define("KEY_USER_PHOTO_COMMENT_COMMENT", "_K17UPCC_");
+
+define("FILED_USER_PHOTO_COMMENT_DATE", "_DATE");
+define("KEY_USER_PHOTO_COMMENT_DATE", "_K17UPCD_");
+
+define("FILED_USER_PHOTO_COMMENT_LIKE", "_LIKE");
+define("KEY_USER_PHOTO_COMMENT_LIKE", "_K17UPCL_");
+
+define("FILED_USER_PHOTO_COMMENT_UNLIKE", "_UNLIKE");
+define("KEY_USER_PHOTO_COMMENT_UNLIKE", "_K17UPCUN_");
+//====================================================================
+//GROUP 18 COMMANT VIDEO
+define("TABLE_USER_VIDEO_COMMENT", "Table_User_Video_comment");
+define("KEY_TABLE_USER_VIDEO_COMMENT", "USERVODEOCOMMENT");
+
+define("FILED_USER_VIDEO_COMMENT_ID", "ID");
+define("KEY_USER_VIDEO_COMMENT_ID", "_K18UVCI_");
+
+define("FILED_USER_VIDEO_COMMENT_UVID", "_UVID");
+define("KEY_USER_VIDEO_COMMENT_UVID", "_K18UVCU_");
+
+define("FILED_USER_VIDEO_COMMENT_FROM", "_FROM");
+define("KEY_USER_VIDEO_COMMENT_FROM", "_K18UVCFR_");
+
+define("FILED_USER_VIDEO_COMMENT_COMMENT", "_COMMENT");
+define("KEY_USER_VIDEO_COMMENT_COMMENT", "_K18UVCC_");
+
+define("FILED_USER_VIDEO_COMMENT_DATE", "_DATE");
+define("KEY_USER_VIDEO_COMMENT_DATE", "_K18UVCD_");
+
+define("FILED_USER_VIDEO_COMMENT_LIKE", "_LIKE");
+define("KEY_USER_VIDEO_COMMENT_LIKE", "_K18UVCL_");
+
+define("FILED_USER_VIDEO_COMMENT_UNLIKE", "_UNLIKE");
+define("KEY_USER_VIDEO_COMMENT_UNLIKE", "_K18UVCUN_");
+//====================================================================
+//GROUP 19 POINT User
+define("TABLE_USER_POINT", "Table_User_Point");
+define("KEY_TABLE_USER_POINT", "USERPOINT");
+
+define("FILED_USER_POINT_UID", "_UID");
+define("KEY_USER_POINT_UID", "_K19UPU_");
+
+define("FILED_USER_POINT_FROM", "_FROM");
+define("KEY_USER_POINT_FROM", "_K19UPF_");
+
+define("FILED_USER_POINT_POINT_STOCK", "_POINT_STOCK");
+define("KEY_USER_POINT_POINT_STOCK", "_K19UPPS_");
+
+define("FILED_USER_POINT_TOTAL_LIKE", "_TOTAL_LIKE");
+define("KEY_USER_POINT_TOTAL_LIKE", "_K19UPTL_");
+
+define("FILED_USER_POINT_TOTAL_UNLIKE", "_TOTAL_UNLIKE");
+define("KEY_USER_POINT_TOTAL_UNLIKE", "_K19UPTUL_");
+
+define("FILED_USER_POINT_DATE_CHARGE_POINT", "_DATE_CHARGE_POINT");
+define("KEY_USER_POINT_DATE_CHARGE_POINT", "_K19UPDCP_");
+//=======================================================================
+//GROUP 20 Audio Table
+define("TABLE_USER_AUDIO", "Table_User_Audio");
+define("KEY_TABLE_USER_AUDIO", "USERAUDIO");
+
+define("FILED_USER_AUDIO_ID", "ID");
+define("KEY_USER_AUDIO_ID", "_K20UAI_");
+
+define("FILED_USER_AUDIO_UID", "_UID");
+define("KEY_USER_AUDIO_UID", "_K20UAUI_");
+
+define("FILED_USER_AUDIO_AUDIO_PATH", "_AUDIO_PATH");
+define("KEY_USER_AUDIO_AUDIO_PATH", "_K20UAAP_");
+
+define("FILED_USER_AUDIO_COMMENT", "_COMMENT");
+define("KEY_USER_AUDIO_COMMENT", "_K20UAC_");
+
+define("FILED_USER_AUDIO_TIME_OF_LIKE", "_TIME_OF_LIKE");
+define("KEY_USER_AUDIO_TIME_OF_LIKE", "_K20UATOL_");
+
+define("FILED_USER_AUDIO_TIME_OF_UNLIKE", "_TIME_OF_UNLIKE");
+define("KEY_USER_AUDIO_TIME_OF_UNLIKE", "_K20UATOU_");
+
+define("FILED_USER_AUDIO_PRIVACY", "_PRIVACY");
+define("KEY_USER_AUDIO_PRIVACY", "_K20UAP_");
+
+define("FILED_USER_AUDIO_INATTACH", "_INATTACH");
+define("KEY_USER_AUDIO_INATTACH", "_K20UAINTT_");
+//======================================================================
+//GROUP 21 Audio Comment Table
+define("TABLE_USER_AUDIO_COMMENT", "Table_User_Audio_comment");
+define("KEY_TABLE_USER_AUDIO_COMMENT", "USERAUDIOCOMMENT");
+
+define("FILED_USER_AUDIO_COMMENT_ID", "ID");
+define("KEY_USER_AUDIO_COMMENT_ID", "_K21UACI_");
+
+define("FILED_USER_AUDIO_COMMENT_UAID", "_UAID");
+define("KEY_USER_AUDIO_COMMENT_UAID", "_K21UACU_");
+
+define("FILED_USER_AUDIO_COMMENT_FROM", "_FROM");
+define("KEY_USER_AUDIO_COMMENT_FROM", "_K21UACFR_");
+
+define("FILED_USER_AUDIO_COMMENT_COMMENT", "_COMMENT");
+define("KEY_USER_AUDIO_COMMENT_COMMENT", "_K21UACC_");
+
+define("FILED_USER_AUDIO_COMMENT_DATE", "_DATE");
+define("KEY_USER_AUDIO_COMMENT_DATE", "_K21UACD_");
+
+define("FILED_USER_AUDIO_COMMENT_LIKE", "_LIKE");
+define("KEY_USER_AUDIO_COMMENT_LIKE", "_K21UACL_");
+
+define("FILED_USER_AUDIO_COMMENT_UNLIKE", "_UNLIKE");
+define("KEY_USER_AUDIO_COMMENT_UNLIKE", "_K21UACUN_");
+//======================================================================
+//GROUP 22 User Table IP Address
+define("TABLE_USER_IP_ADDRESS", "Table_Users_IP_Address");
+define("KEY_TABLE_USER_IP_ADDRESS", "USERIPADDRESS");
+
+define("FILED_USER_IP_ADDRESS_ID", "ID");
+define("KEY_USER_IP_ADDRESS_ID", "_K22UIAI_");
+
+define("FILED_USER_IP_ADDRESS_UID", "_UID");
+define("KEY_USER_IP_ADDRESS_UID", "_K22UIAU_");
+
+define("FILED_USER_IP_ADDRESS_IP_ADDR", "_IP_ADDR");
+define("KEY_USER_IP_ADDRESS_IP_ADDR", "_K22UIAIA_");
+
+define("FILED_USER_IP_ADDRESS_LOCATION", "_LOCATION");
+define("KEY_USER_IP_ADDRESS_LOCATION", "_K22UIAL_");
+
+define("FILED_USER_IP_ADDRESS_TIME_DATE", "_TIME_DATE");
+define("KEY_USER_IP_ADDRESS_TIME_DATE", "_K22UIATD_");
+//=====================================================================
+//Group 23 User Country Zone
+define("TABLE_USER_COUNTRY_ZONE", "Table_User_Country_Zone");
+define("KEY_TABLE_USER_COUNTRY_ZONE", "USERCOUNTRYZONE");
+
+define("FILED_USER_COUNTRY_ZONE_ID", "ID");
+define("KEY_USER_COUNTRY_ZONE_ID", "_K23UCZI_");
+
+define("FILED_USER_COUNTRY_ZONE_UID", "_UID");
+define("KEY_USER_COUNTRY_ZONE_UID", "_K23UCZU_");
+
+define("FILED_USER_COUNTRY_ZONE_COUNTRY", "_COUNTRY");
+define("KEY_USER_COUNTRY_ZONE_COUNTRY", "_K23UCZC_");
+//=====================================================================
+//Group 24 Bad Word
+define("TABLE_BAD_WORD", "Table_Bad_Word");
+define("FILED_BAD_WORD_ID", "ID");
+define("FILED_BAD_WORD_WORD", "_WORD");
+define("FILED_BAD_WORD_REPLACEMENT", "_REPLACEMENT");
+define("FILED_BAD_WORD_HOW_TIME", "_HOW_TIME");
+//=====================================================================
+//Group 25 Woring Word
+define("TABLE_WORRNING_WORD", "Table_Worrning_Word");
+define("FILED_WORRNING_WORD_ID", "ID");
+define("FILED_WORRNING_WORD_WORD", "_WORD");
+define("FILED_WORRNING_WORD_HOW_TIME", "_HOW_TIME");
+//=====================================================================
+//Group 26 Extantion Woring Word
+define("TABLE_WORRNING_WORD_EXTATION", "Table_Worrning_Word_Extintion");
+define("FILED_WORRNING_WORD_WHO_SAY_THIS", "_WHO_SAY_THIS");
+define("FILED_WORRNING_WORD_DATE", "_DATE");
+define("FILED_WORRNING_WORD_TIME", "_TIME");
+define("FILED_WORRNING_WORD_IP", "_IP");
+//=====================================================================
+//Group 27 Hashtag Word
+define("TABLE_HASHTAG", "Table_Hashtag");
+define("FILED_HASHTAG_ID", "ID");
+define("FILED_HASHTAG_WORD", "_WORD");
+define("FILED_HASHTAG_HOW_TIME", "_HOW_TIME");
+//=====================================================================
+//Group 28 Main Table Language for Message System and Other
+define("TABLE_LANGUAGE", "Table_Language");
+define("FILED_LANGUAGE_ID", "ID");
+define("FILED_LANGUAGE_LANGUAGE", "_LANGUAGE");
+define("KEY_LANGUAGE_LANGUAGE", "_K28LL_");
+//=====================================================================
+//Group 29 SubTable Language for Message System and Other
+define("TABLE_SYSTEM_LANGUAGE", "Table_System_Language");
+define("FILED_SYSTEM_LANGUAGE_ID", "ID");
+define("FILED_SYSTEM_LANGUAGE_LID", "_LID");
+define("FILED_SYSTEM_LANGUAGE_MESSAGE_ORGINAL", "_MESSAGE_ORGINAL");
+define("FILED_SYSTEM_LANGUAGE_MESSAGE_OTHER", "_MESSAGE_OTHER");
+/* --------------------------------+
+ * System Paths                   |
+ * --------------------------------+ */
+define("DATA_FILE", "data");
+define("IMAGE_FILE", "image");
+define("MUSIC_FILE", "music");
+define("WATERMARKE_FILE", "img_mark");
+define("TEMP_FILE", MAIN_DIR . DIRECTORY_SEPARATOR . DATA_FILE . DIRECTORY_SEPARATOR . "tmp" . DIRECTORY_SEPARATOR);
+
+define("IMAGE_WATERMARKER_1", "wow_1.png");
+define("IMAGE_WATERMARKER_2", "wow_2.png");
+define("IMAGE_WATERMARKER_3", "wow_3.png");
+define("IMAGE_WATERMARKER_4", "wow_4.png");
+
+define("SYSTEM_FILE_LOG", TEMP_FILE . "SystemLog.txt");
+define("DATABASE_LOG", TEMP_FILE . "Databaselog.txt");
+define("SYSTEM_FILE_TIME_FOR_DEBUG", TEMP_FILE . "CountDebug.txt");
+
+define("BLOCK_DDOS_DIR", MAIN_DIR . DIRECTORY_SEPARATOR . "BDOS");
+define("SYSTEM_XML_VAR", TEMP_FILE . "System.xml");
+
+define("DIR_IMAGE", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . "users");
+define("DIR_FLAGS", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . "flags");
+define("DIR_GIFTS", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . "giftes");
+define("DIR_ICONS", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . "icons");
+
+define("IMAGE_WATERMARKER_PATH_4", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . WATERMARKE_FILE . DIRECTORY_SEPARATOR . IMAGE_WATERMARKER_4);
+define("IMAGE_WATERMARKER_PATH_3", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . WATERMARKE_FILE . DIRECTORY_SEPARATOR . IMAGE_WATERMARKER_3);
+define("IMAGE_WATERMARKER_PATH_2", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . WATERMARKE_FILE . DIRECTORY_SEPARATOR . IMAGE_WATERMARKER_2);
+define("IMAGE_WATERMARKER_PATH_1", DATA_FILE . DIRECTORY_SEPARATOR . IMAGE_FILE . DIRECTORY_SEPARATOR . WATERMARKE_FILE . DIRECTORY_SEPARATOR . IMAGE_WATERMARKER_1);
+
+define("PATH_IMAGE_USERS", MAIN_DIR . DIRECTORY_SEPARATOR . DIR_IMAGE);
+define("PATH_FLAGS", MAIN_DIR . DIRECTORY_SEPARATOR . DIR_FLAGS);
+define("PATH_GIFTES", MAIN_DIR . DIRECTORY_SEPARATOR . DIR_GIFTS);
+define("PATH_ICONS", MAIN_DIR . DIRECTORY_SEPARATOR . DIR_ICONS);
+
+define("GEOIP_DATA_FILE", MAIN_DIR . "/System/geoip/GeoLiteCity.dat");
+
+define("FLAGS_BUFFER_SIZE", "64");
+/* * **************************
+ * Function Main Declaration*
+ * ************************** */
+define("TESTING", "Test");
+define("USER_GROUP", "User_Group");
+define("USER_MANGMENT", "User_Mangment_Group");
+define("MULTIMEDIA_GROUP", "Multimedia_Group");
+define("USER_LOGIN", "Login_Unit");
+define("MESSAGE_GROUP", "Message_Unit");
+define("GIFT_GROUP", "Gift_Unit");
+define("ICONS_USER_GROUP", "Icon_User_Unit");
+define("MONEY_GROUP", "Money_Unit");
+define("CONNECT_GROUP", "Conntact_Unit");
+define("SYNC_GROUP", "Sync_Unit");
+define("FRIEND_GROUP", "Friends");
+define("SEARCH_GROUP", "Search");
+define("COUNTRY_LIST", "BufferCountrys");
+define("NETWORK_LIST", "BufferNetworks");
+
+/* * **********************
+ *  Get User List Switch*
+ * ********************** */
+define('GET_BY_ZONE_ONLY', 1);
+define('GET_BY_NETWORK', 2);
+define('GET_BY_PHONE_TYPE', 3);
+define('GET_BY_COUNTRY', 4);
+define('GET_BY_USER', 5);
+/* * **************************
+ * Friend Flags for Accept
+ */
+define("ACCEPT", 0);
+define("REFUSED", 1);
+define("WAITING", 2);
+/* * ************************
+ * Server Messages
+ * ************************ */
+define('WELCOME_MESSAGE_IN_STATUS', 'status_message');
+define('SERVER_ERROR_TITEL_MESSAGE', 'error_titel_message');
+define('SERVER_ERROR_MESSAGE', 'error_message');
+define('SERVER_ERROR_NUMBER', 'error_number');
+define('SORRY_FOR_UPDATE', 'update_message');
+define("SERVER_REPAIR_TITEL_MESSAGE", "server_repair_message");
+define("SERVER_REPAIR_MESSAGE", "server_update_message");
+define("YOU_HAVE_A_NEW_MESSAGE", "YHNM");
+define("NEW_MESSAGE", "NM");
+define("NEW_FRIEND", "NFRI");
+/**
+ * GEO LOCATION FILEDS
+ */
+define("GEO_CONTINENT_CODE", 0x1);
+define("GEO_CONTINENTNAME", 0x2);
+define("GEO_CONTINENT", 0x3);
+define("GEO_COUNTRYCODE2", 0x4);
+define("GEO_COUNTRYCODE3", 0x5);
+define("GEO_COUNTRYNAME", 0x6);
+define("GEO_REGIONNAME", 0x7);
+define("GEO_CITYNAME", 0x8);
+define("GEO_CITYLATITUDE", 0x9);
+define("GEO_CITYLONGITUDE", 0x10);
+define("GEO_COUNTRYLATITUDE", 0x11);
+define("GEO_COUNTRYLONGITUDE", 0x12);
+define("GEO_LOCALTIMEZONE", 0x15);
+define("GEO_LOCALTIMEEPOCH", 0x16);
+/* * *****************************************************************************
+ * *****************************************************************************
+ * *****************************************************************************
+ * *****************************************************************************
+ * ***************************************************************************** */
+
+function Configration() {
+    $db = array();
+    $db['host'] = 'localhost';
+    $db['port'] = 3306;
+    $db['user'] = 'root';
+    $db['pass'] = 'trinitron';
+    $db['db'] = 'super_wow';
+    return $db;
+}
+
+function GetFunctions() {
+    $MainFunctions = [
+        TESTING => array(
+            TEST
+        ),
+        USER_GROUP => array(
+            NEW_USER, EDIT_USER, DELETE_USER
+        ),
+        USER_MANGMENT => array(
+            GET_USER_INFO, GET_ALBUMES, SET_COMMENT_IN_PHOTO, GET_NOTIFICATION, EDIT_COMMENT_IN_PHOTO, DELETE_COMMENT_IN_PHOTO,
+            STATUS_CHANGE, SET_PONANS, GET_PONANS, GET_USER_LIST
+        ),
+        MULTIMEDIA_GROUP => array(
+            UPLOAD_MALTIMEDIA, GET_IMAGE, GET_VIDEO, GET_AUDIO, UPLOAD_FROM_URL
+        ),
+        USER_LOGIN => array(
+            NORMAL_LOGIN, PASSWORD_LOGIN, ADMIN_LOGIN, USERSYSTEM_LOGIN
+        ),
+        MESSAGE_GROUP => array(
+            SET_MESSAGE, GET_MESSAGE, GET_ALL_MESSAGE, DEL_MESSAGE
+        ),
+        GIFT_GROUP => array(
+        ),
+        ICONS_USER_GROUP => array(
+        ),
+        MONEY_GROUP => array(
+        ),
+        CONNECT_GROUP => array(
+        ),
+        SEARCH_GROUP => array(
+            USER_SEARCH
+        ),
+        COUNTRY_LIST => array(
+            COUNTRY_BUFFER_LIST
+        ),
+        NETWORK_LIST => array(
+            NETWORK_BUFFER_LIST
+        ),
+        SYNC_GROUP => array(
+            SYNC_COUNTRY, SYNC_MEMBER_IN_COUNTRY, SYNC_COMMENT, SYNC_FRINDS,
+            SYNC_GIFTS, SYNC_MESSAGE, SYNC_NEWS, SYNC_NOTIFICATION, SYNC_PONANS,
+            SYNC_STOCK, SYNC_ALL
+        ),
+        FRIEND_GROUP => array(
+            GET_USER_FRIENDS, MAKE_FRIEND, MAKE_UNFRIEND, SET_FRIEND_FAVORIT, SET_FRIEND_UNFAVORIT,
+        )
+    ];
+
+    return $MainFunctions;
+}
+
+function FileAllow() {
+    $file = array(
+        AUDIO => array(
+            'mp3', '3gp'
+        ),
+        VIDEO => array(
+            'mp4'
+        ),
+        PHOTO => array(
+            'jpg', 'png', 'gif'
+        )
+    );
+
+    return $file;
+}
+
+function SystemVariable($Var) {
+    if (file_exists(SYSTEM_XML_VAR)) {
+        $dom = new DOMDocument();
+        $dom->load(SYSTEM_XML_VAR);
+        $dom->formatOutput = true;
+        $x = $dom->documentElement;
+        foreach ($x->childNodes AS $item) {
+            if (strstr($item->nodeName, $Var)) {
+                return $item->nodeValue;
+            }
+        }
+        return false;
+    } else {
+        $Need = null;
+        require_once MAIN_DIR . '/Database/SQLClass.php';
+        $Configration = Configration();
+        $Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+        if (!is_null($Data = $Database->select(TABLE_SYSTEM, [FILED_SYSTEM_ACTIV => ON]))) {
+            $doc = new DOMDocument('1.0');
+            $doc->formatOutput = true;
+            $root = $doc->createElement('system');
+            $root = $doc->appendChild($root);
+            foreach ($Data as $Key => $Value) {
+                if (!empty($Value)) {
+                    $title = $doc->createElement($Key);
+                    $title = $root->appendChild($title);
+
+                    $text = $doc->createTextNode($Value);
+                    $text = $title->appendChild($text);
+                    if (strstr($Key, $Var)) {
+                        $Need = $Value;
+                    }
+                }
+            }
+            $doc->save(SYSTEM_XML_VAR);
+            unset($Database);
+            unset($doc);
+            unset($dom);
+
+            return (!empty($Need) ? $Need : false);
+        }
+    }
+}
+
+function MessagesSystem($Message) {
+    $MessgeArray = [
+        WELCOME_MESSAGE_IN_STATUS => "I am " . SystemVariable(FILED_SYSTEM_APPLICATION_NAME) . "Now :)",
+        SERVER_ERROR_TITEL_MESSAGE => "404 Page Not Found",
+        SERVER_ERROR_MESSAGE => "Page Not Found",
+        SERVER_ERROR_NUMBER => "404",
+        SORRY_FOR_UPDATE => "We Are Sorry But Server in Uptodate Please try later",
+        SERVER_REPAIR_TITEL_MESSAGE => "Server is Repair",
+        SERVER_REPAIR_MESSAGE => "We are sorry but server in update",
+        YOU_HAVE_A_NEW_MESSAGE => "%s You Have a New Message",
+        NEW_MESSAGE => "New Message From %s",
+        NEW_FRIEND => "%s want to be your friend"
+    ];
+    return $MessgeArray[$Message];
+}

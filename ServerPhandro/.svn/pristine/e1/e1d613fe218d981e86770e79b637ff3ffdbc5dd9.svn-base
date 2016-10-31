@@ -1,0 +1,55 @@
+STOP and Refiltration UserMangment
+
+[tools.php]
+2- filtration country zone 
+    - Friends List                                              [Test]
+    - UserMangment.php->WhoIs->Get_User_Profile_Photo [With URL]
+    - Cover Zone between tow users
+    - Move isTheSimeZone , isTheSimeNetwork in UserMangment.php to Zone Class
+
+3- Create List for all group was taking about (Hashtag) Tool.php-Count_Hashtag();
+4- Join to Groups
+5- Add Users to Groups
+
+[core.php]
+3- icon_user_unit
+4- money_unit
+5- conntact_unit
+6- add table for know who is say the Bad Words
+
+[ads]
+1- Create Ads class (Add , Edite , Delete , Clicking , Seen)
+2- Payment Ads System
+
+[[[Syncroniz]]]
+
+[adminstration]
+1- core.php->login_unit->usersystem_login
+2- core.php->login_unit->admin_login
+3- databse explordatabase.php
+4- admin interface
+5- install
+
+
+=====================
+- download users data as zip file and backup database 
+- anti spam
+- proxy
+- server monitor
+- port monitor
+- users monitor
+- messages monitor
+- locations monitor
+- file maneger
+- mysql monitor
+- buffer also if internet is very slow 64bit time:300ms
+- audio streem
+
+
+
+-----------------------------------------------------
+buffraing
+4- random barcode
+
+[Cach.php]
+this class make xml for data in database every 5 sec becose not make load for database 

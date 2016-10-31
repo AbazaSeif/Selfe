@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:custom="http://schemas.android.com/apk/res-auto"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:background="@drawable/background"
+                android:fitsSystemWindows="true">
+
+    <TextView
+        android:id="@+id/link_signup"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="123dp"
+        android:gravity="center"
+        android:text="No account yet? Create one"
+        android:textColor="#db5224"
+        android:textSize="20dip"/>
+
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/image_category_music_raster"
+        />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/caractericonlogin"
+        android:layout_width="150sp"
+        android:layout_height="150sp"
+        android:padding="30dp"
+        android:src="@drawable/boy"
+        android:layout_alignBottom="@+id/imageView"
+        android:layout_centerHorizontal="true"/>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="350dp"
+        android:layout_height="150dp"
+        android:background="@color/Selfie_accent"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        style="@style/CardView"
+        android:id="@+id/wdCard">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/ly_email"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_white"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:weightSum="1"
+                android:layout_gravity="center"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="17dp">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/icon_email"/>
+
+                <com.aprivate.selfie.wedget.custom.CustomEdittext
+                    android:id="@+id/input_email"
+                    android:layout_width="220dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="0.59"
+                    android:background="@null"
+                    android:hint="Email"
+                    android:inputType="textEmailAddress"
+                    android:singleLine="true"
+                    android:textColorHint="@color/font_gray"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ly_password"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/bg_white"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:gravity="center_vertical"
+                android:paddingLeft="20dp"
+                android:weightSum="1"
+                android:layout_gravity="center"
+                android:layout_below="@+id/ly_email"
+                android:layout_centerHorizontal="true">
+
+                <ImageView
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:background="@drawable/icon_password"/>
+
+                <com.aprivate.selfie.wedget.custom.CustomEdittext
+                    android:id="@+id/input_password"
+                    android:layout_width="220dp"
+                    android:layout_height="60dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="0.59"
+                    android:background="@null"
+                    android:hint="Password"
+                    android:inputType="textPassword"
+                    android:textColorHint="@color/font_gray"/>
+
+            </LinearLayout>
+        </RelativeLayout>
+    </android.support.v7.widget.CardView>
+
+    <com.dd.processbutton.iml.ActionProcessButton
+        android:id="@+id/btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="50sp"
+        android:layout_above="@+id/link_signup"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_margin="9dp"
+        android:text="@string/Sign_in"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        custom:pb_textComplete="@string/Success"
+        custom:pb_textError="@string/Failed"
+        custom:pb_textProgress="@string/Loading"
+        />
+
+</RelativeLayout>

@@ -1,0 +1,178 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+
+/**
+ * Description of Class_Login
+ *
+ * @author abaza
+ */
+class Class_Login {
+
+    var $Database = null;
+    var $Tools = null;
+    var $Filter = null;
+    var $UserMang = null;
+
+    //put your code here
+    //Function 1 : Log With Password if IMEI is Exist but SIM is diferant
+    //Function 2 : Log With Password if SIM is Exist but IMEI is diferant
+    function __set($name, $class) {
+        if (is_null($name)) {
+            if (class_exists($class)) {
+                $name = new $class;
+                return $name;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    function __construct() {
+
+        $this->Tools = (is_null($this->Tools = self::__set($this->Tools, Tools)) ? die(ShowError()) : $this->Tools);
+        $this->Filter = (is_null($this->Filter = self::__set($this->Filter, Filtering)) ? die(ShowError()) : $this->Filter);
+        $this->UserMang = (is_null($this->UserMang = self::__set($this->UserMang, UserMangment)) ? die(ShowError()) : $this->UserMang);
+
+        $this->Tools = new Tools();
+        $this->Filter = new Filtering();
+        $this->UserMang = new UserMangment();
+
+        if (is_null($this->Database)) {
+            $Configration = Configration();
+            $this->Database = new SQLClass($Configration['db'], $Configration['user'], $Configration['pass']);
+            if (!isset($this->Database)) {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Database Not Connected : " . $this->Database->ReturnError());
+                die($this->Tools->ShowDie($this->Tools->ShowDie("ERROR Database")));
+            }
+        }
+
+        register_shutdown_function('__destruct');
+    }
+
+    function __destruct() {
+        unset($this->Database);
+        unset($this->Tools);
+    }
+
+    public function Normal_Login() {
+        $UserInfor = array();
+
+        $Data = array(
+            FILED_PHONE_IMEI => $this->Filter->FilterData(KEY_PHONE_IMEI),
+            FILED_PHONE_SIM_SERIAL => $this->Filter->FilterData(KEY_PHONE_SIM_SERIAL)
+        );
+
+        $Data = $this->Tools->removeNull($Data);
+
+        if (!is_null($Data)) {
+            if ($this->Tools->isKeyExists(FILED_PHONE_IMEI, $Data)) {
+                $UserInfor = $this->Database->select(TABLE_PHONE, $Data);
+                if (is_null($UserInfor)) {
+                    $this->Tools->System_Log("NOT Login for IMEI : " . $Data[FILED_PHONE_IMEI] . " MYSQL : " . $this->Database->ReturnError(), __FUNCTION__, __LINE__, Tools::ERROR);
+                    return FAIL;
+                } else {
+                    $Retern = $this->UserMang->Get_User_Information($UserInfor[FILED_PHONE_UID]);
+                    if (!empty($Retern)) {
+                        return $Retern;
+                    } else {
+                        $this->Tools->System_Log("Function Get_User_Information NOT retern data for user id " . $UserInfor[FILED_PHONE_UID], __FUNCTION__, __LINE__, Tools::ERROR);
+                        return FAIL;
+                    }
+                }
+            } else if ($this->Tools->isKeyExists(FILED_PHONE_SIM_SERIAL, $Data)) {
+                $UserInfor = $this->Database->select(TABLE_PHONE, $Data);
+                if (is_null($UserInfor)) {
+                    $this->Tools->System_Log("NOT Login for SIM Serial : " . $Data[FILED_PHONE_SIM_SERIAL] . " MYSQL : " . $this->Database->ReturnError(), __FUNCTION__, __LINE__, Tools::ERROR);
+                    return FAIL;
+                } else {
+                    $Retern = $this->UserMang->Get_User_Information($UserInfor[FILED_PHONE_UID]);
+                    if (!empty($Retern)) {
+                        return $Retern;
+                    } else {
+                        $this->Tools->System_Log("Function Get_User_Information NOT retern data for user id " . $UserInfor[FILED_PHONE_UID], __FUNCTION__, __LINE__, Tools::ERROR);
+                        return FAIL;
+                    }
+                }
+            }
+        } else {
+            $this->Tools->System_Log("Login Data is EMPTY !!!!", __FUNCTION__, __LINE__, Tools::NOTICE);
+            return FAIL;
+        }
+    }
+
+    public function Password_Login() {
+        $UserInfor = array();
+
+        $Password = array(FILED_USER_PASSWORD => $this->Filter->FilterData(KEY_USER_PASSWORD));
+
+        $Data = array(
+            FILED_PHONE_IMEI => $this->Filter->FilterData(KEY_PHONE_IMEI),
+            FILED_PHONE_SIM_SERIAL => $this->Filter->FilterData(KEY_PHONE_SIM_SERIAL)
+        );
+
+        $Data = $this->Tools->removeNull($Data);
+        $Password = $this->Tools->removeNull($Password);
+
+        if (is_null($Password)) {
+            return FAIL . KEY_USER_PASSWORD;
+        }
+
+        if (!is_null($Data)) {
+            if ($this->Tools->isKeyExists(FILED_PHONE_IMEI, $Data)) {
+                $UserInfor = $this->Database->select(TABLE_PHONE, $Data);
+                if (is_null($UserInfor)) {
+                    $this->Tools->System_Log("NOT Login for IMEI : " . $Data[FILED_PHONE_IMEI] . " MYSQL : " . $this->Database->ReturnError(), __FUNCTION__, __LINE__, Tools::ERROR);
+                    return FAIL;
+                } else {
+                    $Retern = $this->UserMang->Get_User_Information($UserInfor[FILED_PHONE_UID]);
+                    if (!empty($Retern)) {
+                        if (!strstr($Retern[FILED_USER_PASSWORD], $Password[FILED_USER_PASSWORD])) {
+                            return FAIL;
+                        } else {
+                            return $Retern;
+                        }
+                    } else {
+                        $this->Tools->System_Log("Function Get_User_Information NOT retern data for user id " . $UserInfor[FILED_PHONE_UID], __FUNCTION__, __LINE__, Tools::ERROR);
+                        return FAIL;
+                    }
+                }
+            } else if ($this->Tools->isKeyExists(FILED_PHONE_SIM_SERIAL, $Data)) {
+                $UserInfor = $this->Database->select(TABLE_PHONE, $Data);
+                if (is_null($UserInfor)) {
+                    $this->Tools->System_Log("NOT Login for SIM Serial : " . $Data[FILED_PHONE_SIM_SERIAL] . " MYSQL : " . $this->Database->ReturnError(), __FUNCTION__, __LINE__, Tools::ERROR);
+                    return FAIL;
+                } else {
+                    $Retern = $this->UserMang->Get_User_Information($UserInfor[FILED_PHONE_UID]);
+                    if (!empty($Retern)) {
+                        if (!strstr($Retern[FILED_USER_PASSWORD], $Password[FILED_USER_PASSWORD])) {
+                            return FAIL;
+                        } else {
+                            return $Retern;
+                        }
+                    } else {
+                        $this->Tools->System_Log("Function Get_User_Information NOT retern data for user id " . $UserInfor[FILED_PHONE_UID], __FUNCTION__, __LINE__, Tools::ERROR);
+                        return FAIL;
+                    }
+                }
+            }
+        } else {
+            $this->Tools->System_Log("Login Data is EMPTY !!!!", __FUNCTION__, __LINE__, Tools::NOTICE);
+            return FAIL;
+        }
+    }
+
+    public function Adminstration_Login() {
+        
+    }
+
+    public function User_Login() {
+        
+    }
+
+}

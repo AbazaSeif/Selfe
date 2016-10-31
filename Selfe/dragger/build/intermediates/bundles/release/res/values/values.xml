@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#E6000000</color>
+    <declare-styleable name="dragger_layout"><attr format="reference" name="drag_view_id"/><attr format="reference" name="shadow_view_id"/><attr format="reference|integer" name="tension"/><attr format="reference|integer" name="friction"/><attr format="float" name="drag_limit"/><attr format="enum" name="drag_position">
+      <enum name="left" value="0"/>
+      <enum name="right" value="1"/>
+      <enum name="top" value="2"/>
+      <enum name="bottom" value="3"/>
+    </attr></declare-styleable>
+</resources>

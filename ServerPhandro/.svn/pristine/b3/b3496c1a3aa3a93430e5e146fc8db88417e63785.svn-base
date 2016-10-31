@@ -1,0 +1,49 @@
+
+[Search_Class.php]
+1- Way to filtering Search and get result
+
+[Create_New]
+2- Save User IP
+4- Send Code confirmation to Email address
+5- Icons for isFamous and isVIP
+
+[Class_Login.php]
+1- Create function call buffring for buffer country and networks 
+
+[Core.php]
+1- Message_Unit
+2- Gift_Unit
+3- Icon_User_Unit
+4- Money_Unit
+5- Conntact_Unit
+
+[Adminstration]
+1- Core.php->Login_Unit->USERSYSTEM_LOGIN
+2- Core.php->Login_Unit->ADMIN_LOGIN
+3- Databse ExplorDatabase.php
+4- Admin Interface
+
+[Tools.php]
+1- convertHashtags
+=====================
+- Download Users Data as ZIP file and Backup database 
+- Anti Spam
+- Proxy
+- Server monitor
+- Port Monitor
+- Users Monitor
+- Messages Monitor
+- Locations Monitor
+- Get Country from IP [Not Tested]
+- File Maneger
+- MySQL Monitor
+
+
+
+-----------------------------------------------------
+Buffraing
+
+1- Buffer for Country only in Table Country 
+2- Buffer for Country Mobile Network and this only for Search
+3- User Barcode
+4- Random Barcode

@@ -1,0 +1,441 @@
+<?php
+
+if (getcwd() == dirname(__FILE__)) {
+    require '../System/ErrorPage.php';
+    die(ShowError());
+}
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+/**
+ * Description of Creating_New
+ *
+ * @author seif abaza
+ */
+class Creating_New {
+
+    var $Filter = null;
+    var $UUID = null;
+    var $DIR_OPRATION = null;
+    var $Image = null;
+    private $Buffer = '';
+
+    function __set($name, $class) {
+        if (is_null($name)) {
+            if (class_exists($class)) {
+                $name = new $class;
+                return $name;
+            } else {
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    function __construct() {
+
+        $this->DIR_OPRATION = (is_null($this->DIR_OPRATION = self::__set($this->DIR_OPRATION, FileSystem)) ? die(ShowError()) : $this->DIR_OPRATION);
+        $this->UUID = (is_null($this->UUID = self::__set($this->UUID, UUID)) ? die(ShowError()) : $this->UUID);
+        $this->Image = (is_null($this->Image = self::__set($this->Image, FileType_Image)) ? die(ShowError()) : $this->Image);
+
+        register_shutdown_function('__destruct');
+    }
+
+    public function Create_New_User() {
+        $UUID = null;
+
+        //Creating UUID
+        do {
+            $UUID = $this->UUID->v4();
+        } while (!$this->UUID->is_valid($UUID));
+
+        //Set Data
+        $User = array(
+            FILED_USER_UUID => $UUID,
+            FILED_USER_NAME => $GLOBALS['Filter']->FilterData(KEY_USER_NAME),
+            FILED_USER_PHONE => $GLOBALS['Filter']->FilterData(KEY_USER_PHONE),
+            FILED_USER_SEX => $GLOBALS['Filter']->FilterData(KEY_USER_SEX),
+            FILED_USER_PASSWORD => $GLOBALS['Filter']->FilterData(KEY_USER_PASSWORD),
+            FILED_USER_ACTIVATION => $GLOBALS['Filter']->FilterData(KEY_USER_ACTIVATION)
+        );
+
+        $Phone = array(
+            FILED_PHONE_IMEI => $GLOBALS['Tools']->Serial_Number_Implimntation($GLOBALS['Filter']->FilterData(KEY_PHONE_IMEI)),
+            FILED_PHONE_SIM_SERIAL => $GLOBALS['Tools']->Serial_Number_Implimntation($GLOBALS['Filter']->FilterData(KEY_PHONE_SIM_SERIAL)),
+            FILED_PHONE_COUNTRY_ISO => $GLOBALS['Filter']->FilterData(KEY_PHONE_COUNTRY_ISO),
+            FILED_PHONE_NETWORK_COUNTRY_ISO => $GLOBALS['Filter']->FilterData(KEY_PHONE_NETWORK_COUNTRY_ISO),
+            FILED_PHONE_NETWORK_NAME => $GLOBALS['Filter']->FilterData(KEY_PHONE_NETWORK_NAME)
+        );
+
+        //Filter Null values
+        $User = $GLOBALS['Tools']->removeNull($User);
+        $Phone = $GLOBALS['Tools']->removeNull($Phone);
+
+        //Make sure about some keys
+        if (!$GLOBALS['Tools']->isKeyExists(FILED_USER_NAME, $User)) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "User Name Not Found");
+            return FAIL . KEY_USER_NAME;
+        }
+        if (!$GLOBALS['Tools']->isKeyExists(FILED_PHONE_IMEI, $Phone)) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Phone IMEI Not Found");
+            return FAIL . PHONE_IMEI;
+        }
+        if (!$GLOBALS['Tools']->isKeyExists(FILED_PHONE_SIM_SERIAL, $Phone)) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Phone SIM Serial Number Not Found");
+            return FAIL . PHONE_SIM_SERIAL_NUMBER;
+        }
+
+        $SearchisExist = array(
+            FILED_PHONE_IMEI => $Phone[FILED_PHONE_IMEI],
+            FILED_PHONE_SIM_SERIAL => $Phone[FILED_PHONE_SIM_SERIAL]
+        );
+        $SearchisExistPhone = array(
+            FILED_USER_PHONE => $User[FILED_USER_PHONE]
+        );
+
+        if ($GLOBALS['Database']->isExist(TABLE_USER, $SearchisExistPhone)) {
+            return FAIL . PHONE_EXIST;
+        }
+        //Install Data in Database
+        if (!$GLOBALS['Database']->isExist(TABLE_PHONE, $SearchisExist, '', 1, false, 'OR')) {
+            //Create User Dir    
+            $User[FILED_USER_DIR_PATH] = $this->Create_Dir($User[FILED_USER_UUID]);
+            if ($User[FILED_USER_DIR_PATH] == false) {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Can not Create User Dir");
+                return FAIL . FILED_USER_DIR_PATH;
+            }
+            //Inser New User
+            if ($GLOBALS['Database']->insert(TABLE_USER, $User)) {
+                //Get ID and insert it in Phone Table
+                $Phone[FILED_UID] = $GLOBALS['Database']->lastInsertID();
+                if ($GLOBALS['Database']->insert(TABLE_PHONE, $Phone)) {
+                    $this->User_Log(__FUNCTION__, __LINE__, "OK", "Create New User is Done : UUID : " . $UUID);
+                    return SUCCESS;
+                }
+            }
+        } else {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "This Phone IMEI is Exist : " . $User[FILED_USER_NAME] .
+                    "-" . $User[FILED_USER_PHONE] . "-" . $User[FILED_PHONE_IMEI] . "-" . $User[FILED_PHONE_SIM_SERIAL]);
+            return FAIL . PHONE_EXIST;
+        }
+        return $User;
+    }
+
+    public function Edite_User() {
+        $USER_UUID = array(
+            FILED_USER_UUID => $GLOBALS['Filter']->FilterData(KEY_USER_UUID)
+        );
+
+        if (is_null($GLOBALS['Tools']->getValue(FILED_USER_UUID, $USER_UUID))) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "ERROR Not Found UUID");
+            return FAIL . KEY_USER_UUID;
+        }
+
+        //Set Data
+        $User = array(
+            FILED_USER_NAME => $GLOBALS['Filter']->FilterData(KEY_USER_NAME),
+            FILED_USER_PHONE => $GLOBALS['Filter']->FilterData(KEY_USER_PHONE),
+            FILED_USER_SEX => $GLOBALS['Filter']->FilterData(KEY_USER_SEX),
+            FILED_USER_PASSWORD => $GLOBALS['Filter']->FilterData(KEY_USER_PASSWORD),
+            FILED_USER_ACTIVATION => $GLOBALS['Filter']->FilterData(KEY_USER_ACTIVATION)
+        );
+
+        $Phone = array(
+            FILED_PHONE_IMEI => $GLOBALS['Filter']->FilterData(KEY_PHONE_IMEI),
+            FILED_PHONE_SIM_SERIAL => $GLOBALS['Filter']->FilterData(KEY_PHONE_SIM_SERIAL),
+            FILED_PHONE_COUNTRY_ISO => $GLOBALS['Filter']->FilterData(KEY_PHONE_COUNTRY_ISO),
+            FILED_PHONE_NETWORK_COUNTRY_ISO => $GLOBALS['Filter']->FilterData(KEY_PHONE_NETWORK_COUNTRY_ISO),
+            FILED_PHONE_NETWORK_NAME => $GLOBALS['Filter']->FilterData(KEY_PHONE_NETWORK_NAME)
+        );
+
+        //Filter Null values
+        $User = $GLOBALS['Tools']->removeNull($User);
+        $Phone = $GLOBALS['Tools']->removeNull($Phone);
+
+
+        //Make sure this UUID in Database or not
+        if ($GLOBALS['Database']->isExist(TABLE_USER, $USER_UUID)) {
+            //Yes in Database
+            //Get ID
+            $UID = null;
+
+            $Ret = $GLOBALS['Database']->select(TABLE_USER, $USER_UUID);
+            if (!is_null($Ret)) {
+                $UID = $Ret[FILED_USER_ID];
+                $Where = array(FILED_UID => $UID);
+                if (count($User) > 0) {
+                    if (!$GLOBALS['Database']->update(TABLE_USER, $User, $USER_UUID)) {
+                        $this->User_Log(__FUNCTION__, __LINE__, "ERROR", $GLOBALS['Database']->ReturnError());
+                        return FAIL . DATABASE;
+                    }
+                }
+                if (count($Phone) > 0) {
+                    if (!$GLOBALS['Database']->update(TABLE_PHONE, $Phone, $Where)) {
+                        $this->User_Log(__FUNCTION__, __LINE__, "ERROR", $GLOBALS['Database']->ReturnError());
+                        return FAIL . DATABASE;
+                    }
+                }
+                $this->User_Log(__FUNCTION__, __LINE__, "OK", "Update is Done for User UUID " . $USER_UUID[FILED_USER_UUID]);
+                return SUCCESS;
+            } else {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Not found User UUID");
+                return FAIL . KEY_USER_UUID;
+            }
+        } else {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Not found User UUID");
+            return FAIL . KEY_USER_UUID;
+        }
+    }
+
+    public function Delete_User() {
+        $DataUser = array(
+            FILED_USER_UUID => $GLOBALS['Filter']->FilterData(KEY_USER_UUID),
+            FILED_USER_PASSWORD => $GLOBALS['Filter']->FilterData(KEY_USER_PASSWORD)
+        );
+
+        if (is_null($GLOBALS['Tools']->getValue(FILED_USER_UUID, $DataUser))) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Not found User UUID");
+            return FAIL . KEY_USER_UUID;
+        }
+        if (is_null($GLOBALS['Tools']->getValue(FILED_USER_PASSWORD, $DataUser))) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Not found User Password");
+            return FAIL . KEY_USER_PASSWORD;
+        }
+
+        if ($GLOBALS['Database']->isExist(TABLE_USER, $DataUser)) {
+            //Yes in Database
+            //Get ID
+            $UID = null;
+
+            $Ret = $GLOBALS['Database']->select(TABLE_USER, $DataUser);
+            if (!is_null($Ret)) {
+                $UID = $Ret[FILED_USER_ID];
+                $USER_DIR = $Ret[FILED_USER_DIR_PATH];
+
+                $Where = array(FILED_UID => $UID);
+
+                if (!$GLOBALS['Database']->delete(TABLE_PHONE, $Where, '1')) {
+                    $this->User_Log(__FUNCTION__, __LINE__, "ERROR", $GLOBALS['Database']->ReturnError());
+                    return FAIL . DATABASE;
+                }
+
+                if (!$GLOBALS['Database']->delete(TABLE_USER, $Ret, '1')) {
+                    $this->User_Log(__FUNCTION__, __LINE__, "ERROR", $GLOBALS['Database']->ReturnError());
+                    return FAIL . DATABASE;
+                }
+                if (!$this->DIR_OPRATION->rmdir($USER_DIR)) {
+                    $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Can not Delete User Dir " . $USER_DIR);
+                    return FAIL . FILESYSTEM;
+                }
+
+                $this->User_Log(__FUNCTION__, __LINE__, "OK", "Delete User " . $DataUser[FILED_USER_UUID] . " is removed done");
+                return SUCCESS;
+            } else {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Not found User UUID");
+                return FAIL . KEY_USER_UUID;
+            }
+        } else {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Not found User UUID");
+            return FAIL . KEY_USER_UUID;
+        }
+    }
+
+    private function Create_Dir($UUID) {
+        if ($this->UUID->is_valid($UUID)) {
+            $Path = opendir(PATH_IMAGE_USERS);
+            if (!$Path) {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Can't Open File " . PATH_IMAGE_USERS);
+                die($GLOBALS['Tools']->ShowDie($GLOBALS['Tools']->ShowDie("Can't Open File " . PATH_IMAGE_USERS)));
+                closedir();
+            } else {
+                closedir();
+                $New_Dir = PATH_IMAGE_USERS . DIRECTORY_SEPARATOR . $UUID;
+                if (!$this->DIR_OPRATION->exists($New_Dir)) {
+                    $Retern = $this->DIR_OPRATION->mkdir($New_Dir);
+                    $this->User_Log(__FUNCTION__, __LINE__, "OK", "Creating Done Dir " . $New_Dir);
+                    return $Retern;
+                } else {
+                    $this->DIR_OPRATION->move($New_Dir, $New_Dir . '_bk');
+                    $this->Create_Dir($UUID);
+                }
+            }
+        } else {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "UUID Not Valid" . $UUID);
+            die(ShowError());
+        }
+    }
+
+    //Chang for new Way
+    public function Upload_Image() {
+        $Data = [FILED_USER_ID => $GLOBALS['Tools']->getValue(KEY_USER_ID, $_REQUEST),
+            FILED_USER_PHOTO_PHOTO_PATH => $GLOBALS['Tools']->getValue(KEY_USER_PHOTO_PHOTO_PATH, $_REQUEST),
+            FILED_USER_PHOTO_IS_PROFILE => $GLOBALS['Tools']->getValue(KEY_USER_PHOTO_IS_PROFILE, $_REQUEST),
+            FILED_USER_PHOTO_PRIVACY => $GLOBALS['Tools']->getValue(KEY_USER_PHOTO_PRIVACY, $_REQUEST),
+            FILED_USER_PHOTO_TIME_OF_LIKE => $GLOBALS['Tools']->getValue(KEY_USER_PHOTO_TIME_OF_LIKE, $_REQUEST),
+            FILED_USER_PHOTO_TIME_OF_UNLIKE => $GLOBALS['Tools']->getValue(KEY_USER_PHOTO_TIME_OF_UNLIKE, $_REQUEST),
+            FILED_USER_PHOTO_COMMENT => $GLOBALS['Tools']->getValue(KEY_USER_PHOTO_COMMENT, $_REQUEST)
+        ];
+
+        $Data = $GLOBALS['Tools']->removeNull($Data);
+
+        if (!isset($Data[FILED_USER_ID])) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "UUID For User not Set");
+            die(ShowError());
+        }
+
+        if ($GLOBALS['Tools']->isKeyExists(FILED_USER_PHOTO_PHOTO_PATH, $Data)) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Image File Not Found");
+            die(ShowError());
+        }
+
+        $SearchForUser = array(
+            FILED_USER_ID => $Data[FILED_USER_ID]
+        );
+
+        if ($GLOBALS['Database']->isExist(TABLE_USER, $SearchForUser)) {
+            $UserInfor = $GLOBALS['Database']->select(TABLE_USER, $SearchForUser);
+            $UUID = $UserInfor[FILED_USER_UUID];
+            $UID = $UserInfor[FILED_USER_ID];
+            $ImagePath = $UserInfor[FILED_USER_DIR_PATH];
+
+            if ($Data[FILED_USER_PHOTO_IS_PROFILE] == ON) {
+                $ProfileImage = array(
+                    FILED_UID => $UID,
+                    FILED_USER_PHOTO_IS_PROFILE => $Data[FILED_USER_PHOTO_IS_PROFILE]
+                );
+
+                $RetImage = $GLOBALS['Database']->select(TABLE_USER_PHOTO, $ProfileImage, '', 1);
+                if (!is_null($RetImage)) {
+                    $RetImage = $GLOBALS['Tools']->ChangeValueInArray(FILED_USER_PHOTO_IS_PROFILE, OFF, $RetImage);
+                    $RetImage = $GLOBALS['Tools']->RemoveKeyInArray(FILED_USER_PHOTO_ID, $RetImage);
+                    $GLOBALS['Database']->update(TABLE_USER_PHOTO, $RetImage, $ProfileImage);
+                }
+            }
+
+            $ImagePath = $this->Image->Reseved_Image_User($ImagePath, $UUID, $GLOBALS['Tools']->getValue(FILED_USER_PHOTO_PHOTO_PATH, $Data));
+            if (!is_null($ImagePath)) {
+                $DataImage = array(
+                    FILED_UID => $UID,
+                    FILED_USER_PHOTO_PHOTO_PATH => $ImagePath,
+                    FILED_USER_PHOTO_IS_PROFILE => $Data[FILED_USER_PHOTO_IS_PROFILE],
+                    FILED_USER_PHOTO_COMMENT => $Data[FILED_USER_PHOTO_COMMENT],
+                    FILED_USER_PHOTO_TIME_OF_LIKE => $Data[FILED_USER_PHOTO_TIME_OF_LIKE],
+                    FILED_USER_PHOTO_TIME_OF_UNLIKE => $Data[FILED_USER_PHOTO_TIME_OF_UNLIKE],
+                    FILED_USER_PHOTO_PRIVACY => $Data[FILED_USER_PHOTO_PRIVACY], //0=public 1=me only 2=friends 3=friends of friends 4=all world
+                );
+
+                $DataImage = $GLOBALS['Tools']->removeNull($DataImage);
+
+                if ($GLOBALS['Database']->insert(TABLE_USER_PHOTO, $DataImage)) {
+                    $ImageID = array(
+                        KEY_USER_PHOTO_ID => $GLOBALS['Database']->lastInsertID(),
+                    );
+                    return $ImageID;
+                } else {
+                    $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Error in Save image " . $GLOBALS['Database']->ReturnError());
+                    return FAIL . FILE_IMAGE;
+                }
+            } else {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Error in Write image file");
+                return FAIL . FILE_IMAGE;
+            }
+        } else {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "UUID Not found : " . $Data[FILED_USER_UUID]);
+            return FAIL . KEY_USER_UUID;
+        }
+    }
+
+    public function Get_Image() {
+        $UUID = null;
+        $Image = array(
+            FILED_UID => $GLOBALS['Filter']->FilterData(KEY_UID),
+            FILED_USER_PHOTO_ID => $GLOBALS['Filter']->FilterData(KEY_USER_PHOTO_ID)
+        );
+
+        $Image = $GLOBALS['Tools']->removeNull($Image);
+
+        if (is_null($Image)) {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Image Array is Empty");
+            die(ShowError());
+        }
+
+        //Get User UUID
+        $UserUUID = array(
+            FILED_USER_ID => $Image[FILED_UID]
+        );
+
+        $RetUser = $GLOBALS['Database']->select(TABLE_USER, $UserUUID);
+
+        if (!empty($RetUser) || !is_null($RetUser)) {
+            $UUID = $RetUser[FILED_USER_UUID];
+            if (empty($UUID)) {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "I Can't found UUID for this ID : " . $RetUser[FILED_USER_ID]);
+                die(ShowError());
+            }
+        }
+
+        $RecImage = $GLOBALS['Database']->select(TABLE_USER_PHOTO, $Image, '', 1);
+        if (!is_null($RecImage)) {
+            $ImagePath = $RecImage[FILED_USER_PHOTO_PHOTO_PATH];
+            $URL = $this->Image->Send_Image_User($ImagePath, $UUID);
+            if (!empty($URL)) {
+                $URLBuffer = array(
+                    KEY_UID => $Image[FILED_UID],
+                    KEY_USER_PHOTO_PHOTO_PATH => $URL,
+                    KEY_USER_PHOTO_TIME_OF_LIKE => $RecImage[FILED_USER_PHOTO_TIME_OF_LIKE],
+                    KEY_USER_PHOTO_TIME_OF_UNLIKE => $RecImage[FILED_USER_PHOTO_TIME_OF_UNLIKE],
+                    KEY_USER_PHOTO_IS_PROFILE => $RecImage[FILED_USER_PHOTO_IS_PROFILE],
+                    KEY_USER_PHOTO_PRIVACY => $RecImage[FILED_USER_PHOTO_PRIVACY],
+                    KEY_USER_PHOTO_COMMENT => $RecImage[FILED_USER_PHOTO_COMMENT]
+                );
+                $URLBuffer = $GLOBALS['Tools']->removeNull($URLBuffer);
+                return $URLBuffer;
+            } else {
+                $this->User_Log(__FUNCTION__, __LINE__, "ERROR", "Can't Reseved URL Image , Path : " . $ImagePath . " UUID : " . $UUID . ", Image ID : " . $Image[FILED_USER_PHOTO_ID]);
+                return FAIL . KEY_USER_PHOTO_PHOTO_PATH;
+            }
+        } else {
+            $this->User_Log(__FUNCTION__, __LINE__, "ERROR USER", "Image Not found : User ID : " . $Image[FILED_UID] . " Image ID : " . $Image[FILED_USER_PHOTO_ID]);
+            return FAIL . KEY_USER_PHOTO_PHOTO_PATH;
+        }
+    }
+
+    private function User_Log($FunctionName, $LINE, $Categury, $Message) {
+        if (LOG_SYSTEM) {
+            $ClassName = __CLASS__;
+            $Date = $GLOBALS['Tools']->getToday();
+            $Time = $GLOBALS['Tools']->getTime();
+
+            $Log = "(" . $Categury . ") " . $ClassName . "::" . $FunctionName . "::" . $LINE . " = " . $Message;
+
+            $MessageLog = array(
+                FILED_USER_LOG_DATE => $Date . "::" . $Time,
+                FILED_USER_LOG_ACTION => $Log
+            );
+
+            $GLOBALS['Database']->insert(TABLE_USER_LOG, $MessageLog);
+            $GLOBALS['Tools']->System_Log($MessageLog, $FunctionName, $LINE, Tools::NOTICE, true);
+
+            if ($GLOBALS['Tools']->isDebug()) {
+                $GLOBALS['Tools']->Show($MessageLog);
+            }
+        }
+    }
+
+    function __destruct() {
+        if (!is_null($this->DIR_OPRATION)) {
+            unset($this->DIR_OPRATION);
+        }
+        if (!is_null($this->Image)) {
+            unset($this->Image);
+        }
+        if (!is_null($this->UUID)) {
+            unset($this->UUID);
+        }
+    }
+
+}

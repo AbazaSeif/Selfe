@@ -1,0 +1,50 @@
+Geting Location it is work ( $Country = $this->Filter->GetCountry(); )
+
+[Search_Class.php]
+1- Way to filtering Search and get result
+
+[News]
+1- Create event for share news 
+2- sync it for Zone and Friends
+
+[Friend]
+1- Reorgniz Frined Class
+2- Accept and Refused and connected with Notification
+
+[Core.php]
+1 - Sync for Notifcation , and messages for (seen , write)
+2- Gift_Unit
+3- Icon_User_Unit
+4- Money_Unit
+5- Conntact_Unit
+
+[Adminstration]
+1- Core.php->Login_Unit->USERSYSTEM_LOGIN
+2- Core.php->Login_Unit->ADMIN_LOGIN
+3- Databse ExplorDatabase.php
+4- Admin Interface
+
+[Tools.php]
+1- convertHashtags
+=====================
+- Download Users Data as ZIP file and Backup database 
+- Anti Spam
+- Proxy
+- Server monitor
+- Port Monitor
+- Users Monitor
+- Messages Monitor
+- Locations Monitor
+- Get Country from IP [Not Tested]
+- File Maneger
+- MySQL Monitor
+- Buffer also if internet is very slow 64bit time:300ms
+- RTSP for Video and Audio
+
+
+-----------------------------------------------------
+Buffraing
+4- Random Barcode
+
+[Create_New]
+4- Send Code confirmation to Email address      [Not Test]
